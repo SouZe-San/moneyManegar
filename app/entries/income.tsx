@@ -1,11 +1,100 @@
-import { Text, View } from "react-native";
-
+import { ThemedText } from "@/components/ThemedText";
+import { ThemedView } from "@/components/ThemedView";
+import { useState } from "react";
+import { Pressable, View, StyleSheet } from "react-native";
+import { InputWithIcon } from "@/components/inputs/InputBox";
+import { MoneyBagIcon, NoteIcon, CalenderIcon } from "@/assets/icons/SVG/InputIcons";
+import { useThemeColorWithName } from "@/hooks/useThemeColor";
+// import DateTimePicker from "react-native-ui-datepicker";
+// import dayjs from "dayjs";
 export function income() {
+  const [date, setDate] = useState(new Date().toLocaleDateString());
+  const [amount, setAmount] = useState("");
+  const [description, setDescription] = useState("");
+  const borderColor = useThemeColorWithName("borderColor");
+  const buttonBgColor = useThemeColorWithName("highLightBackground");
+  const buttonTextColor = useThemeColorWithName("background");
+
   return (
-    <View>
-      <Text> textInComponent </Text>
-    </View>
+    <ThemedView style={styles.mainContainer}>
+      <View
+        style={{
+          marginTop: 150,
+          flex: 1,
+          width: "100%",
+          gap: 10,
+        }}
+      >
+        <View>
+          <InputWithIcon
+            icon={<MoneyBagIcon />}
+            placeholder="00.0 INR"
+            value={amount}
+            setValue={setAmount}
+          />
+        </View>
+        <View>
+          <InputWithIcon
+            icon={<NoteIcon />}
+            placeholder="Description..."
+            value={description}
+            setValue={setDescription}
+            keyboardType="default"
+          />
+        </View>
+        <View>
+          <InputWithIcon
+            icon={<CalenderIcon />}
+            placeholder={"date"}
+            value={date}
+            setValue={setDate}
+            keyboardType="numeric"
+          />
+        </View>
+      </View>
+      <View
+        style={{
+          marginBottom: 40,
+          width: "100%",
+          justifyContent: "center",
+          alignItems: "center",
+        }}
+      >
+        <Pressable style={[styles.button, { backgroundColor: buttonBgColor }]}>
+          <ThemedText style={{ color: buttonTextColor }} type="defaultSemiBold">
+            {" "}
+            Add Income
+          </ThemedText>
+        </Pressable>
+      </View>
+    </ThemedView>
   );
 }
 
 export default income;
+const styles = StyleSheet.create({
+  mainContainer: {
+    flex: 1,
+    width: "100%",
+    paddingHorizontal: 10,
+    justifyContent: "flex-start",
+    alignItems: "flex-start",
+  },
+  dateBox: {
+    height: 60,
+    flexDirection: "row",
+    alignItems: "center",
+    borderWidth: 1,
+    justifyContent: "flex-start",
+    borderRadius: 10,
+    paddingHorizontal: 10,
+  },
+  button: {
+    justifyContent: "center",
+    alignItems: "center",
+    borderRadius: 10,
+    borderWidth: 1,
+    width: "100%",
+    height: 50,
+  },
+});

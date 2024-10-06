@@ -6,12 +6,14 @@ import { useEffect } from "react";
 import "react-native-reanimated";
 
 import { useColorScheme } from "@/hooks/useColorScheme";
+import { useThemeColorWithName } from "@/hooks/useThemeColor";
 
 // Prevent the splash screen from auto-hiding before asset loading is complete.
 SplashScreen.preventAutoHideAsync();
 
 export default function RootLayout() {
   const colorScheme = useColorScheme();
+  const headerColor = useThemeColorWithName("background");
   const [loaded] = useFonts({
     SpaceMono: require("../assets/fonts/SpaceMono-Regular.ttf"),
   });
@@ -31,7 +33,14 @@ export default function RootLayout() {
       <Stack>
         <Stack.Screen name="(tabs)" options={{ headerShown: false }} />
         <Stack.Screen name="+not-found" />
-        <Stack.Screen name="entries/income" options={{ title: "Income: Add Money" }} />
+        <Stack.Screen
+          name="entries/income"
+          options={{
+            title: "Income: Add Money",
+            headerShadowVisible: false,
+            headerTransparent: true,
+          }}
+        />
         <Stack.Screen name="entries/expense" options={{ title: "Expense: Deduct Money" }} />
         <Stack.Screen
           name="entries/contribute"

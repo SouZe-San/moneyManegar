@@ -9,6 +9,7 @@ import Animated, {
 } from "react-native-reanimated";
 import { useEffect } from "react";
 import { Ionicons } from "@expo/vector-icons";
+import { useThemeColorWithName } from "@/hooks/useThemeColor";
 export default function TabBarButton({
   isFocused,
   label,
@@ -49,6 +50,8 @@ export default function TabBarButton({
     };
   });
 
+  const labelColor = useThemeColorWithName("tabIconSelected");
+
   return (
     <Pressable
       role="button"
@@ -60,16 +63,16 @@ export default function TabBarButton({
       {/* Use Icons */}
 
       <Animated.View style={[animatedIconStyle, styles.tabIcon]}>
-        {navIcons[routeName as keyof typeof navIcons] ? (
+        {/* {navIcons[routeName as keyof typeof navIcons] ? (
           navIcons[routeName as keyof typeof navIcons](isFocused)
         ) : (
           <Ionicons name="home" size={24} color={"#00df81"} />
-        )}
+        )} */}
+
+        {navIcons(routeName, isFocused)}
       </Animated.View>
 
-      <Animated.Text
-        style={[{ color: isFocused ? "#00df81" : "#030f0e" }, animatedTextStyle, styles.tabLabel]}
-      >
+      <Animated.Text style={[{ color: labelColor }, animatedTextStyle, styles.tabLabel]}>
         {label as string}
       </Animated.Text>
     </Pressable>
@@ -84,6 +87,7 @@ const styles = StyleSheet.create({
     padding: 8,
   },
   tabLabel: {
+    fontSize: 13,
     transform: [{ scale: 0.8 }],
     paddingVertical: 0,
   },

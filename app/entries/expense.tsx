@@ -1,9 +1,10 @@
+import { ThemedText } from "@/components/ThemedText";
 import { Text, View } from "react-native";
-
+ThemedText;
 export function expense() {
   return (
     <View>
-      <Text> WHat U brought NOw !! </Text>
+      <ThemedText> WHat U brought NOw !! </ThemedText>
     </View>
   );
 }

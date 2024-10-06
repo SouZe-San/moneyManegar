@@ -25,7 +25,7 @@ export default function TabLayout() {
       <Tabs.Screen
         name="capture"
         options={{
-          title: "Click",
+          title: "Scan",
         }}
       />
       <Tabs.Screen

@@ -10,7 +10,7 @@ export default function Transaction() {
         alignItems: "center",
       }}
     >
-      <ThemedText type="title">Capture You p u $ $ Y</ThemedText>
+      <ThemedText type="title">Capture You $_$ </ThemedText>
     </ThemedView>
   );
 }
