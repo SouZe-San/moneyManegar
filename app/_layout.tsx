@@ -39,14 +39,34 @@ export default function RootLayout() {
             title: "Income: Add Money",
             headerShadowVisible: false,
             headerTransparent: true,
+            headerTitleAlign: "center",
           }}
         />
-        <Stack.Screen name="entries/expense" options={{ title: "Expense: Deduct Money" }} />
+        <Stack.Screen
+          name="entries/expense"
+          options={{
+            title: "",
+            headerShadowVisible: false,
+            headerTransparent: true,
+          }}
+        />
         <Stack.Screen
           name="entries/contribute"
-          options={{ title: "Contribute: Kon kon paisa dega  " }}
+          options={{
+            title: "",
+            // title: "Contribute: Kon kon paisa dega  ",
+            headerShadowVisible: false,
+            headerTransparent: true,
+          }}
         />
-        <Stack.Screen name="entries/payble" options={{ title: "payble: or kitneko paisa doo" }} />
+        <Stack.Screen
+          name="entries/payble"
+          options={{
+            title: "payble: or kitneko paisa doo",
+            headerShadowVisible: false,
+            headerTransparent: true,
+          }}
+        />
       </Stack>
     </ThemeProvider>
   );

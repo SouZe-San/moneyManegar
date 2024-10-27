@@ -1,10 +1,9 @@
 import { useThemeColorWithName } from "@/hooks/useThemeColor";
-import { Text, View, StyleSheet, TextInput } from "react-native";
+import { Text, View, StyleSheet, TextInput, type TextProps } from "react-native";
 import { ThemedText } from "../ThemedText";
 
 type InputBoxProps = {
   placeholder: string;
-  label?: string;
   keyboardType?: "numeric" | "default";
   value: string | undefined;
   setValue: (value: string) => void;
@@ -15,7 +14,8 @@ export function InputBox({
   keyboardType = "numeric",
   value,
   setValue,
-}: InputBoxProps) {
+  style,
+}: InputBoxProps & TextProps) {
   const placeTextColor = useThemeColorWithName("tabIconDefault");
   const inputTextColor = useThemeColorWithName("text");
 
@@ -23,7 +23,7 @@ export function InputBox({
     <TextInput
       placeholder={placeholder}
       keyboardType={keyboardType}
-      style={[styles.input, { color: inputTextColor }]}
+      style={[styles.input, { color: inputTextColor }, style]}
       placeholderTextColor={placeTextColor}
       value={value}
       onChangeText={setValue}
@@ -40,13 +40,14 @@ export function InputWithIcon({
 }: InputBoxProps & { icon: React.JSX.Element }) {
   const borderColor = useThemeColorWithName("borderColor");
   return (
-    <View style={[styles.iconInputBox, { borderColor }]}>
+    <View style={[styles.iconInputBox, { borderColor, borderWidth: 1, paddingHorizontal: 10 }]}>
       {icon}
       <InputBox
         placeholder={placeholder}
         keyboardType={keyboardType}
         value={value}
         setValue={setValue}
+        style={{ marginLeft: 5, marginVertical: 10 }}
       />
     </View>
   );
@@ -58,16 +59,50 @@ export function InputWithLabel({
   keyboardType = "numeric",
   value,
   setValue,
-}: InputBoxProps) {
+}: InputBoxProps & { label: string }) {
+  const borderColor = useThemeColorWithName("borderColor");
+  const labelColor = useThemeColorWithName("text");
   return (
-    <View style={styles.labelInputBox}>
-      <ThemedText style={styles.label}>{label}</ThemedText>
+    <View style={[styles.labelInputBox, { borderColor }]}>
+      <ThemedText style={styles.label} type="subtitle">
+        {label}
+      </ThemedText>
       <InputBox
         placeholder={placeholder}
         keyboardType={keyboardType}
         value={value}
         setValue={setValue}
+        style={{ marginTop: 10, marginBottom: 5 }}
       />
+    </View>
+  );
+}
+
+export function InputWithLabel_Icon({
+  placeholder,
+  label,
+  keyboardType = "numeric",
+  value,
+  setValue,
+  icon,
+}: InputBoxProps & { label: string } & { icon: React.JSX.Element }) {
+  const borderColor = useThemeColorWithName("borderColor");
+
+  return (
+    <View style={[styles.labelInputBox, { borderColor }]}>
+      <ThemedText style={styles.label} type="subtitle">
+        {label}
+      </ThemedText>
+      <View style={[styles.iconInputBox]}>
+        {icon}
+        <InputBox
+          placeholder={placeholder}
+          keyboardType={keyboardType}
+          value={value}
+          setValue={setValue}
+          style={{ marginLeft: 5, marginTop: 10, marginBottom: 5 }}
+        />
+      </View>
     </View>
   );
 }
@@ -76,11 +111,10 @@ const styles = StyleSheet.create({
   input: {
     height: 40,
     fontSize: 15,
-    marginLeft: 5,
-    marginVertical: 10,
+
     color: "white",
     paddingHorizontal: 5,
-    width: "70%",
+    width: "80%",
   },
   icon: {
     width: 40,
@@ -89,21 +123,21 @@ const styles = StyleSheet.create({
     borderColor: "red",
   },
   label: {
-    fontSize: 14,
-    marginBottom: 10,
+    fontSize: 18,
+    marginBottom: -6,
   },
   iconInputBox: {
     flexDirection: "row",
     alignItems: "center",
-    borderWidth: 1,
     justifyContent: "flex-start",
     borderRadius: 10,
-    paddingHorizontal: 10,
   },
   labelInputBox: {
     flexDirection: "column",
     alignItems: "flex-start",
-    borderWidth: 1,
+    justifyContent: "center",
+    borderBottomWidth: 1,
     borderColor: "white",
+    paddingHorizontal: 10,
   },
 });
