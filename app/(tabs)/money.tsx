@@ -25,6 +25,7 @@ const linkBtns: { linkLabel: string; link: Href<string | object> }[] = [
 
 export default function MoneyManager() {
   const borderColor = useThemeColorWithName("borderColor");
+  const bg = useThemeColorWithName("blurBg");
   return (
     <ThemedView
       style={{
@@ -51,11 +52,9 @@ export default function MoneyManager() {
         }}
       >
         {linkBtns.map((linkBtn, index) => (
-          <View key={index} style={[styles.linkButton, { borderColor }]}>
+          <View key={index} style={[styles.linkButton, { borderColor, backgroundColor: bg }]}>
             <Link href={linkBtn.link}>
-              <ThemedText colorName="mountainMeadow" type="subtitle">
-                {linkBtn.linkLabel}
-              </ThemedText>
+              <ThemedText type="subtitle">{linkBtn.linkLabel}</ThemedText>
             </Link>
           </View>
         ))}
@@ -74,15 +73,12 @@ const styles = StyleSheet.create({
     paddingLeft: 20,
   },
   linkButton: {
-    borderWidth: 1,
-    padding: 10,
     height: 80,
     marginTop: 10,
     borderRadius: 15,
     paddingLeft: 20,
     flex: 1,
     justifyContent: "center",
-
     width: "100%",
   },
 });
