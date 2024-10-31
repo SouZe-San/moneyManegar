@@ -39,7 +39,7 @@ const iconReturn = (icon: string, color: string) => {
 
 export default function ExpanseType(props: ExpanseTypeProps) {
   const borderColor = useThemeColorWithName("borderColor");
-  const buttonBgColor = useThemeColorWithName("highLightBackground");
+  const buttonBgColor = useThemeColorWithName("button");
   const buttonTextColor = useThemeColorWithName("background");
   return (
     <ScrollView

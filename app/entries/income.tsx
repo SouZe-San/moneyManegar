@@ -5,6 +5,7 @@ import { Pressable, View, StyleSheet } from "react-native";
 import { InputWithIcon } from "@/components/inputs/InputBox";
 import { MoneyBagIcon, BagIcon, CalenderIcon } from "@/assets/icons/SVG/InputIcons";
 import { useThemeColorWithName } from "@/hooks/useThemeColor";
+import SubmitButton from "@/components/inputs/SubmitButton";
 // import DateTimePicker from "react-native-ui-datepicker";
 // import dayjs from "dayjs";
 export function income() {
@@ -60,12 +61,7 @@ export function income() {
           alignItems: "center",
         }}
       >
-        <Pressable style={[styles.button, { backgroundColor: buttonBgColor }]}>
-          <ThemedText style={{ color: buttonTextColor }} type="defaultSemiBold">
-            {" "}
-            Add Income
-          </ThemedText>
-        </Pressable>
+        <SubmitButton button_label="Add Income" onPress={() => console.log("submit")} />
       </View>
     </ThemedView>
   );

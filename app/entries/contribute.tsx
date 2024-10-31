@@ -7,7 +7,7 @@ import { ThemedView } from "@/components/ThemedView";
 import { globalStyles } from "@/constants/globalStyles";
 import { useThemeColorWithName } from "@/hooks/useThemeColor";
 import { useState } from "react";
-import { ScrollView, View, Switch } from "react-native";
+import { ScrollView, View, Switch, useColorScheme } from "react-native";
 
 import ExpanseType from "@/components/inputs/ExpanseType";
 
@@ -21,7 +21,10 @@ export function contribute() {
   // Colors
   const iconColor = useThemeColorWithName("inputIcon");
   const horain = useThemeColorWithName("navBg");
-  const toggleButton = useThemeColorWithName("highLightBackground");
+  const toggleButton = useThemeColorWithName("button");
+  const unSelectedToggleButton = useThemeColorWithName("toggleButton");
+  const thumbColor = useColorScheme() === "light" ? "#8c8c8c" : "#ECEDEE";
+  const selectedThumbColor = useColorScheme() === "light" ? "#dff169" : "#030f0e";
   return (
     <ThemedView style={globalStyles.mainContainer}>
       <ThemedText type="tabTitle" style={{ textAlign: "center", width: "100%" }}>
@@ -75,6 +78,7 @@ export function contribute() {
               borderWidth: 1,
               borderRadius: 20,
               overflow: "hidden",
+              borderBlockColor: "transparent",
             }}
           >
             <Switch
@@ -84,9 +88,9 @@ export function contribute() {
                 margin: 0,
                 height: 28,
                 width: "100%",
-                backgroundColor: splitInGroups ? toggleButton : "#00df8230",
+                backgroundColor: splitInGroups ? toggleButton : unSelectedToggleButton,
               }}
-              thumbColor={splitInGroups ? "#030f0e" : "#ECEDEE"}
+              thumbColor={splitInGroups ? selectedThumbColor : thumbColor}
               trackColor={{ false: "transparent", true: "transparent" }}
               onValueChange={() => setInGroups((previousState) => !previousState)}
             />

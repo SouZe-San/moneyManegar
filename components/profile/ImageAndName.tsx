@@ -9,11 +9,11 @@ const ImageAndName = () => {
         style={{
           opacity: 0.5,
           position: "absolute",
-          bottom: 0,
+          top: 0,
           zIndex: -1,
           objectFit: "cover",
           width: "100%",
-          height: "100%",
+          height: "110%",
         }}
       />
       <View style={[styles.image]}>

@@ -67,6 +67,14 @@ export default function RootLayout() {
             headerTransparent: true,
           }}
         />
+        <Stack.Screen
+          name="setting"
+          options={{
+            title: "Settings",
+            headerShadowVisible: false,
+            headerTransparent: true,
+          }}
+        />
       </Stack>
     </ThemeProvider>
   );

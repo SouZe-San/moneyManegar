@@ -8,7 +8,7 @@ interface SubmitButtonProps {
 }
 
 const SubmitButton = (props: SubmitButtonProps) => {
-  const buttonBgColor = useThemeColorWithName("highLightBackground");
+  const buttonBgColor = useThemeColorWithName("button");
   const buttonTextColor = useThemeColorWithName("background");
   return (
     <Pressable style={[styles.button, { backgroundColor: buttonBgColor }]} onPress={props.onPress}>

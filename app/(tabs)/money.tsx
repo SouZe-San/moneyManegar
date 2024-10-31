@@ -26,6 +26,8 @@ const linkBtns: { linkLabel: string; link: Href<string | object> }[] = [
 export default function MoneyManager() {
   const borderColor = useThemeColorWithName("borderColor");
   const bg = useThemeColorWithName("blurBg");
+  const headerBg = useThemeColorWithName("highLightBackground");
+
   return (
     <ThemedView
       style={{
@@ -37,8 +39,8 @@ export default function MoneyManager() {
         width: "100%",
       }}
     >
-      <View style={styles.headContainer}>
-        <ThemedText type="tabTitle" colorName="background">
+      <View style={[styles.headContainer, { backgroundColor: headerBg }]}>
+        <ThemedText type="tabTitle" style={{ color: "#030f0e" }}>
           Wallet Hub
         </ThemedText>
       </View>
@@ -67,7 +69,6 @@ const styles = StyleSheet.create({
   headContainer: {
     width: "100%",
     justifyContent: "center",
-    backgroundColor: "#00dd12",
     height: "30%",
     borderRadius: 10,
     paddingLeft: 20,

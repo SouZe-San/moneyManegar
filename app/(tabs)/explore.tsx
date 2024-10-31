@@ -1,5 +1,5 @@
 import Ionicons from "@expo/vector-icons/Ionicons";
-import { StyleSheet, Image, Platform } from "react-native";
+import { StyleSheet, Text, View, TouchableOpacity, ScrollView, StatusBar } from "react-native";
 
 import { Collapsible } from "@/components/Collapsible";
 import { ExternalLink } from "@/components/ExternalLink";
@@ -7,28 +7,72 @@ import ParallaxScrollView from "@/components/ParallaxScrollView";
 import { ThemedText } from "@/components/ThemedText";
 import { ThemedView } from "@/components/ThemedView";
 import ImageAndName from "@/components/profile/ImageAndName";
+import { SettingIcon } from "@/assets/icons/SVG/RandomIcons";
+import { useThemeColorWithName } from "@/hooks/useThemeColor";
+import { useRouter } from "expo-router";
+import ExpanseType from "@/components/inputs/ExpanseType";
+import SingleBox from "@/components/SingleBox";
 
 export default function TabTwoScreen() {
+  const iconColor = useThemeColorWithName("icon");
+  const bg = useThemeColorWithName("blurBg");
+
+  const router = useRouter();
+
   return (
     <ParallaxScrollView
       headerBackgroundColor={{ light: "#eaeaea", dark: "transparent" }}
       headerImage={<ImageAndName />}
     >
       {/* Account Info */}
+
       <ThemedText type="subtitle">Account</ThemedText>
       <Collapsible title="Personal Info" iconName="userIcon">
-        <ThemedText>
-          You can open this project on Android, iOS, and the web. To open the web version, press{" "}
-          <ThemedText type="defaultSemiBold">w</ThemedText> in the terminal running this project.
-        </ThemedText>
-      </Collapsible>
-      <Collapsible title="Setting" iconName="settingIcon">
-        <ThemedText>
-          You can open this project on Android, iOS, and the web. To open the web version, press{" "}
-          <ThemedText type="defaultSemiBold">w</ThemedText> in the terminal running this project.
-        </ThemedText>
-      </Collapsible>
+        <View>
+          <ThemedText>
+            <ThemedText type="defaultSemiBold">Name: </ThemedText>
+            Soumyajit Mondal
+          </ThemedText>
 
+          <ThemedText>
+            <ThemedText type="defaultSemiBold">UserName: </ThemedText>
+            Souze
+          </ThemedText>
+
+          <ThemedText>
+            <ThemedText type="defaultSemiBold">Email: </ThemedText>
+            No Mail
+          </ThemedText>
+
+          <ThemedText type="defaultSemiBold">Groups: </ThemedText>
+          <ScrollView
+            horizontal
+            showsHorizontalScrollIndicator={false}
+            style={{ flexGrow: 0, marginVertical: 5 }}
+          >
+            <SingleBox label="Family" icon="👨‍👩‍👧‍👦" />
+            <SingleBox label="Friends" icon="🤪" />
+            <SingleBox label="Add" icon="➕" />
+          </ScrollView>
+        </View>
+      </Collapsible>
+      {/* <Collapsible title="Setting" iconName="settingIcon">
+        <ThemedText>
+          You can open this project on Android, iOS, and the web. To open the web version, press{" "}
+          <ThemedText type="defaultSemiBold">w</ThemedText> in the terminal running this project.
+        </ThemedText>
+      </Collapsible> */}
+
+      <View style={[styles.titleBox, { borderColor: bg, backgroundColor: bg }]}>
+        <TouchableOpacity
+          style={styles.heading}
+          onPress={() => router.push("/setting")}
+          activeOpacity={0.8}
+        >
+          <SettingIcon color={iconColor} />
+          <ThemedText type="defaultSemiBold">Setting</ThemedText>
+        </TouchableOpacity>
+      </View>
       {/* Support  - Add some instruction And button for instruction */}
 
       <ThemedText type="subtitle">Support</ThemedText>
@@ -81,5 +125,10 @@ const styles = StyleSheet.create({
     borderRadius: 10,
     borderWidth: 1,
     // borderColor & backgroundColor will be set by theme
+  },
+  heading: {
+    flexDirection: "row",
+    alignItems: "center",
+    gap: 10,
   },
 });

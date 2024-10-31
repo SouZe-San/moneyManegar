@@ -7,19 +7,21 @@ import { useThemeColorWithName } from "@/hooks/useThemeColor";
 export default function HomeScreen() {
   const borderColor = useThemeColorWithName("borderColor");
   const expanseBg = useThemeColorWithName("expanseBg");
-  const darkTextColor = useThemeColorWithName("background");
+  const darkTextColor = "#030f0e";
   const balanceBg = useThemeColorWithName("highLightBackground");
   const lightTextColor = useThemeColorWithName("mountainMeadow");
   return (
     <SafeAreaView style={{ flex: 1 }}>
-      <ThemedView style={styles.titleContainer}>
+      <ThemedView style={styles.container}>
         <ThemedText type="title">
           Hi,<Text style={{ fontSize: 28 }}>Souze</Text>
         </ThemedText>
         {/* Cost View Section */}
         <View style={styles.costSection}>
           <View>
-            <View style={[styles.costViewBox, { backgroundColor: balanceBg }]}>
+            <View
+              style={[styles.costViewBox, { backgroundColor: balanceBg, borderColor: balanceBg }]}
+            >
               <ThemedText type="default" style={{ fontSize: 14, color: darkTextColor }}>
                 Left Over
               </ThemedText>
@@ -59,7 +61,7 @@ export default function HomeScreen() {
         <View style={{ flex: 1, justifyContent: "center", alignItems: "center", padding: 20 }}>
           <Image
             source={require("@/assets/images/hero/heroImg.png")}
-            style={{ opacity: 0.5, resizeMode: "contain", width: "100%", height: "100%" }}
+            style={{ opacity: 0.5, objectFit: "contain", width: "100%", height: "100%" }}
           />
         </View>
 
@@ -72,7 +74,7 @@ export default function HomeScreen() {
 }
 
 const styles = StyleSheet.create({
-  titleContainer: {
+  container: {
     flex: 1,
     paddingHorizontal: "5%",
     paddingVertical: "15%",
@@ -88,6 +90,7 @@ const styles = StyleSheet.create({
     borderWidth: 1,
     display: "flex",
     borderRadius: 10,
+    borderColor: "transparent",
     justifyContent: "space-between",
     // justifyContent: "flex-end",
     paddingBottom: 15,

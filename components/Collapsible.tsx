@@ -1,5 +1,5 @@
 import { PropsWithChildren, useState } from "react";
-import { StyleSheet, TouchableOpacity, View } from "react-native";
+import { StyleSheet, TouchableOpacity, View, useColorScheme } from "react-native";
 
 import { ThemedText } from "@/components/ThemedText";
 import { ThemedView } from "@/components/ThemedView";
@@ -21,9 +21,11 @@ export function Collapsible({
 }: PropsWithChildren & { title: string; iconName: string }) {
   const [isOpen, setIsOpen] = useState(false);
   const iconColor = useThemeColorWithName("icon");
-  const selectIconColor = useThemeColorWithName("tabIconSelected");
+  const darkSelectIconColor = useThemeColorWithName("tabIconSelected");
+  const lightSelectIconColor = useThemeColorWithName("navBg");
   const bg = useThemeColorWithName("blurBg");
-
+  const theme = useColorScheme() ?? "light";
+  const selectIconColor = theme === "light" ? lightSelectIconColor : darkSelectIconColor;
   const collapseIcons = {
     mailIcon: <MailIcon color={isOpen ? selectIconColor : iconColor} isFocused={isOpen} />,
     helpIcon: <HelpIcon color={isOpen ? selectIconColor : iconColor} isFocused={isOpen} />,

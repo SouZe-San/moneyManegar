@@ -9,4 +9,10 @@ export const globalStyles = StyleSheet.create({
     alignItems: "flex-start",
     paddingTop: 100,
   },
+  container: {
+    flex: 1,
+    paddingHorizontal: "5%",
+    paddingVertical: "15%",
+    width: "100%",
+  },
 });
