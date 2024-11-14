@@ -4,16 +4,21 @@ import { InputWithIcon } from "@/components/inputs/InputBox";
 import { globalStyles } from "@/constants/globalStyles";
 import { useState } from "react";
 import { View } from "react-native";
-import { BagIcon, MoneyBagIcon, CalenderIcon } from "@/assets/icons/SVG/InputIcons";
+import { BagIcon, MoneyBagIcon } from "@/assets/icons/SVG/InputIcons";
+import dayjs from "dayjs";
 import SubmitButton from "@/components/inputs/SubmitButton";
 import ExpanseType from "@/components/inputs/ExpanseType";
 import { useThemeColorWithName } from "@/hooks/useThemeColor";
+import DateView from "@/components/inputs/DateView";
+import { useExpense } from "@/context/ExpanseContext";
 
 export function expense() {
   const [expense, setExpense] = useState("");
   const [expenseType, setExpenseType] = useState("");
-  const iconColor = useThemeColorWithName("inputIcon");
+  const [date, setDate] = useState(dayjs());
 
+  const iconColor = useThemeColorWithName("inputIcon");
+  const { addExpense } = useExpense();
   return (
     <ThemedView style={globalStyles.mainContainer}>
       <ThemedText type="title"> WHat U brought NOw !! </ThemedText>
@@ -43,13 +48,7 @@ export function expense() {
           />
         </View>
         <View>
-          <InputWithIcon
-            icon={<CalenderIcon color={iconColor} />}
-            placeholder={new Date().toLocaleDateString()}
-            value={expense}
-            setValue={setExpense}
-            keyboardType="numeric"
-          />
+          <DateView date={date} setDate={setDate} />
         </View>
 
         <View>
@@ -65,7 +64,15 @@ export function expense() {
           alignItems: "center",
         }}
       >
-        <SubmitButton button_label="Add Expense" onPress={() => console.log("submit")} />
+        <SubmitButton
+          button_label="Add Expense"
+          onPress={() => {
+            addExpense(Number(expense));
+            setExpense("");
+            setDate(dayjs());
+            setExpenseType("");
+          }}
+        />
       </View>
     </ThemedView>
   );

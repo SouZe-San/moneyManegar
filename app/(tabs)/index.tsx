@@ -3,6 +3,7 @@ import { SafeAreaView, StyleSheet, View, Text, Image } from "react-native";
 import { ThemedText } from "@/components/ThemedText";
 import { ThemedView } from "@/components/ThemedView";
 import { useThemeColorWithName } from "@/hooks/useThemeColor";
+import { useExpense } from "@/context/ExpanseContext";
 
 export default function HomeScreen() {
   const borderColor = useThemeColorWithName("borderColor");
@@ -10,6 +11,8 @@ export default function HomeScreen() {
   const darkTextColor = "#030f0e";
   const balanceBg = useThemeColorWithName("highLightBackground");
   const lightTextColor = useThemeColorWithName("mountainMeadow");
+
+  const { totalIncome, totalExpense, leftBalance } = useExpense();
   return (
     <SafeAreaView style={{ flex: 1 }}>
       <ThemedView style={styles.container}>
@@ -27,7 +30,7 @@ export default function HomeScreen() {
               </ThemedText>
               {/* Balance */}
               <ThemedText type="subtitle" style={{ fontSize: 26, color: darkTextColor }}>
-                0.00$
+                {leftBalance.toFixed(2)} ₹
               </ThemedText>
             </View>
           </View>
@@ -43,7 +46,7 @@ export default function HomeScreen() {
                 Expanse
               </ThemedText>
               <ThemedText type="subtitle" style={{ fontSize: 26 }}>
-                10.00$
+                {totalExpense.toFixed(2)} ₹
               </ThemedText>
             </View>
             <View style={[styles.costViewBox, { width: "49%", borderColor }]}>
@@ -51,7 +54,7 @@ export default function HomeScreen() {
                 Income
               </ThemedText>
               <ThemedText type="subtitle" style={{ fontSize: 26 }}>
-                10.00$
+                {totalIncome.toFixed(2)} ₹
               </ThemedText>
             </View>
           </View>

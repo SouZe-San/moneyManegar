@@ -3,18 +3,19 @@ import { ThemedView } from "@/components/ThemedView";
 import { useState } from "react";
 import { Pressable, View, StyleSheet } from "react-native";
 import { InputWithIcon } from "@/components/inputs/InputBox";
-import { MoneyBagIcon, BagIcon, CalenderIcon } from "@/assets/icons/SVG/InputIcons";
+import { MoneyBagIcon, BagIcon } from "@/assets/icons/SVG/InputIcons";
 import { useThemeColorWithName } from "@/hooks/useThemeColor";
 import SubmitButton from "@/components/inputs/SubmitButton";
-// import DateTimePicker from "react-native-ui-datepicker";
-// import dayjs from "dayjs";
+
+import dayjs from "dayjs";
+import DateView from "@/components/inputs/DateView";
+import { globalStyles } from "@/constants/globalStyles";
 export function income() {
-  const [date, setDate] = useState(new Date().toLocaleDateString());
+  const [date, setDate] = useState(dayjs());
+
   const [amount, setAmount] = useState("");
   const [description, setDescription] = useState("");
-  const borderColor = useThemeColorWithName("borderColor");
-  const buttonBgColor = useThemeColorWithName("highLightBackground");
-  const buttonTextColor = useThemeColorWithName("background");
+
   const iconColor = useThemeColorWithName("inputIcon");
   return (
     <ThemedView style={styles.mainContainer}>
@@ -43,14 +44,9 @@ export function income() {
             keyboardType="default"
           />
         </View>
-        <View>
-          <InputWithIcon
-            icon={<CalenderIcon color={iconColor} />}
-            placeholder={"date"}
-            value={date}
-            setValue={setDate}
-            keyboardType="numeric"
-          />
+        <View style={globalStyles.dateRpw}>
+          {/* <ThemedText>{date.format("DD-MM-YYYY")}</ThemedText> */}
+          <DateView date={date} setDate={setDate} />
         </View>
       </View>
       <View

@@ -1,6 +1,7 @@
 import { ScrollView, View, StyleSheet, Pressable } from "react-native";
 import { ThemedText } from "../ThemedText";
 import { useThemeColorWithName } from "@/hooks/useThemeColor";
+import { iconReturn } from "@/constants/expanseIcon";
 
 import {
   FoodIcon,
@@ -16,26 +17,19 @@ type ExpanseTypeProps = {
   setValue: (value: string) => void;
 };
 
-const expanseTypes = [
-  { icon: "🍔", label: "Food" },
-  { icon: "⛽", label: "Fuel" },
-  { icon: "🛍️", label: "Shopping" },
-  { icon: "📱", label: "Recharge" },
-  { icon: "🚌", label: "Travels" },
-  { icon: "🧻", label: "Others" },
-];
+const expanseTypes = ["Food", "Fuel", "Shopping", "Recharge", "Bill", "Rent", "Travels", "Others"];
 
-const iconReturn = (icon: string, color: string) => {
-  const icons = {
-    Food: <FoodIcon color={color} />,
-    Fuel: <FuelIcon color={color} />,
-    Shopping: <ShoppingIcon color={color} />,
-    Recharge: <MobileIcon color={color} />,
-    Travels: <BusIcon color={color} />,
-    Others: <WarBonnetIcon color={color} />,
-  };
-  return icons[icon as keyof typeof icons];
-};
+// const iconReturn = (icon: string, color: string) => {
+//   const icons = {
+//     Food: <FoodIcon color={color} />,
+//     Fuel: <FuelIcon color={color} />,
+//     Shopping: <ShoppingIcon color={color} />,
+//     Recharge: <MobileIcon color={color} />,
+//     Travels: <BusIcon color={color} />,
+//     Others: <WarBonnetIcon color={color} />,
+//   };
+//   return icons[icon as keyof typeof icons];
+// };
 
 export default function ExpanseType(props: ExpanseTypeProps) {
   const borderColor = useThemeColorWithName("borderColor");
@@ -54,18 +48,28 @@ export default function ExpanseType(props: ExpanseTypeProps) {
               styles.expenseTypeButton_btn,
               {
                 borderColor,
-                backgroundColor: props.value === type.label ? buttonBgColor : "transparent",
+                backgroundColor: props.value === type ? buttonBgColor : "transparent",
               },
             ]}
-            onPress={() => props.setValue(type.label)}
+            onPress={() => props.setValue(type)}
           >
             <ThemedText style={styles.buttonLabel}>
-              {type.icon}
+              {iconReturn(
+                type as
+                  | "Food"
+                  | "Fuel"
+                  | "Shopping"
+                  | "Recharge"
+                  | "Travels"
+                  | "Others"
+                  | "Rent"
+                  | "Bill"
+              )}
               {/* {iconReturn(type.label, props.value === type.label ? buttonTextColor : buttonBgColor)} */}
             </ThemedText>
           </Pressable>
           <ThemedText style={styles.buttonSubLabel} colorName="buttonBg">
-            {type.label}
+            {type}
           </ThemedText>
         </View>
       ))}

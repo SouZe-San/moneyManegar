@@ -1,64 +1,140 @@
-import { View, StyleSheet, Text, Button, TouchableOpacity } from "react-native";
+import { View, StyleSheet, Text, TouchableOpacity } from "react-native";
 import { Swipeable } from "react-native-gesture-handler";
 import { ThemedText } from "../ThemedText";
 import { useThemeColorWithName } from "@/hooks/useThemeColor";
-import { DeleteIcon } from "@/assets/icons/SVG/RandomIcons";
+import { DeleteIcon, PayIcon, DownIcon, UpIcon } from "@/assets/icons/SVG/RandomIcons";
 import { iconReturn } from "@/constants/expanseIcon";
-
-const LeftActions = () => {
-  return (
-    <TouchableOpacity>
-      <View
-        style={{
-          alignItems: "center",
-          justifyContent: "center",
-          display: "flex",
-          width: 70,
-          aspectRatio: 1,
-        }}
-      >
-        <Text>
-          <DeleteIcon color="red" />
-        </Text>
-      </View>
-    </TouchableOpacity>
-  );
-};
-const RightActions = () => {
-  return (
-    <TouchableOpacity>
-      <View
-        style={{
-          alignItems: "center",
-          justifyContent: "center",
-          display: "flex",
-          width: 70,
-          aspectRatio: 1,
-        }}
-      >
-        <Text>✅</Text>
-      </View>
-    </TouchableOpacity>
-  );
-};
+import { useExpense } from "@/context/ExpanseContext";
+import { useEffect, useRef } from "react";
 
 type TransactionProps = {
+  transactionId: string;
   expanseType: "Food" | "Fuel" | "Shopping" | "Recharge" | "Travels" | "Others";
   expanseDescription: string;
   expanseData?: string;
-  expanseAmount: string;
+  expanseAmount: number;
+  transactionType: "debit" | "expense" | "income" | "credit";
+  toWhom?: string;
+  onSwipeableWillOpen: (id: string) => void;
+  onSwipeableWillClose: (id: string) => void;
+  openedItem: null | string;
 };
 
 const TransactionRow = ({
+  transactionId,
   expanseAmount,
   expanseDescription,
   expanseType,
   expanseData,
+  transactionType,
+  toWhom = "Own",
+  onSwipeableWillOpen,
+  onSwipeableWillClose,
+  openedItem,
 }: TransactionProps) => {
+  const payIconColor = useThemeColorWithName("highLightBackground");
   const backgroundColor = useThemeColorWithName("background");
   const blurBackgroundColor = useThemeColorWithName("blurBg");
+
+  const { removeTransaction, addExpense, addIncome } = useExpense();
+
+  const swipeableRef = useRef<Swipeable>(null);
+
+  const addTransactionAmount = (
+    amount: number,
+    expanseType: "debit" | "expense" | "income" | "credit",
+    transactionId: string
+  ) => {
+    if (expanseType === "debit" || expanseType === "expense") {
+      addExpense(amount);
+    } else {
+      addIncome(amount);
+    }
+    removeTransaction(transactionId);
+  };
+
+  const RightActions = (
+    amount: number,
+    expanseType: "debit" | "expense" | "income" | "credit",
+    transactionId: string
+  ) => {
+    return (
+      <TouchableOpacity onPress={() => addTransactionAmount(amount, expanseType, transactionId)}>
+        <View
+          style={{
+            alignItems: "center",
+            justifyContent: "center",
+            display: "flex",
+            width: 70,
+            aspectRatio: 1,
+          }}
+        >
+          <Text
+            style={{
+              shadowColor: payIconColor,
+              shadowOffset: {
+                width: 0,
+                height: 6,
+              },
+              shadowOpacity: 0.6,
+              shadowRadius: 3.84,
+              elevation: 5,
+            }}
+          >
+            <PayIcon color={payIconColor} />
+          </Text>
+        </View>
+      </TouchableOpacity>
+    );
+  };
+
+  useEffect(() => {
+    if (openedItem === transactionId) {
+      swipeableRef.current?.openLeft();
+    } else {
+      swipeableRef.current?.close();
+    }
+  }, [openedItem]);
+
+  const LeftActions = (transactionId: string): React.JSX.Element => {
+    return (
+      <TouchableOpacity onPress={() => removeTransaction(transactionId)}>
+        <View
+          style={{
+            alignItems: "center",
+            justifyContent: "center",
+            display: "flex",
+            width: 70,
+            aspectRatio: 1,
+          }}
+        >
+          <Text
+            style={{
+              shadowColor: "red",
+              shadowOffset: {
+                width: 0,
+                height: 6,
+              },
+              shadowOpacity: 0.6,
+              shadowRadius: 3.84,
+              elevation: 5,
+            }}
+          >
+            <DeleteIcon color="red" />
+          </Text>
+        </View>
+      </TouchableOpacity>
+    );
+  };
+
   return (
-    <Swipeable renderLeftActions={LeftActions} renderRightActions={RightActions}>
+    <Swipeable
+      renderLeftActions={() => LeftActions(transactionId)}
+      renderRightActions={() => RightActions(expanseAmount, transactionType, transactionId)}
+      onSwipeableClose={() => onSwipeableWillClose(transactionId)}
+      onSwipeableOpen={() => onSwipeableWillOpen(transactionId)}
+      ref={swipeableRef}
+    >
       <View
         style={{
           backgroundColor,
@@ -72,6 +148,9 @@ const TransactionRow = ({
             },
           ]}
         >
+          {/*  transactionType === "debit" || transactionType === "expense"
+                  ? "#f7323227"
+                  : "#35f73227", */}
           <View style={styles.details}>
             {/* Expanse Icon  */}
             <View>
@@ -80,12 +159,21 @@ const TransactionRow = ({
             {/* Description  */}
             <View style={[styles.description]}>
               <ThemedText type="defaultSemiBold">{expanseDescription}</ThemedText>
-              <ThemedText style={styles.expanseDate}>{expanseData}</ThemedText>
+              <ThemedText style={styles.expanseDate}>
+                {expanseData} &mdash; {toWhom}
+              </ThemedText>
             </View>
           </View>
           {/* Amount */}
           <View style={styles.expanseAmount}>
             <ThemedText type="defaultSemiBold">₹{expanseAmount}</ThemedText>
+            <Text style={{ fontSize: 10 }}>
+              {transactionType === "debit" || transactionType === "expense" ? (
+                <UpIcon color="red" />
+              ) : (
+                <DownIcon color="green" />
+              )}
+            </Text>
           </View>
         </View>
       </View>
@@ -124,5 +212,12 @@ const styles = StyleSheet.create({
   description: {
     paddingVertical: 5,
   },
-  expanseAmount: {},
+  expanseAmount: {
+    display: "flex",
+    flexDirection: "row",
+    justifyContent: "center",
+    alignItems: "center",
+    paddingRight: 5,
+    gap: 2,
+  },
 });

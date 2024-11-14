@@ -11,8 +11,9 @@ export const globalStyles = StyleSheet.create({
   },
   container: {
     flex: 1,
-    paddingHorizontal: "5%",
+    paddingHorizontal: "4%",
     paddingVertical: "15%",
     width: "100%",
   },
+  dateRpw: {},
 });

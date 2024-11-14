@@ -7,6 +7,7 @@ import "react-native-reanimated";
 
 import { useColorScheme } from "@/hooks/useColorScheme";
 import { useThemeColorWithName } from "@/hooks/useThemeColor";
+import { ExpenseProvider } from "@/context/ExpanseContext";
 
 // Prevent the splash screen from auto-hiding before asset loading is complete.
 SplashScreen.preventAutoHideAsync();
@@ -30,52 +31,54 @@ export default function RootLayout() {
 
   return (
     <ThemeProvider value={colorScheme === "dark" ? DarkTheme : DefaultTheme}>
-      <Stack>
-        <Stack.Screen name="(tabs)" options={{ headerShown: false }} />
-        <Stack.Screen name="+not-found" />
-        <Stack.Screen
-          name="entries/income"
-          options={{
-            title: "Income: Add Money",
-            headerShadowVisible: false,
-            headerTransparent: true,
-            headerTitleAlign: "center",
-          }}
-        />
-        <Stack.Screen
-          name="entries/expense"
-          options={{
-            title: "",
-            headerShadowVisible: false,
-            headerTransparent: true,
-          }}
-        />
-        <Stack.Screen
-          name="entries/contribute"
-          options={{
-            title: "",
-            // title: "Contribute: Kon kon paisa dega  ",
-            headerShadowVisible: false,
-            headerTransparent: true,
-          }}
-        />
-        <Stack.Screen
-          name="entries/payble"
-          options={{
-            title: "payble: or kitneko paisa doo",
-            headerShadowVisible: false,
-            headerTransparent: true,
-          }}
-        />
-        <Stack.Screen
-          name="setting"
-          options={{
-            title: "Settings",
-            headerShadowVisible: false,
-            headerTransparent: true,
-          }}
-        />
-      </Stack>
+      <ExpenseProvider>
+        <Stack>
+          <Stack.Screen name="(tabs)" options={{ headerShown: false }} />
+          <Stack.Screen name="+not-found" />
+          <Stack.Screen
+            name="entries/income"
+            options={{
+              title: "Income: Add Money",
+              headerShadowVisible: false,
+              headerTransparent: true,
+              headerTitleAlign: "center",
+            }}
+          />
+          <Stack.Screen
+            name="entries/expense"
+            options={{
+              title: "",
+              headerShadowVisible: false,
+              headerTransparent: true,
+            }}
+          />
+          <Stack.Screen
+            name="entries/contribute"
+            options={{
+              title: "",
+              // title: "Contribute: Kon kon paisa dega  ",
+              headerShadowVisible: false,
+              headerTransparent: true,
+            }}
+          />
+          <Stack.Screen
+            name="entries/payble"
+            options={{
+              title: "payble: or kitneko paisa doo",
+              headerShadowVisible: false,
+              headerTransparent: true,
+            }}
+          />
+          <Stack.Screen
+            name="setting"
+            options={{
+              title: "Settings",
+              headerShadowVisible: false,
+              headerTransparent: true,
+            }}
+          />
+        </Stack>
+      </ExpenseProvider>
     </ThemeProvider>
   );
 }

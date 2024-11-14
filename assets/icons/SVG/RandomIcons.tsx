@@ -19,6 +19,18 @@ const MailIcon = ({ color, isFocused, ...props }: SvgPropWithColor) => (
     )}
   </Svg>
 );
+const PayIcon = ({ color, ...props }: SvgPropWithColor) => (
+  <Svg width={24} height={24} viewBox="0 0 1024 1024" {...props} color={color || "#f1f2f6"}>
+    {/* <Path
+      fill="currentColor"
+      d="M512 64C264.6 64 64 264.6 64 512s200.6 448 448 448 448-200.6 448-448S759.4 64 512 64m166.6 246.8L567.5 515.6h62c4.4 0 8 3.6 8 8v29.9c0 4.4-3.6 8-8 8h-82V603h82c4.4 0 8 3.6 8 8v29.9c0 4.4-3.6 8-8 8h-82V717c0 4.4-3.6 8-8 8h-54.3c-4.4 0-8-3.6-8-8v-68.1h-81.7c-4.4 0-8-3.6-8-8V611c0-4.4 3.6-8 8-8h81.7v-41.5h-81.7c-4.4 0-8-3.6-8-8v-29.9c0-4.4 3.6-8 8-8h61.4L345.4 310.8a8.07 8.07 0 0 1 7-11.9h60.7c3 0 5.8 1.7 7.1 4.4l90.6 180h3.4l90.6-180a8 8 0 0 1 7.1-4.4h59.5c4.4 0 8 3.6 8 8 .2 1.4-.2 2.7-.8 3.9"
+    /> */}
+    <Path
+      fill="currentColor"
+      d="M512 64C264.6 64 64 264.6 64 512s200.6 448 448 448 448-200.6 448-448S759.4 64 512 64m0 820c-205.4 0-372-166.6-372-372s166.6-372 372-372 372 166.6 372 372-166.6 372-372 372m159.6-585h-59.5c-3 0-5.8 1.7-7.1 4.4l-90.6 180H511l-90.6-180a8 8 0 0 0-7.1-4.4h-60.7c-1.3 0-2.6.3-3.8 1-3.9 2.1-5.3 7-3.2 10.9L457 515.7h-61.4c-4.4 0-8 3.6-8 8v29.9c0 4.4 3.6 8 8 8h81.7V603h-81.7c-4.4 0-8 3.6-8 8v29.9c0 4.4 3.6 8 8 8h81.7V717c0 4.4 3.6 8 8 8h54.3c4.4 0 8-3.6 8-8v-68.1h82c4.4 0 8-3.6 8-8V611c0-4.4-3.6-8-8-8h-82v-41.5h82c4.4 0 8-3.6 8-8v-29.9c0-4.4-3.6-8-8-8h-62l111.1-204.8c.6-1.2 1-2.5 1-3.8-.1-4.4-3.7-8-8.1-8"
+    />
+  </Svg>
+);
 const TermsIcon = ({ color, isFocused, ...props }: SvgPropWithColor) => (
   <Svg width={24} height={24} viewBox="0 0 24 24" {...props} color={color || "#f1f2f6"}>
     {!isFocused ? (
@@ -40,6 +52,16 @@ const PrivacyIcon = ({ color, isFocused, ...props }: SvgPropWithColor) => (
       fill="currentColor"
       d="m12 .44 10 3.5V12c0 4.127-2.533 7.012-4.896 8.803a19.7 19.7 0 0 1-4.65 2.595l-.087.033-.025.009-.007.002-.003.001c-.001 0-.002 0-.332-.943l-.331.944h-.001l-.003-.002-.007-.002-.025-.01-.087-.032a18 18 0 0 1-1.39-.606 20 20 0 0 1-3.26-1.989C4.534 19.012 2 16.127 2 12V3.94zm0 22.06-.331.944.331.116.331-.116zm0-1.072.009-.004a17.8 17.8 0 0 0 3.887-2.215C18.034 17.59 20 15.223 20 12V5.36l-8-2.8-8 2.8V12c0 3.223 1.966 5.588 4.104 7.21A17.8 17.8 0 0 0 12 21.428m6.072-13.085-7.071 7.071-4.243-4.242 1.415-1.415L11 12.586l5.657-5.657z"
     />
+  </Svg>
+);
+const DownIcon = ({ color, ...props }: SvgPropWithColor) => (
+  <Svg width={24} height={24} viewBox="0 0 24 24" {...props} color={color || "#f1f2f6"}>
+    <Path fill="none" stroke="currentColor" d="M12 4v16m0 0-3-3m3 3 3-3m-6-5 3 3 3-3" />
+  </Svg>
+);
+const UpIcon = ({ color, ...props }: SvgPropWithColor) => (
+  <Svg width={24} height={24} viewBox="0 0 24 24" {...props} color={color || "#f1f2f6"}>
+    <Path fill="none" stroke="currentColor" d="M12 20V4m0 0L9 7m3-3 3 3m-6 5 3-3 3 3" />
   </Svg>
 );
 const HelpIcon = ({ color, isFocused, ...props }: SvgPropWithColor) => (
@@ -88,4 +110,48 @@ const DeleteIcon = ({ color, ...props }: SvgPropWithColor) => (
     />
   </Svg>
 );
-export { MailIcon, TermsIcon, PrivacyIcon, HelpIcon, ServiceIcon, SettingIcon, DeleteIcon };
+const ResetIcon = ({ color, ...props }: SvgPropWithColor) => (
+  <Svg width={18} height={18} viewBox="0 0 21 21" {...props} color={color || "#f1f2f6"}>
+    <G
+      fill="none"
+      fillRule="evenodd"
+      stroke="currentColor"
+      strokeLinecap="round"
+      strokeLinejoin="round"
+    >
+      <Path d="M3.578 6.487A8 8 0 1 1 2.5 10.5" />
+      <Path d="M7.5 6.5h-4v-4" />
+    </G>
+  </Svg>
+);
+const LeftRightArrowIcon = ({ color, ...props }: SvgPropWithColor) => (
+  <Svg width={18} height={18} viewBox="0 0 21 21" {...props} color={color || "#f1f2f6"}>
+    <Path
+      d="M16 16v-4l5 5-5 5v-4H4v-2h12ZM8 2v3.999L20 6v2H8v4L3 7l5-5Z"
+      fill={color || "#f1f2f6"}
+    />
+  </Svg>
+);
+const OnlineIcon = ({ color, ...props }: SvgPropWithColor) => (
+  <Svg width={18} height={18} viewBox="0 0 21 21" {...props} color={color || "#f1f2f6"}>
+    <Path
+      fill="currentColor"
+      d="M3.5 12q0 1.575.525 2.938t1.45 2.487q.2.25.213.575t-.213.55-.562.2-.563-.3q-1.125-1.325-1.737-2.963T2 12t.613-3.488T4.35 5.55q.225-.275.563-.287t.562.212.213.538-.213.562Q4.55 7.7 4.025 9.063T3.5 12m3 0q0 .95.288 1.788t.812 1.537q.2.275.2.575t-.225.525-.525.213-.5-.263q-.725-.9-1.137-2.013T5 12t.413-2.363T6.55 7.625q.2-.25.5-.262t.525.212.225.525-.2.575q-.525.7-.812 1.537T6.5 12m4.5 4.5q0-.575-.387-1.137t-.863-1.175-.862-1.276T8.5 11.5q0-1.45 1.025-2.475T12 8t2.475 1.025T15.5 11.5q0 .75-.387 1.413t-.863 1.274-.862 1.176T13 16.5zm0 1.5v-.5h2v.5q0 .425-.288.713T12 19t-.712-.288T11 18m6.5-6q0-.95-.288-1.787T16.4 8.675q-.2-.275-.2-.575t.225-.525.525-.212.5.262q.725.9 1.138 2.013T19 12t-.413 2.363-1.137 2.012q-.2.25-.5.263t-.525-.213-.225-.525.2-.575q.525-.7.813-1.537T17.5 12m3 0q0-1.575-.525-2.937t-1.45-2.488q-.2-.25-.212-.575t.212-.55.563-.2.562.3q1.125 1.325 1.738 2.963T22 12t-.612 3.488-1.738 2.962q-.225.275-.562.288t-.563-.213-.212-.537.212-.563q.925-1.125 1.45-2.488T20.5 12"
+    />
+  </Svg>
+);
+export {
+  MailIcon,
+  TermsIcon,
+  PrivacyIcon,
+  HelpIcon,
+  ServiceIcon,
+  SettingIcon,
+  DeleteIcon,
+  PayIcon,
+  DownIcon,
+  UpIcon,
+  ResetIcon,
+  LeftRightArrowIcon,
+  OnlineIcon,
+};

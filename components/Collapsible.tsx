@@ -18,7 +18,10 @@ export function Collapsible({
   children,
   title,
   iconName,
-}: PropsWithChildren & { title: string; iconName: string }) {
+}: PropsWithChildren & {
+  title: string;
+  iconName: "mailIcon" | "helpIcon" | "privacyIcon" | "serviceIcon" | "termsIcon" | "userIcon";
+}) {
   const [isOpen, setIsOpen] = useState(false);
   const iconColor = useThemeColorWithName("icon");
   const darkSelectIconColor = useThemeColorWithName("tabIconSelected");
@@ -31,7 +34,6 @@ export function Collapsible({
     helpIcon: <HelpIcon color={isOpen ? selectIconColor : iconColor} isFocused={isOpen} />,
     privacyIcon: <PrivacyIcon color={isOpen ? selectIconColor : iconColor} isFocused={isOpen} />,
     serviceIcon: <ServiceIcon color={isOpen ? selectIconColor : iconColor} isFocused={isOpen} />,
-    settingIcon: <SettingIcon color={isOpen ? selectIconColor : iconColor} isFocused={isOpen} />,
     termsIcon: <TermsIcon color={isOpen ? selectIconColor : iconColor} isFocused={isOpen} />,
     userIcon: <UserIcon color={isOpen ? selectIconColor : iconColor} isFocused={isOpen} />,
   };
