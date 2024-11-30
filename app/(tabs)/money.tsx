@@ -3,8 +3,9 @@ import { ThemedView } from "@/components/ThemedView";
 import { useThemeColorWithName } from "@/hooks/useThemeColor";
 import { Href, Link } from "expo-router";
 import { View, StyleSheet } from "react-native";
+import AnimateTabView from "@/components/animation/AnimateTabView";
 
-const linkBtns: { linkLabel: string; link: Href<string | object> }[] = [
+const linkBtns: { linkLabel: string; link: Href }[] = [
   {
     linkLabel: "Add Incomes",
     link: "/entries/income",
@@ -29,7 +30,7 @@ export default function MoneyManager() {
   const headerBg = useThemeColorWithName("highLightBackground");
 
   return (
-    <ThemedView
+    <AnimateTabView
       style={{
         flex: 1,
         justifyContent: "flex-start",
@@ -61,7 +62,7 @@ export default function MoneyManager() {
           </View>
         ))}
       </View>
-    </ThemedView>
+    </AnimateTabView>
   );
 }
 

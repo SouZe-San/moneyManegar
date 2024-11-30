@@ -1,13 +1,14 @@
 import { View, StyleSheet, Platform } from "react-native";
-import { BottomTabBarProps } from "@react-navigation/bottom-tabs";
+// import { BottomTabBarProps } from "@react-navigation/bottom-tabs";
+
 import TabBarButton from "./TabBarButton";
 import { useThemeColorWithName } from "@/hooks/useThemeColor";
 
-export function CustomTabBar({ state, descriptors, navigation }: BottomTabBarProps) {
+export function CustomTabBar({ state, descriptors, navigation }: any) {
   const backgroundColor = useThemeColorWithName("navBg");
   return (
     <View style={[tabBarStyle.tabBar, { backgroundColor }]}>
-      {state.routes.map((route, index) => {
+      {state.routes.map((route: any, index: number) => {
         const { options } = descriptors[route.key];
         const label =
           options.tabBarLabel !== undefined

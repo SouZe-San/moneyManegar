@@ -4,6 +4,8 @@ import { ThemedText } from "@/components/ThemedText";
 import { ThemedView } from "@/components/ThemedView";
 import { useThemeColorWithName } from "@/hooks/useThemeColor";
 import { useExpense } from "@/context/ExpanseContext";
+import { HelloWave } from "@/components/animation/HelloWave";
+import AnimateTabView from "@/components/animation/AnimateTabView";
 
 export default function HomeScreen() {
   const borderColor = useThemeColorWithName("borderColor");
@@ -13,66 +15,72 @@ export default function HomeScreen() {
   const lightTextColor = useThemeColorWithName("mountainMeadow");
 
   const { totalIncome, totalExpense, leftBalance } = useExpense();
+
   return (
-    <SafeAreaView style={{ flex: 1 }}>
-      <ThemedView style={styles.container}>
-        <ThemedText type="title">
-          Hi,<Text style={{ fontSize: 28 }}>Souze</Text>
-        </ThemedText>
-        {/* Cost View Section */}
-        <View style={styles.costSection}>
-          <View>
-            <View
-              style={[styles.costViewBox, { backgroundColor: balanceBg, borderColor: balanceBg }]}
-            >
-              <ThemedText type="default" style={{ fontSize: 14, color: darkTextColor }}>
-                Left Over
-              </ThemedText>
-              {/* Balance */}
-              <ThemedText type="subtitle" style={{ fontSize: 26, color: darkTextColor }}>
-                {leftBalance.toFixed(2)} ₹
-              </ThemedText>
-            </View>
-          </View>
+    <AnimateTabView style={styles.container}>
+      <ThemedText
+        type="title"
+        style={{
+          flexDirection: "row",
+          alignItems: "flex-end",
+        }}
+      >
+        Hi,<Text style={{ fontSize: 28 }}>Souze</Text>
+        <HelloWave />
+      </ThemedText>
+      {/* Cost View Section */}
+      <View style={styles.costSection}>
+        <View>
           <View
-            style={{
-              flexDirection: "row",
-              width: "100%",
-              justifyContent: "space-between",
-            }}
+            style={[styles.costViewBox, { backgroundColor: balanceBg, borderColor: balanceBg }]}
           >
-            <View style={[styles.costViewBox, { width: "49%", backgroundColor: expanseBg }]}>
-              <ThemedText type="default" style={{ fontSize: 14 }}>
-                Expanse
-              </ThemedText>
-              <ThemedText type="subtitle" style={{ fontSize: 26 }}>
-                {totalExpense.toFixed(2)} ₹
-              </ThemedText>
-            </View>
-            <View style={[styles.costViewBox, { width: "49%", borderColor }]}>
-              <ThemedText type="default" style={{ fontSize: 14 }}>
-                Income
-              </ThemedText>
-              <ThemedText type="subtitle" style={{ fontSize: 26 }}>
-                {totalIncome.toFixed(2)} ₹
-              </ThemedText>
-            </View>
+            <ThemedText type="default" style={{ fontSize: 14, color: darkTextColor }}>
+              Left Over
+            </ThemedText>
+            {/* Balance */}
+            <ThemedText type="subtitle" style={{ fontSize: 26, color: darkTextColor }}>
+              {leftBalance.toFixed(2)} ₹
+            </ThemedText>
           </View>
         </View>
-
-        {/* New User Image */}
-        <View style={{ flex: 1, justifyContent: "center", alignItems: "center", padding: 20 }}>
-          <Image
-            source={require("@/assets/images/hero/heroImg.png")}
-            style={{ opacity: 0.5, objectFit: "contain", width: "100%", height: "100%" }}
-          />
+        <View
+          style={{
+            flexDirection: "row",
+            width: "100%",
+            justifyContent: "space-between",
+          }}
+        >
+          <View style={[styles.costViewBox, { width: "49%", backgroundColor: expanseBg }]}>
+            <ThemedText type="default" style={{ fontSize: 14 }}>
+              Expanse
+            </ThemedText>
+            <ThemedText type="subtitle" style={{ fontSize: 26 }}>
+              {totalExpense.toFixed(2)} ₹
+            </ThemedText>
+          </View>
+          <View style={[styles.costViewBox, { width: "49%", borderColor }]}>
+            <ThemedText type="default" style={{ fontSize: 14 }}>
+              Income
+            </ThemedText>
+            <ThemedText type="subtitle" style={{ fontSize: 26 }}>
+              {totalIncome.toFixed(2)} ₹
+            </ThemedText>
+          </View>
         </View>
+      </View>
 
-        {/* Two Chart */}
+      {/* New User Image */}
+      <View style={{ flex: 1, justifyContent: "center", alignItems: "center", padding: 20 }}>
+        <Image
+          source={require("@/assets/images/hero/heroImg.png")}
+          style={{ opacity: 0.5, objectFit: "contain", width: "100%", height: "100%" }}
+        />
+      </View>
 
-        {/* All New Groups */}
-      </ThemedView>
-    </SafeAreaView>
+      {/* Two Chart */}
+
+      {/* All New Groups */}
+    </AnimateTabView>
   );
 }
 
@@ -80,7 +88,7 @@ const styles = StyleSheet.create({
   container: {
     flex: 1,
     paddingHorizontal: "5%",
-    paddingVertical: "15%",
+    paddingVertical: "5%",
     width: "100%",
   },
   costSection: {

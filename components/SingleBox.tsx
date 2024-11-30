@@ -6,11 +6,19 @@ type SingleBoxProps = {
   icon: string;
   label: string;
   isSelected?: boolean;
+  onPress?: () => void;
 };
 
-const SingleBox = ({ icon, label, isSelected = false }: SingleBoxProps) => {
-  const borderColor = useThemeColorWithName("borderColor");
-  const buttonBgColor = useThemeColorWithName("highLightBackground");
+const SingleBox = ({
+  icon,
+  label,
+  isSelected = false,
+  onPress = () => console.warn("pressed"),
+}: SingleBoxProps) => {
+  const borderColor = useThemeColorWithName("buttonBg");
+  const selectedBorderColor = useThemeColorWithName("borderColor");
+  const unSelectedButtonBgColor = useThemeColorWithName("blurBg");
+  const selectedButtonBgColor = useThemeColorWithName("toggleButton");
 
   return (
     <View style={[styles.expenseTypeButton]}>
@@ -18,11 +26,11 @@ const SingleBox = ({ icon, label, isSelected = false }: SingleBoxProps) => {
         style={[
           styles.expenseTypeButton_btn,
           {
-            borderColor,
-            backgroundColor: isSelected ? buttonBgColor : "transparent",
+            borderColor: isSelected ? selectedBorderColor : borderColor,
+            backgroundColor: isSelected ? selectedButtonBgColor : unSelectedButtonBgColor,
           },
         ]}
-        onPress={() => console.warn("pressed")}
+        onPress={onPress}
       >
         <ThemedText style={styles.buttonLabel}>{icon}</ThemedText>
       </Pressable>
@@ -52,6 +60,8 @@ const styles = StyleSheet.create({
     elevation: 5,
   },
   expenseTypeButton_btn: {
+    backdropFilter: "blur(10px)",
+    backgroundColor: "#bababa93",
     width: 60,
     aspectRatio: 1,
     display: "flex",

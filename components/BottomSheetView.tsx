@@ -35,7 +35,7 @@ const BottomSheetView = React.forwardRef<BottomSheetRefProps, BottomSheetProps>(
     }, []);
 
     const isActive = useCallback(() => {
-      return active.value;
+      return active.get();
     }, []);
 
     useImperativeHandle(ref, () => ({ scrollTo, isActive }), [scrollTo, isActive]);
@@ -43,30 +43,30 @@ const BottomSheetView = React.forwardRef<BottomSheetRefProps, BottomSheetProps>(
     const context = useSharedValue({ y: 0 });
     const gesture = Gesture.Pan()
       .onStart(() => {
-        context.value = { y: translateY.value };
+        context.value = { y: translateY.get() };
       })
       .onUpdate((event) => {
         translateY.value = event.translationY + context.value.y;
-        translateY.value = Math.max(translateY.value, MAX_TRANSLATE_Y);
+        translateY.value = Math.max(translateY.get(), MAX_TRANSLATE_Y);
       })
       .onEnd(() => {
-        if (translateY.value > -SCREEN_HEIGHT / 4) {
+        if (translateY.get() > -SCREEN_HEIGHT / 4) {
           scrollTo(0);
-        } else if (translateY.value < -SCREEN_HEIGHT / 2) {
+        } else if (translateY.get() < -SCREEN_HEIGHT / 2) {
           scrollTo(MAX_TRANSLATE_Y);
         }
       });
 
     const rBottomSheetStyle = useAnimatedStyle(() => {
       const borderRadius = interpolate(
-        translateY.value,
+        translateY.get(),
         [MAX_TRANSLATE_Y + 50, MAX_TRANSLATE_Y],
         [25, 5],
         Extrapolate.CLAMP
       );
       return {
         borderRadius,
-        transform: [{ translateY: translateY.value }],
+        transform: [{ translateY: translateY.get() }],
       };
     });
     const bg = useThemeColorWithName("darkGreen");

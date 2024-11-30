@@ -7,12 +7,17 @@ import {
 import { ThemedText } from "@/components/ThemedText";
 import { ThemedView } from "@/components/ThemedView";
 import { globalStyles } from "@/constants/globalStyles";
+import { useExpense } from "@/context/ExpanseContext";
+
 import { useThemeColorWithName } from "@/hooks/useThemeColor";
 import { View, StyleSheet, TouchableOpacity } from "react-native";
 
-export default function Setting() {
+const Setting = () => {
   const iconColor = useThemeColorWithName("icon");
   const bg = useThemeColorWithName("blurBg");
+
+  const { reset } = useExpense();
+
   return (
     <ThemedView style={[globalStyles.mainContainer, { gap: 15 }]}>
       <View>
@@ -40,7 +45,12 @@ export default function Setting() {
           great! 😎
         </ThemedText>
 
-        <TouchableOpacity style={[styles.btn, { backgroundColor: bg }]}>
+        <TouchableOpacity
+          style={[styles.btn, { backgroundColor: bg }]}
+          onPress={() => {
+            reset();
+          }}
+        >
           <ResetIcon color={iconColor} />
           <ThemedText>Reset</ThemedText>
         </TouchableOpacity>
@@ -67,8 +77,9 @@ export default function Setting() {
       </View>
     </ThemedView>
   );
-}
+};
 
+export default Setting;
 const styles = StyleSheet.create({
   btn: {
     borderRadius: 10,

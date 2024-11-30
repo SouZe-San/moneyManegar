@@ -24,26 +24,25 @@ export default function TabBarButton({
   label: string;
 }) {
   const scale = useSharedValue(0);
-  //   const scale = useSharedValue(isFocused ? 1 : 0);
-
   //   Animate
 
   useEffect(() => {
     scale.value = withSpring(isFocused ? 1 : 0, {
       duration: 360,
     });
-  }, [scale.value, isFocused]);
+  }, [scale.get(), isFocused]);
 
   const animatedIconStyle = useAnimatedStyle(() => {
-    const scaleValue = interpolate(scale.value, [0, 1], [1.1, 1.2]);
-    const topValue = interpolate(scale.value, [0, 1], [10, 0]);
+    const scaleValue = interpolate(scale.get(), [0, 1], [1.1, 1.2]);
+
+    const topValue = interpolate(scale.get(), [0, 1], [10, 0]);
     return {
       transform: [{ scale: scaleValue }],
       top: topValue,
     };
   });
   const animatedTextStyle = useAnimatedStyle(() => {
-    const opacityValue = interpolate(scale.value, [0, 1], [0, 1]);
+    const opacityValue = interpolate(scale.get(), [0, 1], [0, 1]);
 
     return {
       opacity: opacityValue,

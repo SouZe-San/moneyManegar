@@ -4,14 +4,16 @@ import TransactionRow from "@/components/transaction/TransactionRow";
 import { globalStyles } from "@/constants/globalStyles";
 import { useExpense } from "@/context/ExpanseContext";
 import { useState } from "react";
-import { SafeAreaView, View } from "react-native";
+import { SafeAreaView, View, FlatList, ViewToken } from "react-native";
 import { GestureHandlerRootView } from "react-native-gesture-handler";
-
+import AnimateTabView from "@/components/animation/AnimateTabView";
+import AnimatedListItem from "@/components/animation/AnimatedListItem";
+import { useSharedValue } from "react-native-reanimated";
 export default function Transaction() {
   const { allTransaction } = useExpense();
 
   const [openedItem, setOpenedItem] = useState<null | string>(null);
-
+  const viewableItems = useSharedValue<ViewToken[]>([]);
   const handleSwipeableWillOpen = (id: string) => {
     if (openedItem !== id) {
       setOpenedItem(id);
@@ -26,24 +28,30 @@ export default function Transaction() {
 
   return (
     <GestureHandlerRootView style={{ flex: 1 }}>
-      <SafeAreaView
-        style={{
-          flex: 1,
-        }}
-      >
-        <ThemedView style={globalStyles.container}>
-          <ThemedText type="title">Transaction</ThemedText>
+      <AnimateTabView style={[globalStyles.container, { paddingBottom: "20%" }]}>
+        <ThemedText type="title">Pauna-Gonda</ThemedText>
 
-          <View
+        {/* <View
             style={{
               marginTop: 30,
               flex: 1,
               gap: 10,
             }}
-          >
-            {allTransaction.map((item, index) => (
+          > */}
+        <FlatList
+          style={{
+            marginTop: 30,
+            flex: 1,
+            gap: 10,
+          }}
+          data={allTransaction}
+          showsVerticalScrollIndicator={false}
+          onViewableItemsChanged={({ viewableItems: vItems }) => {
+            viewableItems.value = vItems;
+          }}
+          renderItem={({ item }) => (
+            <AnimatedListItem item={item} viewableItems={viewableItems}>
               <TransactionRow
-                key={index}
                 transactionId={item.transactionId}
                 expanseDescription={item.expanseDescription}
                 expanseData={item.expanseData}
@@ -55,10 +63,12 @@ export default function Transaction() {
                 onSwipeableWillClose={handleSwipeableWillClose}
                 openedItem={openedItem}
               />
-            ))}
-          </View>
-        </ThemedView>
-      </SafeAreaView>
+            </AnimatedListItem>
+          )}
+          keyExtractor={(item) => item.transactionId}
+        />
+        {/* </View> */}
+      </AnimateTabView>
     </GestureHandlerRootView>
   );
 }

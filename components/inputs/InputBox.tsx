@@ -7,6 +7,7 @@ type InputBoxProps = {
   keyboardType?: "numeric" | "default";
   value: string | undefined;
   setValue: (value: string) => void;
+  maxLength?: number;
 };
 
 export function InputBox({
@@ -15,6 +16,7 @@ export function InputBox({
   value,
   setValue,
   style,
+  maxLength = 50,
 }: InputBoxProps & TextProps) {
   const placeTextColor = useThemeColorWithName("tabIconDefault");
   const inputTextColor = useThemeColorWithName("text");
@@ -27,6 +29,7 @@ export function InputBox({
       placeholderTextColor={placeTextColor}
       value={value}
       onChangeText={setValue}
+      maxLength={maxLength}
     />
   );
 }
@@ -37,6 +40,7 @@ export function InputWithIcon({
   icon,
   value,
   setValue,
+  maxLength,
 }: InputBoxProps & { icon: React.JSX.Element }) {
   const borderColor = useThemeColorWithName("borderColor");
   return (
@@ -47,62 +51,34 @@ export function InputWithIcon({
         keyboardType={keyboardType}
         value={value}
         setValue={setValue}
+        maxLength={maxLength}
         style={{ marginLeft: 5, marginVertical: 10 }}
       />
     </View>
   );
 }
 
-export function InputWithLabel({
+export function SmallInputBox({
   placeholder,
-  label,
-  keyboardType = "numeric",
+  keyboardType = "default",
   value,
   setValue,
-}: InputBoxProps & { label: string }) {
+  icon,
+}: InputBoxProps & { icon: React.JSX.Element }) {
   const borderColor = useThemeColorWithName("borderColor");
-  const labelColor = useThemeColorWithName("text");
+
   return (
-    <View style={[styles.labelInputBox, { borderColor }]}>
-      <ThemedText style={styles.label} type="subtitle">
-        {label}
-      </ThemedText>
+    <View
+      style={[styles.iconInputBox, { borderColor, borderWidth: 1, paddingLeft: 10, width: "70%" }]}
+    >
+      {icon}
       <InputBox
         placeholder={placeholder}
         keyboardType={keyboardType}
         value={value}
         setValue={setValue}
-        style={{ marginTop: 10, marginBottom: 5 }}
+        style={{ marginLeft: 5, marginTop: 10, marginBottom: 5 }}
       />
-    </View>
-  );
-}
-
-export function InputWithLabel_Icon({
-  placeholder,
-  label,
-  keyboardType = "numeric",
-  value,
-  setValue,
-  icon,
-}: InputBoxProps & { label: string } & { icon: React.JSX.Element }) {
-  const borderColor = useThemeColorWithName("borderColor");
-
-  return (
-    <View style={[styles.labelInputBox, { borderColor }]}>
-      <ThemedText style={styles.label} type="subtitle">
-        {label}
-      </ThemedText>
-      <View style={[styles.iconInputBox]}>
-        {icon}
-        <InputBox
-          placeholder={placeholder}
-          keyboardType={keyboardType}
-          value={value}
-          setValue={setValue}
-          style={{ marginLeft: 5, marginTop: 10, marginBottom: 5 }}
-        />
-      </View>
     </View>
   );
 }

@@ -1,15 +1,18 @@
 import { View, StyleSheet, Text, TouchableOpacity } from "react-native";
-import { Swipeable } from "react-native-gesture-handler";
+// import { Swipeable } from "react-native-gesture-handler";
 import { ThemedText } from "../ThemedText";
 import { useThemeColorWithName } from "@/hooks/useThemeColor";
 import { DeleteIcon, PayIcon, DownIcon, UpIcon } from "@/assets/icons/SVG/RandomIcons";
 import { iconReturn } from "@/constants/expanseIcon";
 import { useExpense } from "@/context/ExpanseContext";
 import { useEffect, useRef } from "react";
+import ReanimatedSwipeable, {
+  SwipeableMethods,
+} from "react-native-gesture-handler/ReanimatedSwipeable";
 
 type TransactionProps = {
   transactionId: string;
-  expanseType: "Food" | "Fuel" | "Shopping" | "Recharge" | "Travels" | "Others";
+  expanseType: "Food" | "Fuel" | "Shopping" | "Recharge" | "Travels" | "Others" | "Rent" | "Bill";
   expanseDescription: string;
   expanseData?: string;
   expanseAmount: number;
@@ -38,7 +41,7 @@ const TransactionRow = ({
 
   const { removeTransaction, addExpense, addIncome } = useExpense();
 
-  const swipeableRef = useRef<Swipeable>(null);
+  const swipeableRef = useRef<SwipeableMethods | null>(null);
 
   const addTransactionAmount = (
     amount: number,
@@ -53,6 +56,15 @@ const TransactionRow = ({
     removeTransaction(transactionId);
   };
 
+  useEffect(() => {
+    if (openedItem === transactionId) {
+      swipeableRef.current?.openLeft();
+    } else {
+      swipeableRef.current?.close();
+    }
+  }, [openedItem]);
+
+  //^ Pay tab
   const RightActions = (
     amount: number,
     expanseType: "debit" | "expense" | "income" | "credit",
@@ -88,14 +100,7 @@ const TransactionRow = ({
     );
   };
 
-  useEffect(() => {
-    if (openedItem === transactionId) {
-      swipeableRef.current?.openLeft();
-    } else {
-      swipeableRef.current?.close();
-    }
-  }, [openedItem]);
-
+  //^ Delete tab
   const LeftActions = (transactionId: string): React.JSX.Element => {
     return (
       <TouchableOpacity onPress={() => removeTransaction(transactionId)}>
@@ -128,7 +133,7 @@ const TransactionRow = ({
   };
 
   return (
-    <Swipeable
+    <ReanimatedSwipeable
       renderLeftActions={() => LeftActions(transactionId)}
       renderRightActions={() => RightActions(expanseAmount, transactionType, transactionId)}
       onSwipeableClose={() => onSwipeableWillClose(transactionId)}
@@ -138,6 +143,7 @@ const TransactionRow = ({
       <View
         style={{
           backgroundColor,
+          marginVertical: 5,
         }}
       >
         <View
@@ -177,7 +183,7 @@ const TransactionRow = ({
           </View>
         </View>
       </View>
-    </Swipeable>
+    </ReanimatedSwipeable>
   );
 };
 

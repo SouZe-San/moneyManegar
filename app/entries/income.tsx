@@ -1,28 +1,46 @@
+import dayjs from "dayjs";
+import { useCallback, useState } from "react";
+import { View, Alert } from "react-native";
+import DateView from "@/components/inputs/DateView";
+import { globalStyles } from "@/constants/globalStyles";
 import { ThemedText } from "@/components/ThemedText";
 import { ThemedView } from "@/components/ThemedView";
-import { useState } from "react";
-import { Pressable, View, StyleSheet } from "react-native";
 import { InputWithIcon } from "@/components/inputs/InputBox";
 import { MoneyBagIcon, BagIcon } from "@/assets/icons/SVG/InputIcons";
 import { useThemeColorWithName } from "@/hooks/useThemeColor";
+import { useExpense } from "@/context/ExpanseContext";
 import SubmitButton from "@/components/inputs/SubmitButton";
+import { useFocusEffect } from "expo-router";
 
-import dayjs from "dayjs";
-import DateView from "@/components/inputs/DateView";
-import { globalStyles } from "@/constants/globalStyles";
 export function income() {
+  // !States or Input Variables
   const [date, setDate] = useState(dayjs());
-
   const [amount, setAmount] = useState("");
   const [description, setDescription] = useState("");
 
+  // !Hooks
+  const { addIncome } = useExpense();
   const iconColor = useThemeColorWithName("inputIcon");
+
+  useFocusEffect(
+    useCallback(() => {
+      alert("Screen was focused");
+      // Do something when the screen is focused
+      return () => {
+        alert("Screen was unfocused");
+        // Do something when the screen is unfocused
+        // Useful for cleanup functions
+      };
+    }, [])
+  );
+
   return (
-    <ThemedView style={styles.mainContainer}>
+    <ThemedView style={globalStyles.mainContainer}>
+      <ThemedText type="title"> HeHe $_$ Paisa paisa </ThemedText>
       <View
         style={{
-          marginTop: 150,
           flex: 1,
+          marginTop: 50,
           width: "100%",
           gap: 10,
         }}
@@ -44,8 +62,7 @@ export function income() {
             keyboardType="default"
           />
         </View>
-        <View style={globalStyles.dateRpw}>
-          {/* <ThemedText>{date.format("DD-MM-YYYY")}</ThemedText> */}
+        <View>
           <DateView date={date} setDate={setDate} />
         </View>
       </View>
@@ -57,36 +74,24 @@ export function income() {
           alignItems: "center",
         }}
       >
-        <SubmitButton button_label="Add Income" onPress={() => console.log("submit")} />
+        <SubmitButton
+          button_label="Add Income"
+          onPress={() => {
+            addIncome(Number(amount));
+            setAmount("");
+            setDescription("");
+            setDate(dayjs());
+            Alert.alert(
+              "Income Added",
+              "Your income has been added successfully",
+              [{ text: "OK" }],
+              { cancelable: false }
+            );
+          }}
+        />
       </View>
     </ThemedView>
   );
 }
 
 export default income;
-const styles = StyleSheet.create({
-  mainContainer: {
-    flex: 1,
-    width: "100%",
-    paddingHorizontal: 10,
-    justifyContent: "flex-start",
-    alignItems: "flex-start",
-  },
-  dateBox: {
-    height: 60,
-    flexDirection: "row",
-    alignItems: "center",
-    borderWidth: 1,
-    justifyContent: "flex-start",
-    borderRadius: 10,
-    paddingHorizontal: 10,
-  },
-  button: {
-    justifyContent: "center",
-    alignItems: "center",
-    borderRadius: 10,
-    borderWidth: 1,
-    width: "100%",
-    height: 50,
-  },
-});

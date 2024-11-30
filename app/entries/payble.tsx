@@ -1,6 +1,6 @@
 import { MoneyBagIcon, UserIcon, BagIcon } from "@/assets/icons/SVG/InputIcons";
 import ExpanseType from "@/components/inputs/ExpanseType";
-
+import dayjs from "dayjs";
 import { InputWithIcon } from "@/components/inputs/InputBox";
 import SubmitButton from "@/components/inputs/SubmitButton";
 import { ThemedText } from "@/components/ThemedText";
@@ -9,12 +9,15 @@ import { globalStyles } from "@/constants/globalStyles";
 import { useThemeColorWithName } from "@/hooks/useThemeColor";
 import { useState } from "react";
 import { ScrollView, Text, View } from "react-native";
+import DateView from "@/components/inputs/DateView";
 
 //! TO whom I have to pay
 export function payble() {
   const [amount, setAmount] = useState("");
   const [expenseType, setExpenseType] = useState("");
   const iconColor = useThemeColorWithName("inputIcon");
+  const [date, setDate] = useState(dayjs());
+
   const horain = useThemeColorWithName("navBg");
   return (
     <ThemedView style={globalStyles.mainContainer}>
@@ -42,6 +45,7 @@ export function payble() {
             placeholder="To Whom"
             value={amount}
             setValue={setAmount}
+            keyboardType="default"
           />
         </View>
         <View>
@@ -50,11 +54,15 @@ export function payble() {
             placeholder="For What ?"
             value={amount}
             setValue={setAmount}
+            keyboardType="default"
           />
         </View>
 
         <View>
-          {/* <ThemedText>Expanse Type</ThemedText> */}
+          <DateView date={date} setDate={setDate} />
+        </View>
+
+        <View>
           <ExpanseType setValue={setExpenseType} value={expenseType} />
         </View>
       </View>

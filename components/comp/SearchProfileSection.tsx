@@ -1,0 +1,144 @@
+import { View, TouchableOpacity, StyleSheet, FlatList, Alert } from "react-native";
+import { UserIcon } from "@/assets/icons/SVG/InputIcons";
+import { useThemeColorWithName } from "@/hooks/useThemeColor";
+import { useState } from "react";
+import { SmallInputBox } from "../inputs/InputBox";
+import { Members } from "@/types/expanse";
+import { ThemedText } from "../ThemedText";
+import { ThemedView } from "../ThemedView";
+
+// Retrieve Data from Local Storage
+const mem = [
+  { useName: "JohnDoe1", useId: "1" },
+  { useName: "JaneDoe2", useId: "2" },
+  { useName: "SamSmith1", useId: "411" },
+  { useName: "JaneDoe3", useId: "33" },
+  { useName: "Hekk", useId: "61" },
+];
+
+type SearchProfileSectionProps = {
+  member: Members;
+  setMember: (value: Members) => void;
+};
+
+export default function SearchProfileSection({ member, setMember }: SearchProfileSectionProps) {
+  const [searchName, setSearchName] = useState("");
+  const [searchResult, setSearchResult] = useState<Members[]>([]);
+
+  const iconColor = useThemeColorWithName("inputIcon");
+  const buttonBg = useThemeColorWithName("blurBg");
+
+  // !Searching the members from Api
+  const searchMembers = () => {
+    // Check Network Connection
+
+    // Check if searchName is empty
+    if (searchName.trim() === "") {
+      setSearchResult([]); // Clear the search result if no input is given
+      return;
+    }
+    // Filter members based on searchName
+    const filteredMembers = mem.filter((member) =>
+      member.useName.toLowerCase().includes(searchName.trim().toLowerCase())
+    );
+
+    // Update the search result with the filtered members
+    setSearchResult(filteredMembers);
+  };
+
+  //! Search Member Component
+  const SearchMember = ({ member }: { member: Members }) => {
+    //  Add Members
+    const addMembers = (newMember: Members) => {
+      // Check if the member is already in the group based on useName
+
+      setMember(member);
+    };
+    return (
+      <TouchableOpacity onPress={() => addMembers(member)}>
+        <MembersRow member={member} />
+      </TouchableOpacity>
+    );
+  };
+
+  return (
+    <ThemedView>
+      <View
+        style={{
+          flexDirection: "row",
+          justifyContent: "space-between",
+          alignItems: "center",
+        }}
+      >
+        <SmallInputBox
+          icon={<UserIcon color={iconColor} />}
+          keyboardType="default"
+          placeholder="search user"
+          value={searchName}
+          setValue={setSearchName}
+        />
+
+        <TouchableOpacity
+          style={[
+            {
+              backgroundColor: buttonBg,
+              borderRadius: 10,
+              paddingVertical: 10,
+              paddingHorizontal: 25,
+            },
+          ]}
+          onPress={searchMembers}
+        >
+          <ThemedText>Search</ThemedText>
+        </TouchableOpacity>
+      </View>
+
+      <View style={[styles.searchMemberView]}>
+        {searchResult.length === 0 ? (
+          <ThemedText style={{ marginVertical: 10, textAlign: "center" }} colorName="blurBg">
+            Nonnnnnn
+          </ThemedText>
+        ) : (
+          <FlatList
+            scrollEnabled={true}
+            scrollsToTop={true}
+            data={searchResult}
+            renderItem={({ item }) => <SearchMember member={item} />}
+            keyExtractor={(member) => member.useId}
+          />
+        )}
+      </View>
+    </ThemedView>
+  );
+}
+
+const MembersRow = ({ member }: { member: Members }) => {
+  const iconColor = useThemeColorWithName("icon");
+  const bg = useThemeColorWithName("blurBg");
+  return (
+    <View style={[styles.row, { backgroundColor: bg }]}>
+      <UserIcon color={iconColor} />
+      <ThemedText type="defaultSemiBold">
+        {member.useName} - {member.useId}
+      </ThemedText>
+    </View>
+  );
+};
+
+const styles = StyleSheet.create({
+  row: {
+    marginBottom: 10,
+    paddingHorizontal: 10,
+    paddingVertical: 15,
+    borderRadius: 10,
+    flexDirection: "row",
+    alignItems: "center",
+    gap: 10,
+  },
+  searchMemberView: {},
+  memberView: {
+    flex: 0.5,
+    maxHeight: 300,
+    overflow: "scroll",
+  },
+});

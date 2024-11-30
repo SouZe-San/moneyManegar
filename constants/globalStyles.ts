@@ -1,4 +1,4 @@
-import { StyleSheet } from "react-native";
+import { StyleSheet, StatusBar } from "react-native";
 
 export const globalStyles = StyleSheet.create({
   mainContainer: {
@@ -7,12 +7,12 @@ export const globalStyles = StyleSheet.create({
     paddingHorizontal: 15,
     justifyContent: "flex-start",
     alignItems: "flex-start",
-    paddingTop: 100,
+    paddingTop: 60,
   },
   container: {
     flex: 1,
     paddingHorizontal: "4%",
-    paddingVertical: "15%",
+    paddingVertical: "5%",
     width: "100%",
   },
   dateRpw: {},

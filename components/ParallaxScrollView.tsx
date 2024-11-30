@@ -6,6 +6,7 @@ import Animated, {
   useAnimatedStyle,
   useScrollViewOffset,
 } from "react-native-reanimated";
+import AnimateTabView from "@/components/animation/AnimateTabView";
 
 import { ThemedView } from "@/components/ThemedView";
 
@@ -30,20 +31,20 @@ export default function ParallaxScrollView({
       transform: [
         {
           translateY: interpolate(
-            scrollOffset.value,
+            scrollOffset.get(),
             [-HEADER_HEIGHT, 0, HEADER_HEIGHT],
             [-HEADER_HEIGHT / 2, 0, HEADER_HEIGHT * 0.75]
           ),
         },
         {
-          scale: interpolate(scrollOffset.value, [-HEADER_HEIGHT, 0, HEADER_HEIGHT], [2, 1, 1]),
+          scale: interpolate(scrollOffset.get(), [-HEADER_HEIGHT, 0, HEADER_HEIGHT], [2, 1, 1]),
         },
       ],
     };
   });
 
   return (
-    <ThemedView style={styles.container}>
+    <AnimateTabView style={styles.container}>
       <Animated.ScrollView ref={scrollRef} scrollEventThrottle={16}>
         <Animated.View
           style={[
@@ -56,7 +57,7 @@ export default function ParallaxScrollView({
         </Animated.View>
         <ThemedView style={styles.content}>{children}</ThemedView>
       </Animated.ScrollView>
-    </ThemedView>
+    </AnimateTabView>
   );
 }
 

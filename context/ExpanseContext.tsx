@@ -1,72 +1,26 @@
 import { createContext, useState, useContext, useCallback } from "react";
-import { IExpanse } from "@/types/expanse";
+import { IExpanse, Members } from "@/types/expanse";
 
-const expenses: IExpanse[] = [
-  {
-    transactionId: "1",
-    expanseDescription: "Scuty's Fuel",
-    expanseData: "10-21-21",
-    expanseAmount: 200.0,
-    expanseType: "Fuel",
-    type: "expense",
-  },
-  // You can add more expense objects here
-  {
-    transactionId: "2",
-    expanseDescription: "Grocery Shopping",
-    expanseData: "10-22-21",
-    expanseAmount: 150.0,
-    expanseType: "Food",
-    type: "income",
-    toWhom: "Dada",
-  },
-  {
-    transactionId: "3",
-    expanseDescription: "Travel to City",
-    expanseData: "10-23-21",
-    expanseAmount: 300.0,
-    expanseType: "Travels",
-    type: "debit",
-  },
-  {
-    transactionId: "4",
-    expanseDescription: "Recharge Mobile",
-    expanseData: "10-24-21",
-    expanseAmount: 50.0,
-    expanseType: "Recharge",
-    type: "expense",
-  },
-  {
-    transactionId: "5",
-    expanseDescription: "Clothing Shopping",
-    expanseData: "10-25-21",
-    expanseAmount: 120.0,
-    expanseType: "Shopping",
-    type: "credit",
-    toWhom: "Ajay",
-  },
-  {
-    transactionId: "6",
-    expanseDescription: "Miscellaneous",
-    expanseData: "10-26-21",
-    expanseAmount: 80.0,
-    expanseType: "Others",
-    type: "expense",
-    toWhom: "Friend",
-  },
-];
+import { expenses } from "@/constants/tempVar";
 
 export interface ExpenseContextType {
   totalIncome: number;
   totalExpense: number;
   leftBalance: number;
+  groups: Groups[];
+  allTransaction: IExpanse[];
   addIncome: (amount: number) => void;
   addExpense: (amount: number) => void;
   reset: () => void;
-  allTransaction: IExpanse[];
   addTransaction: (transaction: IExpanse) => void;
   removeTransaction: (transactionId: string) => void;
+  addGroup: (group: Groups) => void;
 }
+
+type Groups = {
+  groupName: string;
+  members: Members[];
+};
 
 const ExpenseContext = createContext<ExpenseContextType | undefined>(undefined);
 
@@ -74,6 +28,7 @@ export const ExpenseProvider: React.FC<{ children: React.ReactNode }> = ({ child
   const [totalIncome, setTotalIncome] = useState<number>(0);
   const [totalExpense, setTotalExpense] = useState<number>(0);
   const [allTransaction, setAllTransaction] = useState<IExpanse[]>(expenses);
+  const [groups, setGroups] = useState<Groups[]>([]);
 
   const leftBalance: number = totalIncome - totalExpense;
 
@@ -88,6 +43,10 @@ export const ExpenseProvider: React.FC<{ children: React.ReactNode }> = ({ child
   const reset = () => {
     setTotalIncome(0);
     setTotalExpense(0);
+  };
+
+  const addGroup = (group: Groups) => {
+    setGroups((prev) => [...prev, group]);
   };
 
   const addTransaction = (transaction: IExpanse) => {
@@ -113,6 +72,8 @@ export const ExpenseProvider: React.FC<{ children: React.ReactNode }> = ({ child
         allTransaction,
         addTransaction,
         removeTransaction,
+        groups,
+        addGroup,
       }}
     >
       {children}

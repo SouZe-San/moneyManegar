@@ -53,6 +53,6 @@ export const Colors = {
     borderColor: "#00dd1297",
     // borderColor: "#00dd12",
     toggleButton: "#00df8230",
-    // toggleButton: "#bababad3",
+    // toggleButton: "#bababa93",
   },
 };

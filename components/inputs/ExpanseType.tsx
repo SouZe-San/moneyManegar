@@ -34,7 +34,6 @@ const expanseTypes = ["Food", "Fuel", "Shopping", "Recharge", "Bill", "Rent", "T
 export default function ExpanseType(props: ExpanseTypeProps) {
   const borderColor = useThemeColorWithName("borderColor");
   const buttonBgColor = useThemeColorWithName("button");
-  const buttonTextColor = useThemeColorWithName("background");
   return (
     <ScrollView
       horizontal
@@ -65,7 +64,6 @@ export default function ExpanseType(props: ExpanseTypeProps) {
                   | "Rent"
                   | "Bill"
               )}
-              {/* {iconReturn(type.label, props.value === type.label ? buttonTextColor : buttonBgColor)} */}
             </ThemedText>
           </Pressable>
           <ThemedText style={styles.buttonSubLabel} colorName="buttonBg">
