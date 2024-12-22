@@ -6,6 +6,7 @@ import { useThemeColorWithName } from "@/hooks/useThemeColor";
 
 export function CustomTabBar({ state, descriptors, navigation }: any) {
   const backgroundColor = useThemeColorWithName("navBg");
+
   return (
     <View style={[tabBarStyle.tabBar, { backgroundColor }]}>
       {state.routes.map((route: any, index: number) => {

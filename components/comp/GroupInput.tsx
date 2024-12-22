@@ -1,7 +1,7 @@
 import { View, StyleSheet, Alert, TouchableOpacity, FlatList, TextInput } from "react-native";
 import { ThemedText } from "../ThemedText";
 import { UserIcon, GroupsIcon } from "@/assets/icons/SVG/InputIcons";
-
+import { DeleteIcon } from "@/assets/icons/SVG/RandomIcons";
 import { InputWithIcon, SmallInputBox } from "../inputs/InputBox";
 import { useThemeColorWithName } from "@/hooks/useThemeColor";
 import { useState } from "react";
@@ -86,14 +86,32 @@ function GroupInput({
     setSearchResult(filteredMembers);
   };
 
-  // const handleLogoChange = () => {
-  //   if (logo.length <= 1 && /[a-zA-Z0-9]/.test(logo)) {
-  //     console.log(logo);
-  //     setGroupLogo(logo);
-  //   } else {
-  //     console.log("Invalid Logo");
-  //   }
-  // };
+  // ! Selected Members Component
+  const SelectedMember = ({ member }: { member: Members }) => {
+    return (
+      <View
+        style={{
+          flexDirection: "row",
+
+          justifyContent: "space-between",
+        }}
+      >
+        <View style={{ width: "80%" }}>
+          <MembersRow member={member} />
+        </View>
+        <TouchableOpacity
+          onPress={() => {
+            // Remove the member from the list
+            setMembers(members.filter((existingMember) => existingMember.useId !== member.useId));
+          }}
+        >
+          <View style={[styles.deleteBtn, { backgroundColor: buttonBg }]}>
+            <DeleteIcon color="red" />
+          </View>
+        </TouchableOpacity>
+      </View>
+    );
+  };
 
   return (
     <View style={styles.container}>
@@ -184,7 +202,7 @@ function GroupInput({
             scrollEnabled={true}
             scrollsToTop={true}
             data={members}
-            renderItem={({ item }) => <MembersRow member={item} />}
+            renderItem={({ item }) => <SelectedMember member={item} />}
             keyExtractor={(member) => member.useId}
           />
         )}
@@ -258,5 +276,12 @@ const styles = StyleSheet.create({
     color: "white",
     paddingHorizontal: 5,
     width: "80%",
+  },
+  deleteBtn: {
+    display: "flex",
+    justifyContent: "center",
+    alignItems: "center",
+    padding: 12,
+    borderRadius: 10,
   },
 });

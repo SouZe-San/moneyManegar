@@ -7,7 +7,15 @@ import { ThemedView } from "@/components/ThemedView";
 import { globalStyles } from "@/constants/globalStyles";
 import { useThemeColorWithName } from "@/hooks/useThemeColor";
 import { useState } from "react";
-import { ScrollView, View, Switch, useColorScheme, FlatList, Alert } from "react-native";
+import {
+  ScrollView,
+  View,
+  Switch,
+  useColorScheme,
+  FlatList,
+  Alert,
+  useWindowDimensions,
+} from "react-native";
 import { Groups } from "@/types/expanse";
 import ExpanseType from "@/components/inputs/ExpanseType";
 import { groupData } from "@/constants/tempVar";
@@ -15,9 +23,11 @@ import SingleBox from "@/components/SingleBox";
 import EasyAlert from "@/components/comp/EasyAlert";
 import DateView from "@/components/inputs/DateView";
 import { useRouter } from "expo-router";
+import ImageHeader from "@/components/comp/ImageHeader";
 
 // ! who are you to ask for money &&& { can take full expense and divide in in some numbers}
 export function contribute() {
+  const { width: SCREEN_WEIGHT, height: SCREEN_HEIGHT } = useWindowDimensions();
   // All states
   const [amount, setAmount] = useState("");
   const [expenseType, setExpenseType] = useState("");
@@ -34,6 +44,7 @@ export function contribute() {
   const unSelectedToggleButton = useThemeColorWithName("toggleButton");
   const thumbColor = useColorScheme() === "light" ? "#8c8c8c" : "#ECEDEE";
   const selectedThumbColor = useColorScheme() === "light" ? "#dff169" : "#030f0e";
+  const backgroundColor = useThemeColorWithName("background");
 
   const router = useRouter();
 
@@ -151,155 +162,170 @@ export function contribute() {
   }
 
   return (
-    <ThemedView style={globalStyles.mainContainer}>
-      <ThemedText type="tabTitle" style={{ textAlign: "center", width: "100%" }}>
-        Paisa hee paisa ^_^{" "}
-      </ThemedText>
-      <View
+    <ThemedView style={[globalStyles.entriesViewContainer, { position: "relative" }]}>
+      <ImageHeader url={require("@/assets/images/entries/moneyGive.webp")} />
+
+      <ThemedText
+        type="tabTitle"
         style={{
-          display: "flex",
-          flexGrow: 0,
-          marginTop: 50,
+          textAlign: "center",
           width: "100%",
-          gap: 10,
+          marginTop: 40,
+          textShadowColor: "black",
+          textShadowOffset: { width: 1.4, height: 1 },
+          textShadowRadius: 4,
         }}
       >
-        {/* // Expanse Amount  */}
-        <View>
-          <InputWithIcon
-            icon={<MoneyBagIcon color={iconColor} />}
-            placeholder="00.0 INR"
-            value={amount}
-            setValue={setAmount}
-          />
-        </View>
-        {/* // Expanse Description  */}
-        <View>
-          <InputWithIcon
-            icon={<BagIcon color={iconColor} />}
-            placeholder="Why ?"
-            value={expanseReason}
-            setValue={setExpanseReason}
-            keyboardType="default"
-          />
-        </View>
+        Paisa hee paisa ^_^{" "}
+      </ThemedText>
 
-        {/* Data  */}
-
-        <View>
-          <DateView date={date} setDate={setDate} />
-        </View>
-        {/* // Expanse Type */}
-        <View>
-          <ExpanseType setValue={setExpenseType} value={expenseType} />
-        </View>
-        {/* // Split Section  */}
+      <View style={[globalStyles.inputContainer, { backgroundColor }]}>
         <View
           style={{
-            marginTop: 10,
             display: "flex",
-            flexDirection: "row",
-            justifyContent: "space-between",
-            alignItems: "center",
+            flexGrow: 0,
+            // marginTop: 50,
+            width: "100%",
+            gap: 10,
           }}
         >
-          <ThemedText type="defaultSemiBold">Split in Groups</ThemedText>
-          <View
-            style={{
-              borderWidth: 1,
-              borderRadius: 20,
-              overflow: "hidden",
-              borderBlockColor: "transparent",
-            }}
-          >
-            <Switch
-              value={splitInGroups}
-              style={{
-                padding: 0,
-                margin: 0,
-                height: 28,
-                width: "100%",
-                backgroundColor: splitInGroups ? toggleButton : unSelectedToggleButton,
-              }}
-              thumbColor={splitInGroups ? selectedThumbColor : thumbColor}
-              trackColor={{ false: "transparent", true: "transparent" }}
-              onValueChange={() => setInGroups((previousState) => !previousState)}
-            />
-          </View>
-        </View>
-        {!splitInGroups ? (
+          {/* // Expanse Amount  */}
           <View>
             <InputWithIcon
-              icon={<UserIcon color={iconColor} />}
-              placeholder="Solo Name ?"
-              value={singlePersonName}
-              setValue={setSinglePersonName}
+              icon={<MoneyBagIcon color={iconColor} />}
+              placeholder="00.0 INR"
+              value={amount}
+              setValue={setAmount}
+            />
+          </View>
+          {/* // Expanse Description  */}
+          <View>
+            <InputWithIcon
+              icon={<BagIcon color={iconColor} />}
+              placeholder="Why ?"
+              value={expanseReason}
+              setValue={setExpanseReason}
               keyboardType="default"
             />
           </View>
-        ) : (
+
+          {/* Data  */}
+
           <View>
-            {
-              <FlatList
-                data={groupData}
-                horizontal
-                renderItem={({ item }) => (
-                  <SingleBox
-                    label={item.groupName}
-                    icon={item.groupIcon}
-                    isSelected={selectedGroup?.groupId === item.groupId}
-                    onPress={() => groupSelection(item)}
-                  />
-                )}
-                keyExtractor={(item) => item.groupId}
-              />
-            }
+            <DateView date={date} setDate={setDate} />
           </View>
-        )}
-      </View>
+          {/* // Expanse Type */}
+          <View>
+            <ExpanseType setValue={setExpenseType} value={expenseType} />
+          </View>
+          {/* // Split Section  */}
+          <View
+            style={{
+              marginTop: 10,
+              display: "flex",
+              flexDirection: "row",
+              justifyContent: "space-between",
+              alignItems: "center",
+            }}
+          >
+            <ThemedText type="defaultSemiBold">Split in Groups</ThemedText>
+            <View
+              style={{
+                borderWidth: 1,
+                borderRadius: 20,
+                overflow: "hidden",
+                borderBlockColor: "transparent",
+              }}
+            >
+              <Switch
+                value={splitInGroups}
+                style={{
+                  padding: 0,
+                  margin: 0,
+                  height: 28,
+                  width: "100%",
+                  backgroundColor: splitInGroups ? toggleButton : unSelectedToggleButton,
+                }}
+                thumbColor={splitInGroups ? selectedThumbColor : thumbColor}
+                trackColor={{ false: "transparent", true: "transparent" }}
+                onValueChange={() => setInGroups((previousState) => !previousState)}
+              />
+            </View>
+          </View>
+          {!splitInGroups ? (
+            <View>
+              <InputWithIcon
+                icon={<UserIcon color={iconColor} />}
+                placeholder="Solo Name ?"
+                value={singlePersonName}
+                setValue={setSinglePersonName}
+                keyboardType="default"
+              />
+            </View>
+          ) : (
+            <View>
+              {
+                <FlatList
+                  data={groupData}
+                  horizontal
+                  renderItem={({ item }) => (
+                    <SingleBox
+                      label={item.groupName}
+                      icon={item.groupIcon}
+                      isSelected={selectedGroup?.groupId === item.groupId}
+                      onPress={() => groupSelection(item)}
+                    />
+                  )}
+                  keyExtractor={(item) => item.groupId}
+                />
+              }
+            </View>
+          )}
+        </View>
 
-      <View
-        style={{
-          width: "90%",
-          marginHorizontal: 10,
-          marginTop: 30,
-          height: 1,
-          backgroundColor: horain,
-        }}
-      ></View>
-      {/* All Debt */}
-      <ScrollView
-        style={{
-          marginTop: 10,
-          paddingVertical: 10,
-          flex: 1,
-
-          width: "100%",
-        }}
-      >
         <View
           style={{
+            width: "90%",
+            marginHorizontal: 10,
+            marginTop: 30,
+            height: 1,
+            backgroundColor: horain,
+          }}
+        ></View>
+        {/* All Debt */}
+        <ScrollView
+          style={{
+            marginTop: 10,
+            paddingVertical: 10,
             flex: 1,
+
+            width: "100%",
+          }}
+        >
+          <View
+            style={{
+              flex: 1,
+              justifyContent: "center",
+              alignItems: "center",
+            }}
+          >
+            <ThemedText type="subtitle">All Debt Listed @_@</ThemedText>
+          </View>
+        </ScrollView>
+
+        {/* Submit Button */}
+        <View
+          style={{
+            position: "absolute",
+            bottom: 30,
+            width: "100%",
+            left: 10,
             justifyContent: "center",
             alignItems: "center",
           }}
         >
-          <ThemedText type="subtitle">All Debt Listed @_@</ThemedText>
+          <SubmitButton button_label="Add Request" onPress={() => finalSubmit()} />
         </View>
-      </ScrollView>
-
-      {/* Submit Button */}
-      <View
-        style={{
-          position: "absolute",
-          bottom: 30,
-          width: "100%",
-          left: 10,
-          justifyContent: "center",
-          alignItems: "center",
-        }}
-      >
-        <SubmitButton button_label="Add Debt" onPress={() => finalSubmit()} />
       </View>
     </ThemedView>
   );

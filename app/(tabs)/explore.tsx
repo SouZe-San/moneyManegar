@@ -1,15 +1,6 @@
-import {
-  StyleSheet,
-  Text,
-  View,
-  TouchableOpacity,
-  ScrollView,
-  StatusBar,
-  FlatList,
-} from "react-native";
+import { StyleSheet, View, TouchableOpacity } from "react-native";
 
 import { Collapsible } from "@/components/Collapsible";
-import { ExternalLink } from "@/components/ExternalLink";
 import ParallaxScrollView from "@/components/ParallaxScrollView";
 import { ThemedText } from "@/components/ThemedText";
 
@@ -17,7 +8,6 @@ import ImageAndName from "@/components/profile/ImageAndName";
 import { SettingIcon } from "@/assets/icons/SVG/RandomIcons";
 import { useThemeColorWithName } from "@/hooks/useThemeColor";
 import { useRouter } from "expo-router";
-import ExpanseType from "@/components/inputs/ExpanseType";
 import SingleBox from "@/components/SingleBox";
 import { groupData } from "@/constants/tempVar";
 
@@ -43,37 +33,31 @@ export default function TabTwoScreen() {
           </ThemedText>
 
           <ThemedText>
-            <ThemedText type="defaultSemiBold">UserName: </ThemedText>
-            Souze
-          </ThemedText>
-
-          <ThemedText>
             <ThemedText type="defaultSemiBold">Email: </ThemedText>
             No Mail
           </ThemedText>
 
-          <ThemedText type="defaultSemiBold">Groups: </ThemedText>
-          <ScrollView
-            horizontal
-            showsHorizontalScrollIndicator={false}
-            style={{ flexGrow: 0, marginVertical: 5 }}
+          <ThemedText type="defaultSemiBold" style={{ marginTop: 10 }}>
+            My Groups{" "}
+          </ThemedText>
+          <View
+            style={{
+              flexGrow: 0,
+              marginVertical: 5,
+              flexWrap: "wrap",
+              flexDirection: "row",
+            }}
           >
-            {
-              <FlatList
-                data={groupData}
-                horizontal
-                renderItem={({ item }) => (
-                  <SingleBox
-                    label={item.groupName}
-                    icon={item.groupIcon}
-                    onPress={() => router.push(`/groups/${item.groupId}`)}
-                  />
-                )}
-                keyExtractor={(item) => item.groupId}
+            {groupData.map((group) => (
+              <SingleBox
+                key={group.groupId}
+                label={group.groupName}
+                icon={group.groupIcon}
+                onPress={() => router.push(`/groups/${group.groupId}`)}
               />
-            }
+            ))}
             <SingleBox label="Add" icon="➕" onPress={() => router.push("/groups/create")} />
-          </ScrollView>
+          </View>
         </View>
       </Collapsible>
       {/* <Collapsible title="Setting" iconName="settingIcon">

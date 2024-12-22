@@ -1,14 +1,13 @@
 import { ThemedText } from "@/components/ThemedText";
-import { ThemedView } from "@/components/ThemedView";
 import TransactionRow from "@/components/transaction/TransactionRow";
 import { globalStyles } from "@/constants/globalStyles";
 import { useExpense } from "@/context/ExpanseContext";
 import { useState } from "react";
-import { SafeAreaView, View, FlatList, ViewToken } from "react-native";
+import { FlatList, ViewToken } from "react-native";
 import { GestureHandlerRootView } from "react-native-gesture-handler";
 import AnimateTabView from "@/components/animation/AnimateTabView";
 import AnimatedListItem from "@/components/animation/AnimatedListItem";
-import { useSharedValue } from "react-native-reanimated";
+import Animated, { useSharedValue } from "react-native-reanimated";
 export default function Transaction() {
   const { allTransaction } = useExpense();
 
@@ -31,13 +30,6 @@ export default function Transaction() {
       <AnimateTabView style={[globalStyles.container, { paddingBottom: "20%" }]}>
         <ThemedText type="title">Pauna-Gonda</ThemedText>
 
-        {/* <View
-            style={{
-              marginTop: 30,
-              flex: 1,
-              gap: 10,
-            }}
-          > */}
         <FlatList
           style={{
             marginTop: 30,
@@ -50,24 +42,25 @@ export default function Transaction() {
             viewableItems.value = vItems;
           }}
           renderItem={({ item }) => (
-            <AnimatedListItem item={item} viewableItems={viewableItems}>
-              <TransactionRow
-                transactionId={item.transactionId}
-                expanseDescription={item.expanseDescription}
-                expanseData={item.expanseData}
-                expanseAmount={item.expanseAmount}
-                expanseType={item.expanseType}
-                transactionType={item.type}
-                toWhom={item.toWhom}
-                onSwipeableWillOpen={handleSwipeableWillOpen}
-                onSwipeableWillClose={handleSwipeableWillClose}
-                openedItem={openedItem}
-              />
-            </AnimatedListItem>
+            <Animated.View>
+              <AnimatedListItem item={item} viewableItems={viewableItems}>
+                <TransactionRow
+                  transactionId={item.transactionId}
+                  expanseDescription={item.expanseDescription}
+                  expanseData={item.expanseData}
+                  expanseAmount={item.expanseAmount}
+                  expanseType={item.expanseType}
+                  transactionType={item.type}
+                  toWhom={item.toWhom}
+                  onSwipeableWillOpen={handleSwipeableWillOpen}
+                  onSwipeableWillClose={handleSwipeableWillClose}
+                  openedItem={openedItem}
+                />
+              </AnimatedListItem>
+            </Animated.View>
           )}
           keyExtractor={(item) => item.transactionId}
         />
-        {/* </View> */}
       </AnimateTabView>
     </GestureHandlerRootView>
   );

@@ -5,13 +5,11 @@ import { Modal, View } from "react-native";
 import { GestureHandlerRootView } from "react-native-gesture-handler";
 
 type PropsInterface = {
-  // ref: React.RefObject<BottomSheetRefProps>;
   isOpen: boolean;
   setIsOpen: React.Dispatch<React.SetStateAction<boolean>>;
   children?: React.ReactNode;
 };
 
-// const BottomSheetModal = ({ ref, isOpen, setIsOpen, children }: PropsInterface) => {
 const BottomSheetModal = React.forwardRef<BottomSheetRefProps, PropsInterface>(
   ({ children, isOpen, setIsOpen }, ref) => {
     return (

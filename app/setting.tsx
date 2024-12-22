@@ -12,14 +12,18 @@ import { useExpense } from "@/context/ExpanseContext";
 import { useThemeColorWithName } from "@/hooks/useThemeColor";
 import { View, StyleSheet, TouchableOpacity } from "react-native";
 
-const Setting = () => {
+const setting = () => {
   const iconColor = useThemeColorWithName("icon");
   const bg = useThemeColorWithName("blurBg");
+  const color = useThemeColorWithName("highLightBackground");
 
   const { reset } = useExpense();
 
   return (
     <ThemedView style={[globalStyles.mainContainer, { gap: 15 }]}>
+      <ThemedText style={{ paddingLeft: 10, color }} type="title">
+        Settings
+      </ThemedText>
       <View>
         <ThemedText type="subtitle">🌐 Go Online & Sync</ThemedText>
         <ThemedText type="smallText">
@@ -79,7 +83,7 @@ const Setting = () => {
   );
 };
 
-export default Setting;
+export default setting;
 const styles = StyleSheet.create({
   btn: {
     borderRadius: 10,

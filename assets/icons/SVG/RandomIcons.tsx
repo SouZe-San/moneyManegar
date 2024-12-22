@@ -1,4 +1,4 @@
-import Svg, { SvgProps, Path, G } from "react-native-svg";
+import Svg, { SvgProps, Path, G, Circle } from "react-native-svg";
 interface SvgPropWithColor extends SvgProps {
   color?: string;
   isFocused?: boolean;
@@ -21,10 +21,6 @@ const MailIcon = ({ color, isFocused, ...props }: SvgPropWithColor) => (
 );
 const PayIcon = ({ color, ...props }: SvgPropWithColor) => (
   <Svg width={24} height={24} viewBox="0 0 1024 1024" {...props} color={color || "#f1f2f6"}>
-    {/* <Path
-      fill="currentColor"
-      d="M512 64C264.6 64 64 264.6 64 512s200.6 448 448 448 448-200.6 448-448S759.4 64 512 64m166.6 246.8L567.5 515.6h62c4.4 0 8 3.6 8 8v29.9c0 4.4-3.6 8-8 8h-82V603h82c4.4 0 8 3.6 8 8v29.9c0 4.4-3.6 8-8 8h-82V717c0 4.4-3.6 8-8 8h-54.3c-4.4 0-8-3.6-8-8v-68.1h-81.7c-4.4 0-8-3.6-8-8V611c0-4.4 3.6-8 8-8h81.7v-41.5h-81.7c-4.4 0-8-3.6-8-8v-29.9c0-4.4 3.6-8 8-8h61.4L345.4 310.8a8.07 8.07 0 0 1 7-11.9h60.7c3 0 5.8 1.7 7.1 4.4l90.6 180h3.4l90.6-180a8 8 0 0 1 7.1-4.4h59.5c4.4 0 8 3.6 8 8 .2 1.4-.2 2.7-.8 3.9"
-    /> */}
     <Path
       fill="currentColor"
       d="M512 64C264.6 64 64 264.6 64 512s200.6 448 448 448 448-200.6 448-448S759.4 64 512 64m0 820c-205.4 0-372-166.6-372-372s166.6-372 372-372 372 166.6 372 372-166.6 372-372 372m159.6-585h-59.5c-3 0-5.8 1.7-7.1 4.4l-90.6 180H511l-90.6-180a8 8 0 0 0-7.1-4.4h-60.7c-1.3 0-2.6.3-3.8 1-3.9 2.1-5.3 7-3.2 10.9L457 515.7h-61.4c-4.4 0-8 3.6-8 8v29.9c0 4.4 3.6 8 8 8h81.7V603h-81.7c-4.4 0-8 3.6-8 8v29.9c0 4.4 3.6 8 8 8h81.7V717c0 4.4 3.6 8 8 8h54.3c4.4 0 8-3.6 8-8v-68.1h82c4.4 0 8-3.6 8-8V611c0-4.4-3.6-8-8-8h-82v-41.5h82c4.4 0 8-3.6 8-8v-29.9c0-4.4-3.6-8-8-8h-62l111.1-204.8c.6-1.2 1-2.5 1-3.8-.1-4.4-3.7-8-8.1-8"
@@ -51,6 +47,14 @@ const PrivacyIcon = ({ color, isFocused, ...props }: SvgPropWithColor) => (
     <Path
       fill="currentColor"
       d="m12 .44 10 3.5V12c0 4.127-2.533 7.012-4.896 8.803a19.7 19.7 0 0 1-4.65 2.595l-.087.033-.025.009-.007.002-.003.001c-.001 0-.002 0-.332-.943l-.331.944h-.001l-.003-.002-.007-.002-.025-.01-.087-.032a18 18 0 0 1-1.39-.606 20 20 0 0 1-3.26-1.989C4.534 19.012 2 16.127 2 12V3.94zm0 22.06-.331.944.331.116.331-.116zm0-1.072.009-.004a17.8 17.8 0 0 0 3.887-2.215C18.034 17.59 20 15.223 20 12V5.36l-8-2.8-8 2.8V12c0 3.223 1.966 5.588 4.104 7.21A17.8 17.8 0 0 0 12 21.428m6.072-13.085-7.071 7.071-4.243-4.242 1.415-1.415L11 12.586l5.657-5.657z"
+    />
+  </Svg>
+);
+const StatsIcon = ({ color, ...props }: SvgPropWithColor) => (
+  <Svg width={24} height={24} viewBox="0 0 512 512" {...props} color={color || "#f1f2f6"}>
+    <Path
+      fill="currentColor"
+      d="M104 496H72a24 24 0 0 1-24-24V328a24 24 0 0 1 24-24h32a24 24 0 0 1 24 24v144a24 24 0 0 1-24 24m224 0h-32a24 24 0 0 1-24-24V232a24 24 0 0 1 24-24h32a24 24 0 0 1 24 24v240a24 24 0 0 1-24 24m112 0h-32a24 24 0 0 1-24-24V120a24 24 0 0 1 24-24h32a24 24 0 0 1 24 24v352a24 24 0 0 1-24 24m-224 0h-32a24 24 0 0 1-24-24V40a24 24 0 0 1 24-24h32a24 24 0 0 1 24 24v432a24 24 0 0 1-24 24"
     />
   </Svg>
 );
@@ -110,6 +114,15 @@ const DeleteIcon = ({ color, ...props }: SvgPropWithColor) => (
     />
   </Svg>
 );
+const DbIcon = ({ color, ...props }: SvgPropWithColor) => (
+  <Svg width={24} height={24} viewBox="0 0 24 24" {...props} color={color || "#f1f2f6"}>
+    <G fill="none" stroke="currentColor" strokeWidth={2.1}>
+      <Path d="M4 6c0 1.657 3.582 3 8 3s8-1.343 8-3-3.582-3-8-3-8 1.343-8 3" />
+      <Path d="M4 6v6c0 1.657 3.582 3 8 3q.623 0 1.22-.035M20 10V6" />
+      <Path d="M4 12v6c0 1.657 3.582 3 8 3q.528 0 1.037-.025M21 15h-2.5a1.5 1.5 0 0 0 0 3h1a1.5 1.5 0 0 1 0 3H17m2 0v1m0-8v1" />
+    </G>
+  </Svg>
+);
 const ResetIcon = ({ color, ...props }: SvgPropWithColor) => (
   <Svg width={18} height={18} viewBox="0 0 21 21" {...props} color={color || "#f1f2f6"}>
     <G
@@ -124,11 +137,49 @@ const ResetIcon = ({ color, ...props }: SvgPropWithColor) => (
     </G>
   </Svg>
 );
+const RingBellIcon = ({ color, ...props }: SvgPropWithColor) => (
+  <Svg width={23} height={23} viewBox="0 0 24 24" {...props} color={color || "#f1f2f6"}>
+    <G fill="currentColor">
+      <Path d="M11.209 3.816a1 1 0 0 0-1.966.368l.325 1.74a5.34 5.34 0 0 0-2.8 5.762l.276 1.473.055.296c.258 1.374-.228 2.262-.63 2.998-.285.52-.527.964-.437 1.449.11.586.22 1.173.75 1.074l12.7-2.377c.528-.1.418-.685.308-1.27-.103-.564-.636-1.123-1.195-1.711-.606-.636-1.243-1.306-1.404-2.051-.233-1.085-.275-1.387-.303-1.587-.009-.063-.016-.117-.028-.182a5.34 5.34 0 0 0-5.353-4.39zM6.539 4.278a1 1 0 0 1 .07 1.412c-1.115 1.23-1.705 2.605-1.83 4.26a1 1 0 0 1-1.995-.15c.16-2.099.929-3.893 2.342-5.453a1 1 0 0 1 1.413-.069M8.95 19.7c.7.8 1.7 1.3 2.8 1.3 1.6 0 2.9-1.1 3.3-2.5z" />
+    </G>
+  </Svg>
+);
+const BellIcon = ({ color, ...props }: SvgPropWithColor) => (
+  <Svg width={23} height={23} viewBox="0 0 15 15" {...props} color={color || "#f1f2f6"}>
+    <Path
+      fill="currentColor"
+      d="M8.601 1.25a1.1 1.1 0 0 1-.8 1.06A4.5 4.5 0 0 1 12 6.8v3.45c0 .806.033 1.457.724 1.803A.5.5 0 0 1 12.5 13H8.161a1 1 0 1 1-1.323 0H2.5a.5.5 0 0 1-.224-.947c.691-.346.724-.997.724-1.803V6.8a4.5 4.5 0 0 1 4.2-4.49 1.1 1.1 0 1 1 1.401-1.06M7.5 3.3A3.5 3.5 0 0 0 4 6.8v3.5c0 .446.001 1.108-.3 1.7h7.6c-.301-.592-.3-1.254-.3-1.7V6.8a3.5 3.5 0 0 0-3.5-3.5"
+    />
+  </Svg>
+);
+const ProCamIcon = ({ color, ...props }: SvgPropWithColor) => (
+  <Svg
+    width={28}
+    height={28}
+    // viewBox="0 0 24 24"
+    viewBox="-2 -4 24 24"
+    {...props}
+    color={color || "#f1f2f6"}
+  >
+    <Path
+      fill="currentColor"
+      d="M5.676 5H4a2 2 0 0 0-2 2v5a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V7a2 2 0 0 0-2-2h-1.676l-.387-1.501A2 2 0 0 0 12 2H8a2 2 0 0 0-1.937 1.499zm-1.55-2C4.57 1.275 6.136 0 8 0h4a4 4 0 0 1 3.874 3H16a4 4 0 0 1 4 4v5a4 4 0 0 1-4 4H4a4 4 0 0 1-4-4V7a4 4 0 0 1 4-4zM10 13a4 4 0 1 1 0-8 4 4 0 0 1 0 8m0-2a2 2 0 1 0 0-4 2 2 0 0 0 0 4m6-3a1 1 0 1 0 0-2 1 1 0 0 0 0 2"
+    />
+  </Svg>
+);
 const LeftRightArrowIcon = ({ color, ...props }: SvgPropWithColor) => (
   <Svg width={18} height={18} viewBox="0 0 21 21" {...props} color={color || "#f1f2f6"}>
     <Path
       d="M16 16v-4l5 5-5 5v-4H4v-2h12ZM8 2v3.999L20 6v2H8v4L3 7l5-5Z"
       fill={color || "#f1f2f6"}
+    />
+  </Svg>
+);
+const RightArrowIcon = ({ color, ...props }: SvgPropWithColor) => (
+  <Svg width={20} height={20} viewBox="0 0 24 24" {...props} color={color || "#f1f2f6"}>
+    <Path
+      fill="currentColor"
+      d="M15.187 12 7.47 4.285q-.221-.221-.218-.532.003-.31.224-.532Q7.698 3 8.009 3q.31 0 .532.221l7.636 7.643q.242.242.354.54t.111.596-.111.596-.354.54L8.535 20.78q-.222.221-.53.218-.307-.003-.528-.224t-.221-.532.221-.531z"
     />
   </Svg>
 );
@@ -154,4 +205,10 @@ export {
   ResetIcon,
   LeftRightArrowIcon,
   OnlineIcon,
+  BellIcon,
+  ProCamIcon,
+  RingBellIcon,
+  StatsIcon,
+  RightArrowIcon,
+  DbIcon,
 };

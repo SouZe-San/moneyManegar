@@ -1,7 +1,7 @@
 import { ThemedText } from "@/components/ThemedText";
-import { View } from "react-native";
+
 import { useLocalSearchParams } from "expo-router";
-import { SafeAreaView } from "react-native-safe-area-context";
+
 import { ThemedView } from "@/components/ThemedView";
 import { globalStyles } from "@/constants/globalStyles";
 import { useState } from "react";
@@ -20,7 +20,9 @@ const GroupDetails = () => {
   function onSubmit() {}
   return (
     <ThemedView style={[globalStyles.mainContainer]}>
-      <ThemedText type="title">Group Details {groupId}</ThemedText>
+      <ThemedText type="title" style={{ marginTop: 30 }}>
+        Group Details {groupId}
+      </ThemedText>
       <GroupInput
         {...{ groupName, groupLogo, setGroupName, members, setMembers, onSubmit, setGroupLogo }}
       />

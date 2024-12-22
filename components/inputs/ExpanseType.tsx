@@ -1,17 +1,16 @@
-import { ScrollView, View, StyleSheet, Pressable } from "react-native";
+import { ScrollView, View, StyleSheet, Pressable, FlatList, ViewToken } from "react-native";
 import { ThemedText } from "../ThemedText";
 import { useThemeColorWithName } from "@/hooks/useThemeColor";
 import { iconReturn } from "@/constants/expanseIcon";
-
-import {
-  FoodIcon,
-  BusIcon,
-  FuelIcon,
-  MobileIcon,
-  ShoppingIcon,
-  WarBonnetIcon,
-} from "@/assets/icons/SVG/ExpanseIcons";
-
+import Animated, {
+  useSharedValue,
+  useAnimatedStyle,
+  withTiming,
+  SharedValue,
+  Easing,
+  withSpring,
+  ReduceMotion,
+} from "react-native-reanimated";
 type ExpanseTypeProps = {
   value: string | undefined;
   setValue: (value: string) => void;
@@ -19,59 +18,106 @@ type ExpanseTypeProps = {
 
 const expanseTypes = ["Food", "Fuel", "Shopping", "Recharge", "Bill", "Rent", "Travels", "Others"];
 
-// const iconReturn = (icon: string, color: string) => {
-//   const icons = {
-//     Food: <FoodIcon color={color} />,
-//     Fuel: <FuelIcon color={color} />,
-//     Shopping: <ShoppingIcon color={color} />,
-//     Recharge: <MobileIcon color={color} />,
-//     Travels: <BusIcon color={color} />,
-//     Others: <WarBonnetIcon color={color} />,
-//   };
-//   return icons[icon as keyof typeof icons];
-// };
+const ExpanseButton = ({
+  item,
+  value,
+  setValue,
+  viewableItems,
+}: { item: string; viewableItems: SharedValue<ViewToken[]> } & ExpanseTypeProps) => {
+  const borderColor = useThemeColorWithName("borderColor");
+  const buttonBgColor = useThemeColorWithName("toggleButton");
+
+  const rStyle = useAnimatedStyle(() => {
+    const isVisible = Boolean(
+      viewableItems.value
+        .filter((item) => item.isViewable)
+        .find((viewableItem) => viewableItem.item === item)
+    );
+    // const isVisible = true;
+    return {
+      opacity: withTiming(isVisible ? 1 : 0, {
+        duration: 300, // Adjust duration for smoother transition
+        easing: Easing.out(Easing.exp), // Use an easing function for smoother transitions
+      }),
+
+      transform: [
+        {
+          scale: withSpring(isVisible ? 1 : 0.3, {
+            duration: 300,
+            stiffness: 75,
+            overshootClamping: false,
+            restDisplacementThreshold: 0.01,
+            restSpeedThreshold: 2,
+            reduceMotion: ReduceMotion.System,
+          }),
+          // scale: withTiming(isVisible ? 1 : 0.2, {
+          //   duration: 300, // Match duration with opacity for synchronization
+          //   easing: Easing.bounce, // Use an easing function for smoother transitions
+          // }),
+        },
+      ],
+    };
+  }, [viewableItems.value]); // Add dependencies to ensure it updates correctly
+
+  return (
+    <Animated.View style={[rStyle]}>
+      <View style={[styles.expenseTypeButton]}>
+        <Pressable
+          style={[
+            styles.expenseTypeButton_btn,
+            {
+              borderColor,
+              backgroundColor: value === item ? buttonBgColor : "transparent",
+            },
+          ]}
+          onPress={() => setValue(item)}
+        >
+          <ThemedText style={styles.buttonLabel}>
+            {iconReturn(
+              item as
+                | "Food"
+                | "Fuel"
+                | "Shopping"
+                | "Recharge"
+                | "Travels"
+                | "Others"
+                | "Rent"
+                | "Bill"
+            )}
+          </ThemedText>
+        </Pressable>
+        <ThemedText style={styles.buttonSubLabel} colorName="buttonBg">
+          {item}
+        </ThemedText>
+      </View>
+    </Animated.View>
+  );
+};
 
 export default function ExpanseType(props: ExpanseTypeProps) {
-  const borderColor = useThemeColorWithName("borderColor");
-  const buttonBgColor = useThemeColorWithName("button");
+  const viewableItems = useSharedValue<ViewToken[]>([]);
+
   return (
-    <ScrollView
+    <FlatList
       horizontal
       style={styles.expanseTypeContainer}
       showsHorizontalScrollIndicator={false}
-    >
-      {expanseTypes.map((type, index) => (
-        <View style={[styles.expenseTypeButton]} key={index}>
-          <Pressable
-            style={[
-              styles.expenseTypeButton_btn,
-              {
-                borderColor,
-                backgroundColor: props.value === type ? buttonBgColor : "transparent",
-              },
-            ]}
-            onPress={() => props.setValue(type)}
-          >
-            <ThemedText style={styles.buttonLabel}>
-              {iconReturn(
-                type as
-                  | "Food"
-                  | "Fuel"
-                  | "Shopping"
-                  | "Recharge"
-                  | "Travels"
-                  | "Others"
-                  | "Rent"
-                  | "Bill"
-              )}
-            </ThemedText>
-          </Pressable>
-          <ThemedText style={styles.buttonSubLabel} colorName="buttonBg">
-            {type}
-          </ThemedText>
-        </View>
-      ))}
-    </ScrollView>
+      data={expanseTypes}
+      keyExtractor={(item) => item}
+      onViewableItemsChanged={({ viewableItems: vItems }) => {
+        viewableItems.value = vItems;
+      }}
+      renderItem={({ item, index: numbers }) => {
+        return (
+          <ExpanseButton
+            item={item}
+            value={props.value}
+            setValue={props.setValue}
+            viewableItems={viewableItems}
+          />
+        );
+      }}
+    />
   );
 }
 

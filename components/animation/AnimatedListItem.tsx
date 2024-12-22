@@ -17,23 +17,6 @@ type ListItemProps = ViewProps & {
 
 const AnimatedListItem = React.memo(
   ({ item, style, viewableItems, ...otherProps }: ListItemProps) => {
-    // const rStyle = useAnimatedStyle(() => {
-    //   const isVisible = Boolean(
-    //     viewableItems.value
-    //       .filter((item) => item.isViewable)
-    //       .find((viewableItem) => viewableItem.item.transactionId === item.transactionId)
-    //   );
-
-    //   return {
-    //     opacity: withSpring(isVisible ? 1 : 0, { duration: 200 }),
-    //     transform: [
-    //       {
-    //         scale: withSpring(isVisible ? 1 : 0.7, { duration: 400 }),
-    //       },
-    //     ],
-    //   };
-    // }, []);
-
     const rStyle = useAnimatedStyle(() => {
       const isVisible = Boolean(
         viewableItems.value
@@ -42,13 +25,13 @@ const AnimatedListItem = React.memo(
       );
 
       return {
-        opacity: withTiming(isVisible ? 1 : 0, {
-          duration: 300, // Adjust duration for smoother transition
-          easing: Easing.out(Easing.exp), // Use an easing function for smoother transitions
-        }),
+        // opacity: withTiming(isVisible ? 1 : 0, {
+        //   duration: 300, // Adjust duration for smoother transition
+        //   easing: Easing.out(Easing.exp), // Use an easing function for smoother transitions
+        // }),
         transform: [
           {
-            scale: withTiming(isVisible ? 1 : 0.7, {
+            scale: withTiming(isVisible ? 1 : 0.2, {
               duration: 300, // Match duration with opacity for synchronization
               easing: Easing.out(Easing.exp), // Use an easing function for smoother transitions
             }),

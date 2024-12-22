@@ -19,3 +19,13 @@ export type Groups = {
   groupIcon: string;
   members: Members[];
 };
+
+export type expanseType =
+  | "Food"
+  | "Fuel"
+  | "Shopping"
+  | "Recharge"
+  | "Travels"
+  | "Others"
+  | "Rent"
+  | "Bill";

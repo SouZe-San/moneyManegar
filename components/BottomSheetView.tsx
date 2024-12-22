@@ -69,15 +69,17 @@ const BottomSheetView = React.forwardRef<BottomSheetRefProps, BottomSheetProps>(
         transform: [{ translateY: translateY.get() }],
       };
     });
-    const bg = useThemeColorWithName("darkGreen");
+    const bg = useThemeColorWithName("background");
     const barColor = useThemeColorWithName("text");
     return (
-      <GestureDetector gesture={gesture}>
-        <Animated.View style={[styles.container, rBottomSheetStyle, { backgroundColor: bg }]}>
-          <View style={[styles.bar, { backgroundColor: barColor }]} />
-          {children}
-        </Animated.View>
-      </GestureDetector>
+      <Animated.View style={[styles.container, rBottomSheetStyle, { backgroundColor: bg }]}>
+        <GestureDetector gesture={gesture}>
+          <View style={styles.topContainer}>
+            <View style={[styles.bar, { backgroundColor: barColor }]} />
+          </View>
+        </GestureDetector>
+        {children}
+      </Animated.View>
     );
   }
 );
@@ -85,19 +87,12 @@ const BottomSheetView = React.forwardRef<BottomSheetRefProps, BottomSheetProps>(
 export default BottomSheetView;
 
 const styles = StyleSheet.create({
-  backdrop: {
-    position: "absolute",
-    top: 0,
-    left: 0,
-    flex: 1,
+  topContainer: {
+    paddingVertical: 10,
     width: "100%",
-    height: "100%",
-    backgroundColor: "rgba(0,0,0,0.5)",
-    justifyContent: "flex-end",
-    alignItems: "center",
   },
   bar: {
-    width: 50,
+    width: 60,
     height: 5,
     borderRadius: 5,
     alignSelf: "center",
@@ -110,8 +105,7 @@ const styles = StyleSheet.create({
     position: "absolute",
     borderTopLeftRadius: 25,
     borderTopRightRadius: 25,
-    padding: 20,
     paddingHorizontal: 20,
-    paddingVertical: 10,
+    paddingBottom: 10,
   },
 });

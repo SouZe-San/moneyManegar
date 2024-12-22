@@ -3,17 +3,16 @@ import { useFonts } from "expo-font";
 import { Stack } from "expo-router";
 import * as SplashScreen from "expo-splash-screen";
 import { useEffect } from "react";
-import "react-native-reanimated";
+
 import { useColorScheme } from "@/hooks/useColorScheme";
 import { useThemeColorWithName } from "@/hooks/useThemeColor";
 import { ExpenseProvider } from "@/context/ExpanseContext";
-
-import { NavigationContainer } from "@react-navigation/native";
 
 // Prevent the splash screen from auto-hiding before asset loading is complete.
 SplashScreen.preventAutoHideAsync();
 
 import { configureReanimatedLogger, ReanimatedLogLevel } from "react-native-reanimated";
+import { StatusBar } from "expo-status-bar";
 
 // This is the default configuration
 configureReanimatedLogger({
@@ -42,16 +41,24 @@ export default function RootLayout() {
   return (
     <ThemeProvider value={colorScheme === "dark" ? DarkTheme : DefaultTheme}>
       <ExpenseProvider>
+        <StatusBar
+          translucent
+          hideTransitionAnimation="fade"
+          hidden={true}
+          backgroundColor="transparent"
+          // hidden
+          networkActivityIndicatorVisible
+        />
         <Stack>
           <Stack.Screen name="(tabs)" options={{ headerShown: false }} />
           <Stack.Screen name="+not-found" />
           <Stack.Screen
             name="entries/income"
             options={{
-              title: "Income: Add Money",
+              title: "",
               headerShadowVisible: false,
               headerTransparent: true,
-              headerTitleAlign: "center",
+              headerBackVisible: false,
               headerTintColor: headerTextColor,
             }}
           />
@@ -61,6 +68,7 @@ export default function RootLayout() {
               title: "",
               headerShadowVisible: false,
               headerTransparent: true,
+              headerBackVisible: false,
               headerTintColor: headerTextColor,
             }}
           />
@@ -71,31 +79,35 @@ export default function RootLayout() {
               // title: "Contribute: Kon kon paisa dega  ",
               headerShadowVisible: false,
               headerTransparent: true,
+              headerBackVisible: false,
               headerTintColor: headerTextColor,
             }}
           />
           <Stack.Screen
             name="entries/payble"
             options={{
-              title: "payble: or kitneko paisa doo",
+              title: "",
               headerShadowVisible: false,
               headerTransparent: true,
+              headerBackVisible: false,
               headerTintColor: headerTextColor,
             }}
           />
           <Stack.Screen
             name="setting"
             options={{
-              title: "Settings",
+              title: "",
               headerShadowVisible: false,
+              headerLargeTitle: true,
               headerTransparent: true,
+              headerBackVisible: false,
               headerTintColor: headerTextColor,
             }}
           />
           <Stack.Screen
             name="groups/[groupId]"
             options={{
-              title: "gggg",
+              title: "",
               headerShadowVisible: false,
               headerTransparent: true,
               headerTintColor: headerTextColor,
@@ -103,6 +115,15 @@ export default function RootLayout() {
           />
           <Stack.Screen
             name="groups/create"
+            options={{
+              title: "",
+              headerShadowVisible: false,
+              headerTransparent: true,
+              headerTintColor: headerTextColor,
+            }}
+          />
+          <Stack.Screen
+            name="notification"
             options={{
               title: "",
               headerShadowVisible: false,

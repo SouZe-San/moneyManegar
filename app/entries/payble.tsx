@@ -8,107 +8,198 @@ import { ThemedView } from "@/components/ThemedView";
 import { globalStyles } from "@/constants/globalStyles";
 import { useThemeColorWithName } from "@/hooks/useThemeColor";
 import { useState } from "react";
-import { ScrollView, Text, View } from "react-native";
+import { ScrollView, Alert, View } from "react-native";
 import DateView from "@/components/inputs/DateView";
+import ImageHeader from "@/components/comp/ImageHeader";
+import { useRouter } from "expo-router";
+import EasyAlert from "@/components/comp/EasyAlert";
 
 //! TO whom I have to pay
 export function payble() {
+  // States
   const [amount, setAmount] = useState("");
   const [expenseType, setExpenseType] = useState("");
-  const iconColor = useThemeColorWithName("inputIcon");
+  const [toWhom, setToWhom] = useState("");
+  const [expanseReason, setExpanseReason] = useState("");
   const [date, setDate] = useState(dayjs());
 
+  // Colors
+  const backgroundColor = useThemeColorWithName("background");
   const horain = useThemeColorWithName("navBg");
+  const iconColor = useThemeColorWithName("inputIcon");
+  // Routes
+  const router = useRouter();
+
+  // FUNCTIONS
+
+  // Final Submit
+  function finalSubmit() {
+    // Check if the amount is empty
+
+    if (amount.trim() === "" || amount === "0") {
+      // Show an alert or feedback to the user
+      console.log("Amount is empty");
+      EasyAlert("Amount is empty", "Please enter the amount to continue");
+      return;
+    }
+    // Check if the expanseReason is empty
+    if (expanseReason.trim() === "") {
+      // Show an alert or feedback to the user
+      console.log("Expanse Reason is empty");
+      EasyAlert("Why is empty", "Please enter the Reason to continue");
+      return;
+    }
+    // Check if the expenseType is empty
+    if (expenseType.trim() === "") {
+      // Show an alert or feedback to the user
+      console.log("Expense Type is empty");
+      EasyAlert("Type is Not Selected", "Type should be selected to continue");
+      return;
+    }
+    // Check if the Debt Person Name is empty
+    if (toWhom.trim() === "") {
+      // Show an alert or feedback to the user
+      console.log("Person's is empty");
+      EasyAlert("Name Missing", "Owned Person's Name should be selected to continue");
+      return;
+    }
+
+    // All Checks Pass
+    // Submit the data to the serve
+    const data = {
+      amount,
+      date,
+      expanseReason,
+      expenseType,
+      toWhom,
+    };
+    console.log("====================================");
+    console.log(" Data", data);
+    console.log("====================================");
+
+    Alert.alert(
+      "Success",
+      "Your Udhary Successfully Added",
+      [
+        {
+          text: "OK",
+          onPress: () => router.push("/(tabs)"),
+        },
+      ],
+      {
+        cancelable: false,
+      }
+    );
+  }
+
   return (
-    <ThemedView style={globalStyles.mainContainer}>
-      <ThemedText type="tabTitle"> I Owned Others &#59;&#41;</ThemedText>
-      <View
+    <ThemedView style={globalStyles.entriesViewContainer}>
+      <ImageHeader url={require("@/assets/images/entries/debt.webp")} />
+      <ThemedText
+        type="tabTitle"
         style={{
-          display: "flex",
-          flexGrow: 0,
-          marginTop: 50,
           width: "100%",
-          gap: 10,
+          paddingHorizontal: 15,
+          marginTop: 40,
+          textShadowColor: "black",
+          textShadowOffset: { width: 1.4, height: 1 },
+          textShadowRadius: 4,
         }}
       >
-        <View>
-          <InputWithIcon
-            icon={<MoneyBagIcon color={iconColor} />}
-            placeholder="00.0 INR"
-            value={amount}
-            setValue={setAmount}
-          />
-        </View>
-        <View>
-          <InputWithIcon
-            icon={<UserIcon color={iconColor} />}
-            placeholder="To Whom"
-            value={amount}
-            setValue={setAmount}
-            keyboardType="default"
-          />
-        </View>
-        <View>
-          <InputWithIcon
-            icon={<BagIcon color={iconColor} />}
-            placeholder="For What ?"
-            value={amount}
-            setValue={setAmount}
-            keyboardType="default"
-          />
+        {" "}
+        I owe Others &#59;&#41;
+      </ThemedText>
+
+      <View style={[globalStyles.inputContainer, { backgroundColor }]}>
+        <View
+          style={[
+            {
+              display: "flex",
+              flexGrow: 0,
+              width: "100%",
+              gap: 10,
+            },
+          ]}
+        >
+          <View>
+            <InputWithIcon
+              icon={<MoneyBagIcon color={iconColor} />}
+              placeholder="00.0 INR"
+              value={amount}
+              setValue={setAmount}
+            />
+          </View>
+          <View>
+            <InputWithIcon
+              icon={<UserIcon color={iconColor} />}
+              placeholder="To Whom"
+              value={toWhom}
+              setValue={setToWhom}
+              keyboardType="default"
+            />
+          </View>
+          <View>
+            <InputWithIcon
+              icon={<BagIcon color={iconColor} />}
+              placeholder="For What ?"
+              value={expanseReason}
+              setValue={setExpanseReason}
+              keyboardType="default"
+            />
+          </View>
+
+          <View>
+            <DateView date={date} setDate={setDate} />
+          </View>
+
+          <View>
+            <ExpanseType setValue={setExpenseType} value={expenseType} />
+          </View>
         </View>
 
-        <View>
-          <DateView date={date} setDate={setDate} />
-        </View>
-
-        <View>
-          <ExpanseType setValue={setExpenseType} value={expenseType} />
-        </View>
-      </View>
-
-      <View
-        style={{
-          width: "90%",
-          marginHorizontal: 10,
-          marginTop: 30,
-          height: 1,
-          backgroundColor: horain,
-        }}
-      ></View>
-      {/* All Debt */}
-      <ScrollView
-        style={{
-          marginTop: 10,
-          paddingVertical: 10,
-          flex: 1,
-
-          width: "100%",
-        }}
-      >
         <View
           style={{
+            width: "90%",
+            marginHorizontal: 10,
+            marginTop: 30,
+            height: 1,
+            backgroundColor: horain,
+          }}
+        ></View>
+        {/* All Debt */}
+        <ScrollView
+          style={{
+            marginTop: 10,
+            paddingVertical: 10,
             flex: 1,
+
+            width: "100%",
+          }}
+        >
+          <View
+            style={{
+              flex: 1,
+              justifyContent: "center",
+              alignItems: "center",
+            }}
+          >
+            <ThemedText type="subtitle">All Debt Listed @_@</ThemedText>
+          </View>
+        </ScrollView>
+
+        {/* Submit Button */}
+        <View
+          style={{
+            position: "absolute",
+            bottom: 30,
+            width: "100%",
+            left: 10,
             justifyContent: "center",
             alignItems: "center",
           }}
         >
-          <ThemedText type="subtitle">All Debt Listed @_@</ThemedText>
+          <SubmitButton button_label="Add Debt" onPress={() => finalSubmit()} />
         </View>
-      </ScrollView>
-
-      {/* Submit Button */}
-      <View
-        style={{
-          position: "absolute",
-          bottom: 30,
-          width: "100%",
-          left: 10,
-          justifyContent: "center",
-          alignItems: "center",
-        }}
-      >
-        <SubmitButton button_label="Add Debt" onPress={() => console.log("submit")} />
       </View>
     </ThemedView>
   );
