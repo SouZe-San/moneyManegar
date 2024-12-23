@@ -3,7 +3,7 @@ import { useFonts } from "expo-font";
 import { Stack } from "expo-router";
 import * as SplashScreen from "expo-splash-screen";
 import { useEffect } from "react";
-
+import { SQLiteProvider } from "expo-sqlite";
 import { useColorScheme } from "@/hooks/useColorScheme";
 import { useThemeColorWithName } from "@/hooks/useThemeColor";
 import { ExpenseProvider } from "@/context/ExpanseContext";
@@ -13,6 +13,7 @@ SplashScreen.preventAutoHideAsync();
 
 import { configureReanimatedLogger, ReanimatedLogLevel } from "react-native-reanimated";
 import { StatusBar } from "expo-status-bar";
+import { migrateDbIfNeeded } from "@/hooks/useStorage";
 
 // This is the default configuration
 configureReanimatedLogger({
@@ -40,99 +41,101 @@ export default function RootLayout() {
 
   return (
     <ThemeProvider value={colorScheme === "dark" ? DarkTheme : DefaultTheme}>
-      <ExpenseProvider>
-        <StatusBar
-          translucent
-          hideTransitionAnimation="fade"
-          hidden={true}
-          backgroundColor="transparent"
-          // hidden
-          networkActivityIndicatorVisible
-        />
-        <Stack>
-          <Stack.Screen name="(tabs)" options={{ headerShown: false }} />
-          <Stack.Screen name="+not-found" />
-          <Stack.Screen
-            name="entries/income"
-            options={{
-              title: "",
-              headerShadowVisible: false,
-              headerTransparent: true,
-              headerBackVisible: false,
-              headerTintColor: headerTextColor,
-            }}
+      <SQLiteProvider databaseName="test.db" onInit={migrateDbIfNeeded}>
+        <ExpenseProvider>
+          <StatusBar
+            translucent
+            hideTransitionAnimation="fade"
+            hidden={true}
+            backgroundColor="transparent"
+            // hidden
+            networkActivityIndicatorVisible
           />
-          <Stack.Screen
-            name="entries/expense"
-            options={{
-              title: "",
-              headerShadowVisible: false,
-              headerTransparent: true,
-              headerBackVisible: false,
-              headerTintColor: headerTextColor,
-            }}
-          />
-          <Stack.Screen
-            name="entries/contribute"
-            options={{
-              title: "",
-              // title: "Contribute: Kon kon paisa dega  ",
-              headerShadowVisible: false,
-              headerTransparent: true,
-              headerBackVisible: false,
-              headerTintColor: headerTextColor,
-            }}
-          />
-          <Stack.Screen
-            name="entries/payble"
-            options={{
-              title: "",
-              headerShadowVisible: false,
-              headerTransparent: true,
-              headerBackVisible: false,
-              headerTintColor: headerTextColor,
-            }}
-          />
-          <Stack.Screen
-            name="setting"
-            options={{
-              title: "",
-              headerShadowVisible: false,
-              headerLargeTitle: true,
-              headerTransparent: true,
-              headerBackVisible: false,
-              headerTintColor: headerTextColor,
-            }}
-          />
-          <Stack.Screen
-            name="groups/[groupId]"
-            options={{
-              title: "",
-              headerShadowVisible: false,
-              headerTransparent: true,
-              headerTintColor: headerTextColor,
-            }}
-          />
-          <Stack.Screen
-            name="groups/create"
-            options={{
-              title: "",
-              headerShadowVisible: false,
-              headerTransparent: true,
-              headerTintColor: headerTextColor,
-            }}
-          />
-          <Stack.Screen
-            name="notification"
-            options={{
-              title: "",
-              headerShadowVisible: false,
-              headerTransparent: true,
-              headerTintColor: headerTextColor,
-            }}
-          />
-        </Stack>
-      </ExpenseProvider>
+          <Stack>
+            <Stack.Screen name="(tabs)" options={{ headerShown: false }} />
+            <Stack.Screen name="+not-found" />
+            <Stack.Screen
+              name="entries/income"
+              options={{
+                title: "",
+                headerShadowVisible: false,
+                headerTransparent: true,
+                headerBackVisible: false,
+                headerTintColor: headerTextColor,
+              }}
+            />
+            <Stack.Screen
+              name="entries/expense"
+              options={{
+                title: "",
+                headerShadowVisible: false,
+                headerTransparent: true,
+                headerBackVisible: false,
+                headerTintColor: headerTextColor,
+              }}
+            />
+            <Stack.Screen
+              name="entries/contribute"
+              options={{
+                title: "",
+                // title: "Contribute: Kon kon paisa dega  ",
+                headerShadowVisible: false,
+                headerTransparent: true,
+                headerBackVisible: false,
+                headerTintColor: headerTextColor,
+              }}
+            />
+            <Stack.Screen
+              name="entries/payble"
+              options={{
+                title: "",
+                headerShadowVisible: false,
+                headerTransparent: true,
+                headerBackVisible: false,
+                headerTintColor: headerTextColor,
+              }}
+            />
+            <Stack.Screen
+              name="setting"
+              options={{
+                title: "",
+                headerShadowVisible: false,
+                headerLargeTitle: true,
+                headerTransparent: true,
+                headerBackVisible: false,
+                headerTintColor: headerTextColor,
+              }}
+            />
+            <Stack.Screen
+              name="groups/[groupId]"
+              options={{
+                title: "",
+                headerShadowVisible: false,
+                headerTransparent: true,
+                headerTintColor: headerTextColor,
+              }}
+            />
+            <Stack.Screen
+              name="groups/create"
+              options={{
+                title: "",
+                headerShadowVisible: false,
+                headerTransparent: true,
+                headerTintColor: headerTextColor,
+              }}
+            />
+            <Stack.Screen
+              name="notification"
+              options={{
+                title: "",
+                headerShadowVisible: false,
+                headerTransparent: true,
+                headerTintColor: headerTextColor,
+              }}
+            />
+          </Stack>
+        </ExpenseProvider>
+      </SQLiteProvider>
     </ThemeProvider>
   );
 }

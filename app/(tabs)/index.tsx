@@ -2,6 +2,8 @@ import { StyleSheet, View, Text, Image, FlatList, ScrollView } from "react-nativ
 import { useRouter } from "expo-router";
 import { useState, useRef, useCallback } from "react";
 import { PieChartPro } from "react-native-gifted-charts";
+import { useSQLiteContext } from "expo-sqlite";
+import { useDrizzleStudio } from "expo-drizzle-studio-plugin";
 
 // Components
 import SingleBox from "@/components/SingleBox";
@@ -34,11 +36,19 @@ export default function HomeScreen() {
   const balanceBg = useThemeColorWithName("highLightBackground");
   const text = useThemeColorWithName("text");
 
+  // States
   const [modalVisible, setModalVisible] = useState(false);
   const [memberId, setMemberId] = useState<string | null>(null);
+
+  // modal Reference
   const ref = useRef<BottomSheetRefProps>(null);
 
+  const db = useSQLiteContext();
+  useDrizzleStudio(db);
+
   const { totalIncome, totalExpense, leftBalance } = useExpense();
+
+  // Router
   const router = useRouter();
 
   // Open Modal
