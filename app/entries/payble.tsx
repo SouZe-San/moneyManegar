@@ -101,7 +101,7 @@ export function payble() {
           width: "100%",
           paddingHorizontal: 15,
           marginTop: 40,
-          textShadowColor: "black",
+          textShadowColor: backgroundColor,
           textShadowOffset: { width: 1.4, height: 1 },
           textShadowRadius: 4,
         }}

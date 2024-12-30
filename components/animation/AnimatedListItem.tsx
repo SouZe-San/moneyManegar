@@ -8,11 +8,11 @@ import Animated, {
   FadeOut,
   LinearTransition,
 } from "react-native-reanimated";
-import { IExpanse } from "@/types/expanse";
+import { IUdahar } from "@/types/expanse";
 
 type ListItemProps = ViewProps & {
   viewableItems: SharedValue<ViewToken[]>;
-  item: IExpanse;
+  item: IUdahar;
 };
 
 const AnimatedListItem = React.memo(
@@ -21,14 +21,10 @@ const AnimatedListItem = React.memo(
       const isVisible = Boolean(
         viewableItems.value
           .filter((item) => item.isViewable)
-          .find((viewableItem) => viewableItem.item.transactionId === item.transactionId)
+          .find((viewableItem) => viewableItem.item._id === item._id)
       );
 
       return {
-        // opacity: withTiming(isVisible ? 1 : 0, {
-        //   duration: 300, // Adjust duration for smoother transition
-        //   easing: Easing.out(Easing.exp), // Use an easing function for smoother transitions
-        // }),
         transform: [
           {
             scale: withTiming(isVisible ? 1 : 0.2, {

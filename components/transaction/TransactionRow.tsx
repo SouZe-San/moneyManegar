@@ -11,12 +11,12 @@ import ReanimatedSwipeable, {
 } from "react-native-gesture-handler/ReanimatedSwipeable";
 
 type TransactionProps = {
-  transactionId: string;
+  transactionId: number;
+  expanseAmount: number;
+  transactionType: "debt" | "owned";
   expanseType: "Food" | "Fuel" | "Shopping" | "Recharge" | "Travels" | "Others" | "Rent" | "Bill";
   expanseDescription: string;
-  expanseData?: string;
-  expanseAmount: number;
-  transactionType: "debit" | "expense" | "income" | "credit";
+  expanseData: string;
   toWhom?: string;
   onSwipeableWillOpen: (id: string) => void;
   onSwipeableWillClose: (id: string) => void;
@@ -43,21 +43,17 @@ const TransactionRow = ({
 
   const swipeableRef = useRef<SwipeableMethods | null>(null);
 
-  const addTransactionAmount = (
-    amount: number,
-    expanseType: "debit" | "expense" | "income" | "credit",
-    transactionId: string
-  ) => {
-    if (expanseType === "debit" || expanseType === "expense") {
+  const addTransactionAmount = (amount: number, type: "debt" | "owned", transactionId: number) => {
+    if (type === "debt") {
       addExpense(amount);
     } else {
       addIncome(amount);
     }
-    removeTransaction(transactionId);
+    // removeTransaction(transactionId);
   };
 
   useEffect(() => {
-    if (openedItem === transactionId) {
+    if (openedItem === transactionId.toString()) {
       swipeableRef.current?.openLeft();
     } else {
       swipeableRef.current?.close();
@@ -65,13 +61,9 @@ const TransactionRow = ({
   }, [openedItem]);
 
   //^ Pay tab
-  const RightActions = (
-    amount: number,
-    expanseType: "debit" | "expense" | "income" | "credit",
-    transactionId: string
-  ) => {
+  const RightActions = (amount: number, type: "debt" | "owned", transactionId: number) => {
     return (
-      <TouchableOpacity onPress={() => addTransactionAmount(amount, expanseType, transactionId)}>
+      <TouchableOpacity onPress={() => addTransactionAmount(amount, type, transactionId)}>
         <View
           style={{
             alignItems: "center",
@@ -101,9 +93,9 @@ const TransactionRow = ({
   };
 
   //^ Delete tab
-  const LeftActions = (transactionId: string): React.JSX.Element => {
+  const LeftActions = (transactionId: number): React.JSX.Element => {
     return (
-      <TouchableOpacity onPress={() => removeTransaction(transactionId)}>
+      <TouchableOpacity onPress={() => removeTransaction(transactionId.toString())}>
         <View
           style={{
             alignItems: "center",
@@ -136,8 +128,8 @@ const TransactionRow = ({
     <ReanimatedSwipeable
       renderLeftActions={() => LeftActions(transactionId)}
       renderRightActions={() => RightActions(expanseAmount, transactionType, transactionId)}
-      onSwipeableClose={() => onSwipeableWillClose(transactionId)}
-      onSwipeableOpen={() => onSwipeableWillOpen(transactionId)}
+      onSwipeableClose={() => onSwipeableWillClose(transactionId.toString())}
+      onSwipeableOpen={() => onSwipeableWillOpen(transactionId.toString())}
       ref={swipeableRef}
     >
       <View
@@ -174,11 +166,7 @@ const TransactionRow = ({
           <View style={styles.expanseAmount}>
             <ThemedText type="defaultSemiBold">₹{expanseAmount}</ThemedText>
             <Text style={{ fontSize: 10 }}>
-              {transactionType === "debit" || transactionType === "expense" ? (
-                <UpIcon color="red" />
-              ) : (
-                <DownIcon color="green" />
-              )}
+              {transactionType === "debt" ? <UpIcon color="red" /> : <DownIcon color="green" />}
             </Text>
           </View>
         </View>

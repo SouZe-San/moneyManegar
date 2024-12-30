@@ -1,6 +1,20 @@
 import { type SQLiteDatabase, openDatabaseSync } from "expo-sqlite";
 
-// const db = openDatabaseSync("db");
+// const transactionStatement = db.prepareSync(
+//   "INSERT INTO AllTransactions ( amount,type,expanseType,date,expanseDesc,memberId,toWhom) VALUES ($amount, $type, $expanseType, $date, $expanseDesc, $memberId, $toWhom)"
+// );
+// export const UdharTransactions = db.prepareSync(
+//   "INSERT INTO UdharTransactions (amount,type ,expenseType ,date ,toWhom ,expanseDesc ,memberId ) VALUES ($amount,$type ,$expenseType ,$date ,$toWhom ,$expanseDesc ,$memberId )"
+// );
+
+// export const memberStatement = db.prepareSync("INSERT INTO MemberTable (name) VALUES ($name)");
+
+// export const groupStatement = db.prepareSync(
+//   "INSERT INTO GroupTable (name,logo) VALUES ($name, $logo)"
+// );
+// export const groupMemberStatement = db.prepareSync(
+//   "INSERT INTO Group_Member (groupId, memberId) VALUES ($groupId, $memberId)"
+// );
 
 export const migrateDbIfNeeded = async (db: SQLiteDatabase) => {
   await db.execAsync(`
@@ -11,7 +25,7 @@ export const migrateDbIfNeeded = async (db: SQLiteDatabase) => {
             _id INTEGER PRIMARY KEY AUTOINCREMENT,
             amount REAL NOT NULL CHECK (amount >= 0), 
             type TEXT NOT NULL,
-            expenseType TEXT DEFAULT 'Other',
+            expenseType TEXT DEFAULT 'Others',
             date TEXT NOT NULL,
             toWhom TEXT NOT NULL DEFAULT 'Own',
             expanseDesc TEXT NOT NULL,

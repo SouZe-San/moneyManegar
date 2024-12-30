@@ -34,7 +34,7 @@ export function income() {
           marginTop: 40,
           textAlign: "center",
           width: "100%",
-          textShadowColor: "black",
+          textShadowColor: backgroundColor,
           textShadowOffset: { width: 1.4, height: 1 },
           textShadowRadius: 4,
         }}

@@ -28,7 +28,7 @@ export const Colors = {
     buttonBg: "#05281d",
     borderColor: "#498428",
     // borderColor: "#3c8600",
-    toggleButton: "#86868630",
+    toggleButton: "#7dbe15d5",
   },
   dark: {
     text: "#ECEDEE",

@@ -4,8 +4,18 @@ export interface IExpanse {
   expanseData: string;
   expanseAmount: number;
   expanseType: "Food" | "Fuel" | "Shopping" | "Recharge" | "Travels" | "Others" | "Rent" | "Bill";
-  type: "debit" | "expense" | "income" | "credit";
+  type: "debit" | "expense" | "income" | "credit" | "debt" | "owned";
   toWhom?: string;
+}
+export interface IUdahar {
+  _id: number;
+  amount: number;
+  type: "debt" | "owned";
+  expenseType: "Food" | "Fuel" | "Shopping" | "Recharge" | "Travels" | "Others" | "Rent" | "Bill";
+  date: string;
+  toWhom: string;
+  expanseDesc: string;
+  memberId: number | null;
 }
 
 export type Members = {

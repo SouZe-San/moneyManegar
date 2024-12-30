@@ -17,12 +17,12 @@ const mem = [
 ];
 
 type SearchProfileSectionProps = {
-  member: Members;
+  member: Members | null;
   setMember: (value: Members) => void;
 };
 
 export default function SearchProfileSection({ member, setMember }: SearchProfileSectionProps) {
-  const [searchName, setSearchName] = useState("");
+  const [searchName, setSearchName] = useState(member ? member.useName : "");
   const [searchResult, setSearchResult] = useState<Members[]>([]);
 
   const iconColor = useThemeColorWithName("inputIcon");
@@ -51,8 +51,8 @@ export default function SearchProfileSection({ member, setMember }: SearchProfil
     //  Add Members
     const addMembers = (newMember: Members) => {
       // Check if the member is already in the group based on useName
-
-      setMember(member);
+      setSearchName(newMember.useName);
+      setMember(newMember);
     };
     return (
       <TouchableOpacity onPress={() => addMembers(member)}>
@@ -68,6 +68,7 @@ export default function SearchProfileSection({ member, setMember }: SearchProfil
           flexDirection: "row",
           justifyContent: "space-between",
           alignItems: "center",
+          marginVertical: 15,
         }}
       >
         <SmallInputBox

@@ -3,7 +3,7 @@ import { ThemedText } from "./ThemedText";
 import { useThemeColorWithName } from "@/hooks/useThemeColor";
 
 type SingleBoxProps = {
-  icon: string;
+  icon: string | React.JSX.Element;
   label: string;
   isSelected?: boolean;
   onPress?: () => void;

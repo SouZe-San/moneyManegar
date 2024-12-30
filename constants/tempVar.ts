@@ -271,6 +271,16 @@ const colorMapping = {
   Rent: "#2DD4BF", // Aqua Cyan - Rent
   Bill: "#6366F1", // Soft Indigo - Bill
 };
+const vibrantLightColorMapping = {
+  Food: "#D32F2F", // Dark Red - Food category
+  Fuel: "#1976D2", // Dark Blue - Fuel
+  Shopping: "#FBC02D", // Bright Yellow - Shopping
+  Recharge: "#388E3C", // Dark Green - Recharge
+  Travels: "#7B1FA2", // Dark Purple - Travels
+  Others: "#757575", // Dark Grey - Others
+  Rent: "#009688", // Teal - Rent
+  Bill: "#5C6BC0", // Medium Indigo - Bill, // Soft Indigo (Distinct but not overwhelming)
+};
 
 const aggregateExpenses = (transactions: AllTransaction[]) => {
   const aggregatedData = transactions.reduce(
@@ -288,7 +298,7 @@ const aggregateExpenses = (transactions: AllTransaction[]) => {
   return Object.entries(aggregatedData).map(([text, value]) => ({
     text,
     value,
-    color: colorMapping[text as keyof typeof colorMapping],
+    color: vibrantLightColorMapping[text as keyof typeof colorMapping],
   }));
 };
 

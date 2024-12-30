@@ -1,9 +1,11 @@
-import { View, StyleSheet, Platform } from "react-native";
+import { View, StyleSheet, Platform, useWindowDimensions, Dimensions } from "react-native";
 // import { BottomTabBarProps } from "@react-navigation/bottom-tabs";
 
 import TabBarButton from "./TabBarButton";
 import { useThemeColorWithName } from "@/hooks/useThemeColor";
 
+const { height: ScreeHeight } = Dimensions.get("screen");
+const { height: windowHeight } = Dimensions.get("window");
 export function CustomTabBar({ state, descriptors, navigation }: any) {
   const backgroundColor = useThemeColorWithName("navBg");
 
@@ -57,7 +59,7 @@ export function CustomTabBar({ state, descriptors, navigation }: any) {
 const tabBarStyle = StyleSheet.create({
   tabBar: {
     position: "absolute",
-    bottom: 20,
+    bottom: ScreeHeight - windowHeight - 20,
     flexDirection: "row",
     // width: 300,
     justifyContent: "space-between",
@@ -69,12 +71,5 @@ const tabBarStyle = StyleSheet.create({
     paddingVertical: 5,
     borderWidth: 1,
     borderColor: "#abcbc49b",
-    shadowColor: "#ecedee",
-    shadowOffset: {
-      width: 0,
-      height: 5,
-    },
-    shadowOpacity: 0.35,
-    shadowRadius: 25,
   },
 });

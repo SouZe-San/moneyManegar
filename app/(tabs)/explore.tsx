@@ -1,21 +1,37 @@
+import { useState, useRef, useCallback } from "react";
 import { StyleSheet, View, TouchableOpacity } from "react-native";
+import { useRouter } from "expo-router";
 
+import BottomSheetModal from "@/components/BottomSheetModal";
+import { BottomSheetRefProps } from "@/components/BottomSheetView";
 import { Collapsible } from "@/components/Collapsible";
+import MemberCreate from "@/components/details/MemberCreate";
 import ParallaxScrollView from "@/components/ParallaxScrollView";
 import { ThemedText } from "@/components/ThemedText";
-
 import ImageAndName from "@/components/profile/ImageAndName";
-import { SettingIcon } from "@/assets/icons/SVG/RandomIcons";
-import { useThemeColorWithName } from "@/hooks/useThemeColor";
-import { useRouter } from "expo-router";
 import SingleBox from "@/components/SingleBox";
-import { groupData } from "@/constants/tempVar";
+
+import { openBottomSheetModal } from "@/hooks/useFunc";
+import { useThemeColorWithName } from "@/hooks/useThemeColor";
+
+import { SettingIcon } from "@/assets/icons/SVG/RandomIcons";
+import { UserIcon, GroupsIcon } from "@/assets/icons/SVG/InputIcons";
 
 export default function TabTwoScreen() {
   const iconColor = useThemeColorWithName("icon");
   const bg = useThemeColorWithName("blurBg");
 
+  // States
+  const [modalVisible, setModalVisible] = useState(false);
+
+  // modal Reference
+  const ref = useRef<BottomSheetRefProps>(null);
+
   const router = useRouter();
+  // Open Modal
+  const onPress = useCallback(() => {
+    openBottomSheetModal(ref, setModalVisible);
+  }, []);
 
   return (
     <ParallaxScrollView
@@ -25,20 +41,30 @@ export default function TabTwoScreen() {
       {/* Account Info */}
 
       <ThemedText type="subtitle">Account</ThemedText>
-      <Collapsible title="Personal Info" iconName="userIcon">
+      <Collapsible title="Personal " iconName="userIcon">
         <View>
           <ThemedText>
-            <ThemedText type="defaultSemiBold">Name: </ThemedText>
-            Soumyajit Mondal
+            <ThemedText style={{ fontSize: 15 }} type="smallText">
+              E-mail :{" "}
+            </ThemedText>
+            No Mail
+          </ThemedText>
+          <ThemedText>
+            <ThemedText style={{ fontSize: 15 }} type="smallText">
+              Status :{" "}
+            </ThemedText>
+            Offline
           </ThemedText>
 
           <ThemedText>
-            <ThemedText type="defaultSemiBold">Email: </ThemedText>
-            No Mail
+            <ThemedText style={{ fontSize: 15 }} type="smallText">
+              Situation :{" "}
+            </ThemedText>
+            Broke
           </ThemedText>
 
           <ThemedText type="defaultSemiBold" style={{ marginTop: 10 }}>
-            My Groups{" "}
+            Add New
           </ThemedText>
           <View
             style={{
@@ -46,17 +72,24 @@ export default function TabTwoScreen() {
               marginVertical: 5,
               flexWrap: "wrap",
               flexDirection: "row",
+              position: "relative",
             }}
           >
-            {groupData.map((group) => (
-              <SingleBox
-                key={group.groupId}
-                label={group.groupName}
-                icon={group.groupIcon}
-                onPress={() => router.push(`/groups/${group.groupId}`)}
-              />
-            ))}
-            <SingleBox label="Add" icon="➕" onPress={() => router.push("/groups/create")} />
+            <SingleBox
+              label="Member"
+              icon={<UserIcon color={iconColor} />}
+              onPress={() => onPress()}
+            />
+            <SingleBox
+              label="Group"
+              icon={<GroupsIcon color={iconColor} />}
+              onPress={() => router.push("/groups/create")}
+            />
+
+            <BottomSheetModal isOpen={modalVisible} setIsOpen={setModalVisible} ref={ref}>
+              <MemberCreate />
+              {/* <ThemedText>HEkko</ThemedText> */}
+            </BottomSheetModal>
           </View>
         </View>
       </Collapsible>

@@ -12,7 +12,7 @@ interface RedirectButtonProps {
 
 const RedirectButton = ({ label, icon, redirectUrl = "/(tabs)" }: RedirectButtonProps) => {
   const bg = useThemeColorWithName("blurBg");
-  const balanceBg = useThemeColorWithName("highLightBackground");
+  const balanceBg = useThemeColorWithName("navBg");
   const text = useThemeColorWithName("text");
   const router = useRouter();
   return (
@@ -23,7 +23,7 @@ const RedirectButton = ({ label, icon, redirectUrl = "/(tabs)" }: RedirectButton
         borderRadius: 10,
         borderWidth: 1,
         borderColor: bg,
-        backgroundColor: bg,
+        backgroundColor: balanceBg,
         marginVertical: 5,
       }}
     >
@@ -34,7 +34,9 @@ const RedirectButton = ({ label, icon, redirectUrl = "/(tabs)" }: RedirectButton
       >
         <View style={{ flexDirection: "row", alignItems: "center", gap: 10 }}>
           {icon}
-          <ThemedText type="defaultSemiBold">{label}</ThemedText>
+          <ThemedText type="defaultSemiBold" colorName="antiFlashWhite">
+            {label}
+          </ThemedText>
         </View>
         <RightArrowIcon color={text} />
       </TouchableOpacity>

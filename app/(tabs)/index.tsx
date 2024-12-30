@@ -152,7 +152,6 @@ export default function HomeScreen() {
               flexGrow: 0,
               marginVertical: 5,
               flexWrap: "wrap",
-              flexDirection: "row",
             }}
           >
             <FlatList
@@ -205,7 +204,6 @@ export default function HomeScreen() {
         <View style={{ position: "relative" }}>
           <BottomSheetModal isOpen={modalVisible} setIsOpen={setModalVisible} ref={ref}>
             <MemberDetails id={memberId} />
-            {/* <ThemedText>HEkko</ThemedText> */}
           </BottomSheetModal>
         </View>
         {/*//! Two Chart */}
