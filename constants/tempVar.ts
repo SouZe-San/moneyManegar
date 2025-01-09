@@ -1,8 +1,8 @@
-import { Groups, IExpanse, expanseType } from "@/types/expanse";
+import { Groups, IExpanse, IUdahar, expenseType } from "@/types/expanse";
 
 export const USERNAME = "souze";
 
-const expanseTypes = ["Food", "Fuel", "Shopping", "Recharge", "Travels", "Others", "Rent", "Bill"];
+const expenseTypes = ["Food", "Fuel", "Shopping", "Recharge", "Travels", "Others", "Rent", "Bill"];
 
 const getRandomDate = () => {
   const start = new Date(2021, 0, 1); // Start date: January 1, 2021
@@ -14,122 +14,117 @@ const getRandomDate = () => {
 const getRandomElement = (arr: any) => arr[Math.floor(Math.random() * arr.length)];
 
 const getRandomAmount = () => (Math.random() * 1000).toFixed(2); // Random amount between 0 and 1000
-export const expenses: IExpanse[] = [
+export const udharArray: IUdahar[] = [
   {
-    transactionId: "1",
-    expanseDescription: "Scuty's Fuel",
-    expanseData: "10-21-21",
-    expanseAmount: 200.0,
-    expanseType: "Fuel",
-    type: "expense",
+    expanseDesc: "Scuty's Fuel",
+    date: "10-21-21",
+    amount: 200.0,
+    expenseType: "Fuel",
+    type: "debt",
+    memberId: null,
+    toWhom: "Ajay",
   },
   // You can add more expense objects here
   {
-    transactionId: "2",
-    expanseDescription: "Grocery Shopping",
-    expanseData: "10-22-21",
-    expanseAmount: 150.0,
-    expanseType: "Food",
-    type: "income",
+    expanseDesc: "Grocery Shopping",
+    date: "10-22-21",
+    amount: 150.0,
+    expenseType: "Food",
+    type: "owned",
     toWhom: "Dada",
+    memberId: null,
   },
   {
-    transactionId: "3",
-    expanseDescription: "Travel to City",
-    expanseData: "10-23-21",
-    expanseAmount: 300.0,
-    expanseType: "Travels",
-    type: "debit",
-  },
-  {
-    transactionId: "4",
-    expanseDescription: "Recharge Mobile",
-    expanseData: "10-24-21",
-    expanseAmount: 50.0,
-    expanseType: "Recharge",
-    type: "expense",
-  },
-  {
-    transactionId: "5",
-    expanseDescription: "Clothing Shopping",
-    expanseData: "10-25-21",
-    expanseAmount: 120.0,
-    expanseType: "Shopping",
-    type: "credit",
+    expanseDesc: "Travel to City",
+    date: "10-23-21",
+    amount: 300.0,
+    expenseType: "Travels",
+    type: "debt",
+    memberId: null,
     toWhom: "Ajay",
   },
   {
-    transactionId: "6",
-    expanseDescription: "Miscellaneous",
-    expanseData: "10-26-21",
-    expanseAmount: 80.0,
-    expanseType: "Others",
-    type: "expense",
+    expanseDesc: "Recharge Mobile",
+    date: "10-24-21",
+    amount: 50.0,
+    expenseType: "Recharge",
+    type: "debt",
+    memberId: null,
+    toWhom: "suro",
+  },
+  {
+    expanseDesc: "Clothing Shopping",
+    date: "10-25-21",
+    amount: 120.0,
+    expenseType: "Shopping",
+    type: "owned",
+    toWhom: "Ajay",
+    memberId: null,
+  },
+  {
+    expanseDesc: "Miscellaneous",
+    date: "10-26-21",
+    amount: 80.0,
+    expenseType: "Others",
+    type: "debt",
     toWhom: "Friend",
+    memberId: null,
   },
   {
-    transactionId: "7",
-    expanseDescription: "Grocery Shopping",
-    expanseData: "10-22-21",
-    expanseAmount: 150.0,
-    expanseType: "Food",
-    type: "income",
+    expanseDesc: "Grocery Shopping",
+    date: "10-22-21",
+    amount: 150.0,
+    expenseType: "Food",
+    type: "owned",
     toWhom: "Dada",
+    memberId: null,
   },
   {
-    transactionId: "8",
-    expanseDescription: "Travel to City",
-    expanseData: "10-23-21",
-    expanseAmount: 300.0,
-    expanseType: "Travels",
-    type: "debit",
-  },
-  {
-    transactionId: "9",
-    expanseDescription: "Recharge Mobile",
-    expanseData: "10-24-21",
-    expanseAmount: 50.0,
-    expanseType: "Recharge",
-    type: "expense",
-  },
-  {
-    transactionId: "10",
-    expanseDescription: "Clothing Shopping",
-    expanseData: "10-25-21",
-    expanseAmount: 120.0,
-    expanseType: "Shopping",
-    type: "credit",
+    expanseDesc: "Travel to City",
+    date: "10-23-21",
+    amount: 300.0,
+    expenseType: "Travels",
+    type: "debt",
+    memberId: null,
     toWhom: "Ajay",
   },
   {
-    transactionId: "11",
-    expanseDescription: "Miscellaneous",
-    expanseData: "10-26-21",
-    expanseAmount: 80.0,
-    expanseType: "Others",
-    type: "expense",
-    toWhom: "Friend",
+    expanseDesc: "Recharge Mobile",
+    date: "10-24-21",
+    amount: 50.0,
+    expenseType: "Recharge",
+    type: "debt",
+    memberId: null,
+    toWhom: "Ajay",
   },
-  // ...new Array(10).fill(0).map(
-  //   (_, index) =>
-  //     ({
-  //       transactionId: (index + 12).toString(),
-  //       expanseDescription: "Scuty's Fuel",
-  //       expanseData: "10-21-21",
-  //       expanseAmount: 200.0,
-  //       expanseType: expanseTypes(index),
-  //       type: "expense",
-  //     } as const)
-  // ),
+  {
+    expanseDesc: "Clothing Shopping",
+    date: "10-25-21",
+    amount: 120.0,
+    expenseType: "Shopping",
+    type: "owned",
+    memberId: null,
+    toWhom: "Ajay",
+  },
+  {
+    expanseDesc: "Miscellaneous",
+    date: "10-26-21",
+    amount: 80.0,
+    expenseType: "Others",
+    type: "debt",
+    toWhom: "Friend",
+    memberId: null,
+  },
   ...new Array(10).fill(0).map(
     (_, index) =>
       ({
-        transactionId: (index + 12).toString(),
-        expanseDescription: "Scuty's Fuel",
-        expanseData: getRandomDate(),
-        expanseAmount: parseFloat(getRandomAmount()),
-        expanseType: getRandomElement(expanseTypes),
-        type: Math.random() < 0.5 ? "expense" : "income", // Randomly choose between "expense" and "income"
+        amount: parseFloat(getRandomAmount()),
+        type: Math.random() < 0.5 ? "debt" : "owned",
+        expenseType: getRandomElement(expenseTypes),
+        date: getRandomDate(),
+        expanseDesc: "Scuty's Fuel",
+        memberId: null,
+        toWhom: Math.random() < 0.5 ? "future" : getRandomElement(toWhomOptions),
       } as const)
   ),
 ];
@@ -140,11 +135,11 @@ export const groupData: Groups[] = [
     groupName: "Family",
     members: [
       {
-        useName: "Dada",
+        userName: "Dada",
         useId: "lkf",
       },
       {
-        useName: "baba",
+        userName: "baba",
         useId: "lk34",
       },
     ],
@@ -155,11 +150,11 @@ export const groupData: Groups[] = [
     groupName: "Friends",
     members: [
       {
-        useName: "Ajay",
+        userName: "Ajay",
         useId: "4234",
       },
       {
-        useName: "Vijay",
+        userName: "Vijay",
         useId: "234",
       },
     ],
@@ -170,11 +165,11 @@ export const groupData: Groups[] = [
     groupName: "Friends",
     members: [
       {
-        useName: "Ajay",
+        userName: "Ajay",
         useId: "4234",
       },
       {
-        useName: "Vijay",
+        userName: "Vijay",
         useId: "234",
       },
     ],
@@ -185,11 +180,11 @@ export const groupData: Groups[] = [
     groupName: "Friends",
     members: [
       {
-        useName: "Ajay",
+        userName: "Ajay",
         useId: "4234",
       },
       {
-        useName: "Vijay",
+        userName: "Vijay",
         useId: "234",
       },
     ],
@@ -202,7 +197,7 @@ type AllTransaction = {
   expanseDescription: string;
   expanseData: string;
   expanseAmount: number;
-  expanseType: "Food" | "Fuel" | "Shopping" | "Recharge" | "Travels" | "Others" | "Rent" | "Bill";
+  expenseType: "Food" | "Fuel" | "Shopping" | "Recharge" | "Travels" | "Others" | "Rent" | "Bill";
   type: "debit" | "expense" | "income" | "credit";
   toWhom: "own" | string;
 };
@@ -215,7 +210,7 @@ export const allTransactions: AllTransaction[] = new Array(30).fill(0).map((_, i
   expanseDescription: "Scuty's Fuel", // Static description
   expanseData: getRandomDate(), // Random date
   expanseAmount: parseFloat(getRandomAmount()), // Random amount
-  expanseType: getRandomElement(expanseTypes), // Random expense type
+  expenseType: getRandomElement(expenseTypes), // Random expense type
   type: getRandomElement(transactionTypes), // Random transaction type
   toWhom: Math.random() < 0.5 ? "own" : getRandomElement(toWhomOptions), // Randomly choose "own" or another option
 }));
@@ -284,10 +279,10 @@ const vibrantLightColorMapping = {
 
 const aggregateExpenses = (transactions: AllTransaction[]) => {
   const aggregatedData = transactions.reduce(
-    (acc: { [key in expanseType]?: number }, transaction) => {
+    (acc: { [key in expenseType]?: number }, transaction) => {
       if (transaction.type === "expense") {
-        acc[transaction.expanseType] =
-          (acc[transaction.expanseType] || 0) + transaction.expanseAmount;
+        acc[transaction.expenseType] =
+          (acc[transaction.expenseType] || 0) + transaction.expanseAmount;
       }
       return acc;
     },
@@ -302,4 +297,4 @@ const aggregateExpenses = (transactions: AllTransaction[]) => {
   }));
 };
 
-export const expanseTypeData = aggregateExpenses(allTransactions);
+export const expenseTypeData = aggregateExpenses(allTransactions);

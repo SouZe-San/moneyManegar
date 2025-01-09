@@ -1,26 +1,56 @@
 import { View, Image, StyleSheet, Pressable, TouchableOpacity } from "react-native";
-import { USERNAME } from "@/constants/tempVar";
 import { ThemedText } from "../ThemedText";
-import { BellIcon, RingBellIcon, ProCamIcon } from "@/assets/icons/SVG/RandomIcons";
+import { useRouter } from "expo-router";
+import * as ImagePicker from "expo-image-picker";
 
 import { useThemeColorWithName } from "@/hooks/useThemeColor";
-import { useRouter } from "expo-router";
 import { ThemedView } from "../ThemedView";
+import { BellIcon, RingBellIcon, ProCamIcon } from "@/assets/icons/SVG/RandomIcons";
+
+// userName
+import { USERNAME } from "@/constants/tempVar";
+const NOTIFICATION_COUNT = 0;
+
 export default function ProfileModal({
   setOpenedItem,
+  selectedImage,
+  setSelectedImage,
 }: {
   setOpenedItem: React.Dispatch<React.SetStateAction<boolean>>;
+  setSelectedImage: React.Dispatch<React.SetStateAction<string | null>>;
+  selectedImage: string | null;
 }) {
+  // Image Picking logic
+  const pickImage = async () => {
+    // No permissions request is necessary for launching the image library
+    let result = await ImagePicker.launchImageLibraryAsync({
+      mediaTypes: ["images"],
+      allowsEditing: true,
+      aspect: [1, 1],
+      quality: 1,
+    });
+
+    if (!result.canceled) {
+      setSelectedImage(result.assets[0].uri);
+      return;
+    }
+    setSelectedImage(null);
+  };
+
   const router = useRouter();
+
+  // Colors
   const iconColor = useThemeColorWithName("icon");
   const borderColor = useThemeColorWithName("buttonBg");
   const highLightNotify = useThemeColorWithName("highLightBackground");
   const bg = useThemeColorWithName("blurBg");
+
+  //
   return (
     <ThemedView>
       {/* Ist ROw */}
       <View style={{ flexDirection: "row", alignItems: "center", justifyContent: "space-between" }}>
-        <View>{USERNAME && <Profile userName={USERNAME} />}</View>
+        <View>{USERNAME && <Profile userName={USERNAME} selectedImage={selectedImage} />}</View>
 
         <Pressable
           style={[styles.iconView, { borderColor }]}
@@ -29,23 +59,33 @@ export default function ProfileModal({
             router.push("/notification");
           }}
         >
-          <BellIcon color={iconColor} />
-          {/* <RingBellIcon color={highLightNotify} /> */}
+          {NOTIFICATION_COUNT > 0 ? (
+            <RingBellIcon color={highLightNotify} />
+          ) : (
+            <BellIcon color={iconColor} />
+          )}
         </Pressable>
       </View>
 
       {/*  //! Second Row || photo Selected*/}
 
-      <View style={[styles.titleBox, { borderColor: bg, backgroundColor: bg }]}>
-        <TouchableOpacity
-          style={{ flexDirection: "row", alignItems: "center", gap: 10 }}
-          //   onPress={() => router.push("/setting")}
-          activeOpacity={0.8}
-        >
-          <ProCamIcon color={iconColor} />
-          <ThemedText type="defaultSemiBold">Profile Photo</ThemedText>
-        </TouchableOpacity>
-      </View>
+      <TouchableOpacity
+        style={[
+          styles.titleBox,
+          {
+            flexDirection: "row",
+            alignItems: "center",
+            gap: 10,
+            borderColor: bg,
+            backgroundColor: bg,
+          },
+        ]}
+        onPress={pickImage}
+        activeOpacity={0.8}
+      >
+        <ProCamIcon color={iconColor} />
+        <ThemedText type="defaultSemiBold">Profile Photo</ThemedText>
+      </TouchableOpacity>
 
       {/* //! 3rd Row || Log In  */}
       <ThemedText type="title" style={{ fontSize: 20, marginBottom: 10 }}>
@@ -79,12 +119,20 @@ export default function ProfileModal({
   );
 }
 
-const Profile = ({ userName }: { userName: string }) => {
+const Profile = ({
+  userName,
+  selectedImage,
+}: {
+  userName: string;
+  selectedImage: string | null;
+}) => {
   return (
     <View style={{ flexDirection: "row", alignItems: "center", gap: 10 }}>
       <View style={[styles.image]}>
         <Image
-          source={require("@/assets/images/temp/myprofile.jpg")}
+          source={
+            selectedImage ? { uri: selectedImage } : require("@/assets/images/temp/myprofile.jpg")
+          }
           style={{ objectFit: "cover", width: "100%", height: "100%" }}
         />
       </View>

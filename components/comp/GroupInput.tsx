@@ -23,11 +23,11 @@ interface GroupInputProps {
 // Temporary Data
 
 const mem = [
-  { useName: "JohnDoe1", useId: "1" },
-  { useName: "JaneDoe2", useId: "2" },
-  { useName: "SamSmith1", useId: "411" },
-  { useName: "JaneDoe3", useId: "33" },
-  { useName: "Hekk", useId: "61" },
+  { userName: "JohnDoe1", useId: "1" },
+  { userName: "JaneDoe2", useId: "2" },
+  { userName: "SamSmith1", useId: "411" },
+  { userName: "JaneDoe3", useId: "33" },
+  { userName: "Hekk", useId: "61" },
 ];
 
 function GroupInput({
@@ -52,13 +52,13 @@ function GroupInput({
   const SearchMember = ({ member }: { member: Members }) => {
     //  Add Members
     const addMembers = (newMember: Members) => {
-      // Check if the member is already in the group based on useName
+      // Check if the member is already in the group based on userName
       if (!members.some((existingMember) => existingMember.useId === newMember.useId)) {
         // If the member is not already in the list, add them
         setMembers([...members, newMember]);
       } else {
         // Optionally, show an alert or feedback for duplicate member
-        Alert.alert("Member already added", `${newMember.useName} is already in the group.`);
+        Alert.alert("Member already added", `${newMember.userName} is already in the group.`);
       }
     };
     return (
@@ -79,7 +79,7 @@ function GroupInput({
     }
     // Filter members based on searchName
     const filteredMembers = mem.filter((member) =>
-      member.useName.toLowerCase().includes(searchName.trim().toLowerCase())
+      member.userName.toLowerCase().includes(searchName.trim().toLowerCase())
     );
 
     // Update the search result with the filtered members
@@ -230,7 +230,7 @@ const MembersRow = ({ member }: { member: Members }) => {
     <View style={[styles.row, { backgroundColor: bg }]}>
       <UserIcon color={iconColor} />
       <ThemedText type="defaultSemiBold">
-        {member.useName} - {member.useId}
+        {member.userName} - {member.useId}
       </ThemedText>
     </View>
   );

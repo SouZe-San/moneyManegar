@@ -13,19 +13,21 @@ import { useThemeColorWithName } from "@/hooks/useThemeColor";
 import { View, StyleSheet, TouchableOpacity } from "react-native";
 
 const setting = () => {
+  // Colors
   const iconColor = useThemeColorWithName("icon");
   const bg = useThemeColorWithName("blurBg");
-  const color = useThemeColorWithName("highLightBackground");
 
   const { reset } = useExpense();
 
   return (
     <ThemedView style={[globalStyles.mainContainer, { gap: 15 }]}>
-      <ThemedText style={{ paddingLeft: 10, color }} type="title">
+      <ThemedText style={{ paddingLeft: 10 }} type="title">
         Settings
       </ThemedText>
       <View>
-        <ThemedText type="subtitle">🌐 Go Online & Sync</ThemedText>
+        <ThemedText type="subtitle" colorName="mountainMeadow">
+          🌐 Go Online & Sync
+        </ThemedText>
         <ThemedText type="smallText">
           Log in to stay in sync! Tap to update your data in real-time—it's like magic! ✨
         </ThemedText>
@@ -42,7 +44,9 @@ const setting = () => {
         </TouchableOpacity>
       </View>
       <View>
-        <ThemedText type="subtitle">🔄 Reset : Forget Past</ThemedText>
+        <ThemedText type="subtitle" colorName="mountainMeadow">
+          🔄 Reset : Forget Past
+        </ThemedText>
         {/* Track Reset */}
         <ThemedText type="smallText">
           Time to clear the slate! Hit reset for a fresh start—no strings attached. Letting go feels
@@ -60,7 +64,9 @@ const setting = () => {
         </TouchableOpacity>
       </View>
       <View>
-        <ThemedText type="subtitle">⚙️ Account Setting</ThemedText>
+        <ThemedText type="subtitle" colorName="mountainMeadow">
+          ⚙️ Account Setting
+        </ThemedText>
         <ThemedText type="smallText">
           Take control of your account! Log out to step away or delete it entirely for a fresh
           start. Your account, your choice.💪

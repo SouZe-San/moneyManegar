@@ -1,4 +1,4 @@
-import { Pressable, StyleSheet } from "react-native";
+import { TouchableOpacity, StyleSheet } from "react-native";
 import { ThemedText } from "../ThemedText";
 import { useThemeColorWithName } from "@/hooks/useThemeColor";
 
@@ -11,12 +11,16 @@ const SubmitButton = (props: SubmitButtonProps) => {
   const buttonBgColor = useThemeColorWithName("button");
   const buttonTextColor = useThemeColorWithName("background");
   return (
-    <Pressable style={[styles.button, { backgroundColor: buttonBgColor }]} onPress={props.onPress}>
+    <TouchableOpacity
+      activeOpacity={0.5}
+      style={[styles.button, { backgroundColor: buttonBgColor }]}
+      onPress={props.onPress}
+    >
       <ThemedText style={{ color: buttonTextColor }} type="defaultSemiBold">
         {" "}
         {props.button_label}
       </ThemedText>
-    </Pressable>
+    </TouchableOpacity>
   );
 };
 

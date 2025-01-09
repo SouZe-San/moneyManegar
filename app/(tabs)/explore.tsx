@@ -87,7 +87,7 @@ export default function TabTwoScreen() {
             />
 
             <BottomSheetModal isOpen={modalVisible} setIsOpen={setModalVisible} ref={ref}>
-              <MemberCreate />
+              <MemberCreate setModalVisibility={setModalVisible} />
               {/* <ThemedText>HEkko</ThemedText> */}
             </BottomSheetModal>
           </View>

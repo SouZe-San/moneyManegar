@@ -132,7 +132,7 @@ export function contribute() {
       const allList: any = [];
       selectedGroup.members.forEach((member) => {
         allList.push({
-          useName: member.useName,
+          userName: member.userName,
           Amount: eachContri,
           Date: date,
           expanseReason,

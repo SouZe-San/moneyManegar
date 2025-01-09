@@ -1,12 +1,15 @@
-import { View, Image, StyleSheet, TouchableOpacity } from "react-native";
+import { View, Image, StyleSheet, TouchableOpacity, type ImageSourcePropType } from "react-native";
 import { ThemedText } from "../ThemedText";
 import { useState, useCallback, useRef } from "react";
 import BottomSheetModal from "@/components/BottomSheetModal";
 import { BottomSheetRefProps } from "@/components/BottomSheetView";
 import ProfileModal from "./ProfileModal";
 
+const defaultProfile: ImageSourcePropType = require("@/assets/images/temp/myprofile.jpg");
+
 const ImageAndName = () => {
   const [openedItem, setOpenedItem] = useState<boolean>(false);
+  const [image, setImage] = useState<string | null>(null);
   const ref = useRef<BottomSheetRefProps>(null);
 
   const onPress = useCallback(() => {
@@ -21,7 +24,7 @@ const ImageAndName = () => {
   return (
     <View style={styles.container}>
       <Image
-        source={require("@/assets/images/temp/myprofile.jpg")}
+        source={image ? { uri: image } : defaultProfile}
         style={{
           opacity: 0.5,
           position: "absolute",
@@ -35,7 +38,7 @@ const ImageAndName = () => {
       <TouchableOpacity onPress={onPress}>
         <View style={[styles.image]}>
           <Image
-            source={require("@/assets/images/temp/myprofile.jpg")}
+            source={image ? { uri: image } : defaultProfile}
             style={{ objectFit: "cover", width: "100%", height: "100%" }}
           />
         </View>
@@ -45,7 +48,11 @@ const ImageAndName = () => {
       </ThemedText>
 
       <BottomSheetModal isOpen={openedItem} setIsOpen={setOpenedItem} ref={ref}>
-        <ProfileModal setOpenedItem={setOpenedItem} />
+        <ProfileModal
+          setOpenedItem={setOpenedItem}
+          selectedImage={image}
+          setSelectedImage={setImage}
+        />
       </BottomSheetModal>
     </View>
   );

@@ -8,7 +8,7 @@ export interface IExpanse {
   toWhom?: string;
 }
 export interface IUdahar {
-  _id: number;
+  _id?: number;
   amount: number;
   type: "debt" | "owned";
   expenseType: "Food" | "Fuel" | "Shopping" | "Recharge" | "Travels" | "Others" | "Rent" | "Bill";
@@ -17,10 +17,21 @@ export interface IUdahar {
   expanseDesc: string;
   memberId: number | null;
 }
+export type mainTransactionType = "income" | "expense";
+
+export interface ITransaction {
+  amount: number;
+  type: mainTransactionType;
+  expenseType: expanseType;
+  date: string;
+  expanseDesc: string;
+  toWhom?: string;
+  memberId?: string;
+}
 
 export type Members = {
-  useName: string;
-  useId: string;
+  userName: string;
+  useId: string | null;
 };
 
 export type Groups = {
@@ -30,7 +41,7 @@ export type Groups = {
   members: Members[];
 };
 
-export type expanseType =
+export type expenseType =
   | "Food"
   | "Fuel"
   | "Shopping"

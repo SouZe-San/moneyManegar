@@ -9,20 +9,20 @@ import { ThemedView } from "../ThemedView";
 
 // Retrieve Data from Local Storage
 const mem = [
-  { useName: "JohnDoe1", useId: "1" },
-  { useName: "JaneDoe2", useId: "2" },
-  { useName: "SamSmith1", useId: "411" },
-  { useName: "JaneDoe3", useId: "33" },
-  { useName: "Hekk", useId: "61" },
+  { userName: "JohnDoe1", useId: "1" },
+  { userName: "JaneDoe2", useId: "2" },
+  { userName: "SamSmith1", useId: "411" },
+  { userName: "JaneDoe3", useId: "33" },
+  { userName: "Hekk", useId: "61" },
 ];
 
 type SearchProfileSectionProps = {
   member: Members | null;
-  setMember: (value: Members) => void;
+  setMember: (value: Members | null) => void;
 };
 
 export default function SearchProfileSection({ member, setMember }: SearchProfileSectionProps) {
-  const [searchName, setSearchName] = useState(member ? member.useName : "");
+  const [searchName, setSearchName] = useState(member ? member.userName : "");
   const [searchResult, setSearchResult] = useState<Members[]>([]);
 
   const iconColor = useThemeColorWithName("inputIcon");
@@ -34,24 +34,26 @@ export default function SearchProfileSection({ member, setMember }: SearchProfil
 
     // Check if searchName is empty
     if (searchName.trim() === "") {
+      setMember(null); // Clear the member if no input is given
       setSearchResult([]); // Clear the search result if no input is given
       return;
     }
     // Filter members based on searchName
     const filteredMembers = mem.filter((member) =>
-      member.useName.toLowerCase().includes(searchName.trim().toLowerCase())
+      member.userName.toLowerCase().includes(searchName.trim().toLowerCase())
     );
 
     // Update the search result with the filtered members
     setSearchResult(filteredMembers);
+    setMember({ userName: searchName, useId: null });
   };
 
   //! Search Member Component
   const SearchMember = ({ member }: { member: Members }) => {
     //  Add Members
     const addMembers = (newMember: Members) => {
-      // Check if the member is already in the group based on useName
-      setSearchName(newMember.useName);
+      // Check if the member is already in the group based on userName
+      setSearchName(newMember.userName);
       setMember(newMember);
     };
     return (
@@ -105,7 +107,7 @@ export default function SearchProfileSection({ member, setMember }: SearchProfil
             scrollsToTop={true}
             data={searchResult}
             renderItem={({ item }) => <SearchMember member={item} />}
-            keyExtractor={(member) => member.useId}
+            keyExtractor={(member) => member.useId ?? member.userName}
           />
         )}
       </View>
@@ -120,7 +122,7 @@ const MembersRow = ({ member }: { member: Members }) => {
     <View style={[styles.row, { backgroundColor: bg }]}>
       <UserIcon color={iconColor} />
       <ThemedText type="defaultSemiBold">
-        {member.useName} - {member.useId}
+        {member.userName} - {member.useId}
       </ThemedText>
     </View>
   );

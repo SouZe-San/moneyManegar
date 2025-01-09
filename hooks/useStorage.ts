@@ -1,4 +1,4 @@
-import { type SQLiteDatabase, openDatabaseSync } from "expo-sqlite";
+import { type SQLiteDatabase } from "expo-sqlite";
 
 // const transactionStatement = db.prepareSync(
 //   "INSERT INTO AllTransactions ( amount,type,expanseType,date,expanseDesc,memberId,toWhom) VALUES ($amount, $type, $expanseType, $date, $expanseDesc, $memberId, $toWhom)"
@@ -45,14 +45,14 @@ export const migrateDbIfNeeded = async (db: SQLiteDatabase) => {
 
         CREATE TABLE IF NOT EXISTS GroupTable (
             _id INTEGER PRIMARY KEY AUTOINCREMENT,
-            name TEXT NOT NULL,
+            name TEXT NOT NULL UNIQUE,
             logo TEXT NOT NULL
         );
 
 
         CREATE TABLE IF NOT EXISTS MemberTable (
             _id INTEGER PRIMARY KEY AUTOINCREMENT,
-            name TEXT NOT NULL,
+            userName TEXT NOT NULL UNIQUE,
             ownedAmount REAL DEFAULT 0 CHECK (ownedAmount >= 0), 
             dueAmount REAL DEFAULT 0 CHECK (dueAmount >= 0), 
             userId TEXT

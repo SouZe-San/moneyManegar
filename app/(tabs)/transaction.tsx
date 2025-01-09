@@ -9,9 +9,9 @@ import AnimatedListItem from "@/components/animation/AnimatedListItem";
 
 import { globalStyles } from "@/constants/globalStyles";
 import { useExpense } from "@/context/ExpanseContext";
-import { useEffect, useState } from "react";
+import { useEffect, useState, useCallback } from "react";
 import { useSQLiteContext } from "expo-sqlite";
-import { expenses } from "@/constants/tempVar";
+import { udharArray } from "@/constants/tempVar";
 import { IUdahar } from "@/types/expanse";
 
 export default function Transaction() {
@@ -61,22 +61,24 @@ export default function Transaction() {
   //   }
   // };
 
-  useEffect(() => {
-    const fetchData = async () => {
-      console.log("Fetching data...");
-      try {
-        const rows: IUdahar[] = await db.getAllAsync("SELECT * FROM UdharTransactions");
-        setAllRows(rows);
-      } catch (error) {
-        console.error("Error fetching data: ", error);
-        // Handle error state if needed
-      } finally {
-        setLoading(false); // Set loading to false after fetching
-      }
-    };
+  useEffect(
+    useCallback(() => {
+      const fetchData = async () => {
+        console.log("Fetching data...");
+        try {
+          const rows: IUdahar[] = await db.getAllAsync("SELECT * FROM UdharTransactions");
+          setAllRows(rows);
+        } catch (error) {
+          console.error("Error fetching data: ", error);
+          // Handle error state if needed
+        } finally {
+          setLoading(false); // Set loading to false after fetching
+        }
+      };
 
-    fetchData();
-  }, []);
+      fetchData();
+    }, [])
+  );
 
   // useEffect(() => {
   //   const initializeDb = async () => {
@@ -137,7 +139,7 @@ export default function Transaction() {
             <Animated.View>
               <AnimatedListItem item={item} viewableItems={viewableItems}>
                 <TransactionRow
-                  transactionId={item._id}
+                  transactionId={item._id!}
                   expanseDescription={item.expanseDesc}
                   expanseData={item.date}
                   expanseAmount={item.amount}
@@ -151,7 +153,7 @@ export default function Transaction() {
               </AnimatedListItem>
             </Animated.View>
           )}
-          keyExtractor={(item) => item._id.toString()}
+          keyExtractor={(item) => item._id!.toString()}
         />
       </AnimateTabView>
     </GestureHandlerRootView>
