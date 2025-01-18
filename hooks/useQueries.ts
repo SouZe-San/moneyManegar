@@ -1,4 +1,4 @@
-import { expanseType, ITransaction, IUdahar, Members } from "@/types/expanse";
+import { ITransaction, IUdahar, Members } from "@/types/expanse";
 import { type SQLiteDatabase } from "expo-sqlite";
 
 // ! Data INSERTING - INSERTION ---->
@@ -8,7 +8,7 @@ const addData_in_AllTransaction = async (db: SQLiteDatabase, data: ITransaction)
   db.withTransactionAsync(async () => {
     try {
       await db.runAsync(
-        "INSERT INTO AllTransactions (amount, type, expanseType, date, expanseDesc) VALUES (?, ?, ?, ?, ?)",
+        "INSERT INTO AllTransactions (amount, type, expenseType, date, expanseDesc) VALUES (?, ?, ?, ?, ?)",
         [data.amount, data.type, data.expenseType, data.date, data.expanseDesc]
       );
       console.log("====================================");
@@ -25,7 +25,7 @@ const add_udhar = async (db: SQLiteDatabase, data: IUdahar) => {
   db.withTransactionAsync(async () => {
     try {
       await db.runAsync(
-        "INSERT INTO UdharTransactions (amount, type, expanseType, date, expanseDesc,toWhom, memberId) VALUES (?, ?, ?, ?, ?,?,?)",
+        "INSERT INTO UdharTransactions (amount, type, expenseType, date, expanseDesc,toWhom, memberId) VALUES (?, ?, ?, ?, ?,?,?)",
         [
           data.amount,
           data.type,

@@ -15,7 +15,7 @@ import { globalStyles } from "@/constants/globalStyles";
 import RedirectButton from "@/components/comp/RedirectButton";
 import ColorLabeling from "@/components/comp/ColorLabeling";
 
-import { totalBudget, expanseTypeData, groupData } from "@/constants/tempVar";
+import { totalBudget, expenseTypeData, groupData } from "@/constants/tempVar";
 // Hooks
 import { useThemeColorWithName } from "@/hooks/useThemeColor";
 import { useExpense } from "@/context/ExpanseContext";
@@ -94,7 +94,7 @@ export default function HomeScreen() {
                   type="default"
                   style={[styles.shortTag, { fontSize: 14, color: darkTextColor }]}
                 >
-                  You Brock &#59;&#40;
+                  You Brock &#59;&#40;ಥ⁠╭⁠╮⁠ಥ┐
                 </ThemedText>
               )}
 
@@ -200,7 +200,11 @@ export default function HomeScreen() {
           </View>
         </View>
 
-        <RedirectButton icon={<DbIcon color={balanceBg} />} label="All Transactions" />
+        <RedirectButton
+          icon={<DbIcon color={balanceBg} />}
+          label="All Transactions"
+          redirectUrl={"/allTransaction"}
+        />
         <View style={{ position: "relative" }}>
           <BottomSheetModal isOpen={modalVisible} setIsOpen={setModalVisible} ref={ref}>
             <MemberDetails id={memberId} />
@@ -221,7 +225,7 @@ export default function HomeScreen() {
             <PieChartPro
               showText={false}
               textSize={0}
-              data={expanseTypeData}
+              data={expenseTypeData}
               radius={60}
               innerRadius={45}
               donut
@@ -232,14 +236,14 @@ export default function HomeScreen() {
                 marginTop: 10,
               }}
             >
-              {expanseTypeData.map((item, index) => {
+              {expenseTypeData.map((item, index) => {
                 return (
                   <ColorLabeling
                     color={item.color}
                     key={index.toString()}
                     label={item.text}
                     amount={item.value}
-                    totalAmt={expanseTypeData.reduce((sum, item) => sum + item.value, 0)}
+                    totalAmt={expenseTypeData.reduce((sum, item) => sum + item.value, 0)}
                   />
                 );
               })}
@@ -272,7 +276,11 @@ export default function HomeScreen() {
           </View>
         </View>
 
-        <RedirectButton icon={<StatsIcon color={balanceBg} />} label="Stats" />
+        <RedirectButton
+          icon={<StatsIcon color={balanceBg} />}
+          label="Stats"
+          redirectUrl={"/allStats"}
+        />
 
         {/* MoDal */}
       </ScrollView>

@@ -61,24 +61,22 @@ export default function Transaction() {
   //   }
   // };
 
-  useEffect(
-    useCallback(() => {
-      const fetchData = async () => {
-        console.log("Fetching data...");
-        try {
-          const rows: IUdahar[] = await db.getAllAsync("SELECT * FROM UdharTransactions");
-          setAllRows(rows);
-        } catch (error) {
-          console.error("Error fetching data: ", error);
-          // Handle error state if needed
-        } finally {
-          setLoading(false); // Set loading to false after fetching
-        }
-      };
+  useEffect(() => {
+    const fetchData = async () => {
+      console.log("Fetching data...");
+      try {
+        const rows: IUdahar[] = await db.getAllAsync("SELECT * FROM UdharTransactions");
+        setAllRows(rows);
+      } catch (error) {
+        console.error("Error fetching data: ", error);
+        // Handle error state if needed
+      } finally {
+        setLoading(false); // Set loading to false after fetching
+      }
+    };
 
-      fetchData();
-    }, [])
-  );
+    fetchData();
+  }, []);
 
   // useEffect(() => {
   //   const initializeDb = async () => {
@@ -115,7 +113,7 @@ export default function Transaction() {
           { paddingBottom: "20%", justifyContent: "center", alignItems: "center" },
         ]}
       >
-        <ThemedText type="title">Free Soul </ThemedText>
+        <ThemedText type="title">{"(⁠ʘ⁠ᴗ⁠ʘ⁠✿⁠)"} </ThemedText>
       </AnimateTabView>
     );
   }

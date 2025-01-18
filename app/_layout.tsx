@@ -116,6 +116,28 @@ export default function RootLayout() {
                 }}
               />
               <Stack.Screen
+                name="allStats"
+                options={{
+                  title: "",
+                  headerShadowVisible: false,
+                  headerLargeTitle: true,
+                  headerTransparent: true,
+                  headerBackVisible: false,
+                  headerTintColor: headerTextColor,
+                }}
+              />
+              <Stack.Screen
+                name="allTransaction"
+                options={{
+                  title: "",
+                  headerShadowVisible: false,
+                  headerLargeTitle: true,
+                  headerTransparent: true,
+                  headerBackVisible: false,
+                  headerTintColor: headerTextColor,
+                }}
+              />
+              <Stack.Screen
                 name="groups/[groupId]"
                 options={{
                   title: "",

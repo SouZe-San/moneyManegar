@@ -1,12 +1,18 @@
 import { Image, useWindowDimensions, ImageSourcePropType } from "react-native";
 
-const ImageHeader = ({ url }: { url: ImageSourcePropType | undefined }) => {
+const ImageHeader = ({
+  url,
+  blurRadius,
+}: {
+  url: ImageSourcePropType | undefined;
+  blurRadius?: number;
+}) => {
   const { width: SCREEN_WEIGHT, height: SCREEN_HEIGHT } = useWindowDimensions();
 
   return (
     <Image
       source={url}
-      blurRadius={3}
+      blurRadius={blurRadius || 3}
       resizeMethod="scale"
       style={{
         opacity: 0.6,

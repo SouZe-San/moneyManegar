@@ -13,6 +13,7 @@ import DateView from "@/components/inputs/DateView";
 import ImageHeader from "@/components/comp/ImageHeader";
 import { useRouter } from "expo-router";
 import EasyAlert from "@/components/comp/EasyAlert";
+import AnimatedStackView from "@/components/animation/AnimatedStackView";
 
 //! TO whom I have to pay
 export function payble() {
@@ -106,100 +107,93 @@ export function payble() {
           textShadowRadius: 4,
         }}
       >
-        {" "}
-        I owe Others &#59;&#41;
+        I owe Others ರ⁠╭⁠╮⁠ರ
+        {/* I owe Others &#59;&#41; */}
       </ThemedText>
 
       <View style={[globalStyles.inputContainer, { backgroundColor }]}>
-        <View
-          style={[
-            {
-              display: "flex",
-              flexGrow: 0,
-              width: "100%",
-              gap: 10,
-            },
-          ]}
-        >
-          <View>
-            <InputWithIcon
-              icon={<MoneyBagIcon color={iconColor} />}
-              placeholder="00.0 INR"
-              value={amount}
-              setValue={setAmount}
-            />
-          </View>
-          <View>
-            <InputWithIcon
-              icon={<UserIcon color={iconColor} />}
-              placeholder="To Whom"
-              value={toWhom}
-              setValue={setToWhom}
-              keyboardType="default"
-            />
-          </View>
-          <View>
-            <InputWithIcon
-              icon={<BagIcon color={iconColor} />}
-              placeholder="For What ?"
-              value={expanseReason}
-              setValue={setExpanseReason}
-              keyboardType="default"
-            />
+        <AnimatedStackView style={globalStyles.animated_stackContainer}>
+          <View
+            style={[
+              {
+                display: "flex",
+                flexGrow: 0,
+                width: "100%",
+                gap: 10,
+              },
+            ]}
+          >
+            <View>
+              <InputWithIcon
+                icon={<MoneyBagIcon color={iconColor} />}
+                placeholder="00.0 INR"
+                value={amount}
+                setValue={setAmount}
+              />
+            </View>
+            <View>
+              <InputWithIcon
+                icon={<UserIcon color={iconColor} />}
+                placeholder="To Whom"
+                value={toWhom}
+                setValue={setToWhom}
+                keyboardType="default"
+              />
+            </View>
+            <View>
+              <InputWithIcon
+                icon={<BagIcon color={iconColor} />}
+                placeholder="For What ?"
+                value={expanseReason}
+                setValue={setExpanseReason}
+                keyboardType="default"
+              />
+            </View>
+
+            <View>
+              <DateView date={date} setDate={setDate} />
+            </View>
+
+            <View>
+              <ExpanseType setValue={setExpenseType} value={expenseType} />
+            </View>
           </View>
 
-          <View>
-            <DateView date={date} setDate={setDate} />
-          </View>
-
-          <View>
-            <ExpanseType setValue={setExpenseType} value={expenseType} />
-          </View>
-        </View>
-
-        <View
-          style={{
-            width: "90%",
-            marginHorizontal: 10,
-            marginTop: 30,
-            height: 1,
-            backgroundColor: horain,
-          }}
-        ></View>
-        {/* All Debt */}
-        <ScrollView
-          style={{
-            marginTop: 10,
-            paddingVertical: 10,
-            flex: 1,
-
-            width: "100%",
-          }}
-        >
           <View
             style={{
+              width: "90%",
+              marginHorizontal: 10,
+              marginTop: 30,
+              height: 1,
+              backgroundColor: horain,
+            }}
+          ></View>
+          {/* All Debt */}
+          <ScrollView
+            style={{
+              marginTop: 10,
+              paddingVertical: 10,
               flex: 1,
-              justifyContent: "center",
-              alignItems: "center",
+
+              width: "100%",
             }}
           >
-            <ThemedText type="subtitle">All Debt Listed @_@</ThemedText>
-          </View>
-        </ScrollView>
+            <View
+              style={{
+                flex: 1,
+                justifyContent: "center",
+                alignItems: "center",
+              }}
+            >
+              <ThemedText type="subtitle">Debt Listed {".⁠·⁠´⁠¯⁠⁠(⁠>⁠▂⁠<⁠)⁠´⁠¯⁠⁠·⁠."}</ThemedText>
+            </View>
+          </ScrollView>
 
-        {/* Submit Button */}
-        <View
-          style={{
-            position: "absolute",
-            bottom: 30,
-            width: "100%",
-            left: 10,
-            justifyContent: "center",
-            alignItems: "center",
-          }}
-        >
-          <SubmitButton button_label="Add Debt" onPress={() => finalSubmit()} />
-        </View>
+          {/* Submit Button */}
+          <View style={globalStyles.submit_btn_container}>
+            <SubmitButton button_label="Add Debt" onPress={() => finalSubmit()} />
+          </View>
+        </AnimatedStackView>
       </View>
     </ThemedView>
   );

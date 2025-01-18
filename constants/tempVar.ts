@@ -1,8 +1,10 @@
-import { Groups, IExpanse, IUdahar, expenseType } from "@/types/expanse";
+import { Groups, IExpanse, ITransaction, IUdahar, expenseType } from "@/types/expanse";
+import { keyType } from "./keyTypes";
 
 export const USERNAME = "souze";
 
 const expenseTypes = ["Food", "Fuel", "Shopping", "Recharge", "Travels", "Others", "Rent", "Bill"];
+const toWhomOptions = ["own", "friend", "family", "business", "charity"];
 
 const getRandomDate = () => {
   const start = new Date(2021, 0, 1); // Start date: January 1, 2021
@@ -11,7 +13,8 @@ const getRandomDate = () => {
   return date.toLocaleDateString(); // Format date as MM/DD/YYYY
 };
 
-const getRandomElement = (arr: any) => arr[Math.floor(Math.random() * arr.length)];
+const getRandomElement = (arrayOfEle: string[]) =>
+  arrayOfEle[Math.floor(Math.random() * arrayOfEle.length)];
 
 const getRandomAmount = () => (Math.random() * 1000).toFixed(2); // Random amount between 0 and 1000
 export const udharArray: IUdahar[] = [
@@ -120,7 +123,7 @@ export const udharArray: IUdahar[] = [
       ({
         amount: parseFloat(getRandomAmount()),
         type: Math.random() < 0.5 ? "debt" : "owned",
-        expenseType: getRandomElement(expenseTypes),
+        expenseType: getRandomElement(expenseTypes) as expenseType,
         date: getRandomDate(),
         expanseDesc: "Scuty's Fuel",
         memberId: null,
@@ -192,34 +195,21 @@ export const groupData: Groups[] = [
   },
 ];
 
-type AllTransaction = {
-  transactionId: number;
-  expanseDescription: string;
-  expanseData: string;
-  expanseAmount: number;
-  expenseType: "Food" | "Fuel" | "Shopping" | "Recharge" | "Travels" | "Others" | "Rent" | "Bill";
-  type: "debit" | "expense" | "income" | "credit";
-  toWhom: "own" | string;
-};
-
-const transactionTypes = ["debit", "expense", "income", "credit"];
-const toWhomOptions = ["own", "friend", "family", "business", "charity"];
-
-export const allTransactions: AllTransaction[] = new Array(30).fill(0).map((_, index) => ({
-  transactionId: index + 1, // Transaction ID starting from 1
-  expanseDescription: "Scuty's Fuel", // Static description
-  expanseData: getRandomDate(), // Random date
-  expanseAmount: parseFloat(getRandomAmount()), // Random amount
+export const allTransactions: ITransaction[] = new Array(30).fill(0).map((_, index) => ({
+  _id: index + 1, // Transaction ID starting from 1
+  expanseDesc: "Scuty's Fuel", // Static description
+  date: getRandomDate(), // Random date
+  amount: parseFloat(getRandomAmount()), // Random amount
   expenseType: getRandomElement(expenseTypes), // Random expense type
-  type: getRandomElement(transactionTypes), // Random transaction type
+  type: Math.random() < 0.5 ? "expense" : "income", // Random transaction type
   toWhom: Math.random() < 0.5 ? "own" : getRandomElement(toWhomOptions), // Randomly choose "own" or another option
 }));
 const aggregatedData = allTransactions.reduce(
   (acc, transaction) => {
     if (transaction.type === "income") {
-      acc.income += transaction.expanseAmount;
+      acc.income += transaction.amount;
     } else if (transaction.type === "expense") {
-      acc.expense += transaction.expanseAmount;
+      acc.expense += transaction.amount;
     }
     return acc;
   },
@@ -277,16 +267,24 @@ const vibrantLightColorMapping = {
   Bill: "#5C6BC0", // Medium Indigo - Bill, // Soft Indigo (Distinct but not overwhelming)
 };
 
-const aggregateExpenses = (transactions: AllTransaction[]) => {
+const aggregateExpenses = (transactions: ITransaction[]) => {
   const aggregatedData = transactions.reduce(
-    (acc: { [key in expenseType]?: number }, transaction) => {
+    (acc: { [key in expenseType]: number }, transaction) => {
       if (transaction.type === "expense") {
-        acc[transaction.expenseType] =
-          (acc[transaction.expenseType] || 0) + transaction.expanseAmount;
+        acc[transaction.expenseType as expenseType] += transaction.amount;
       }
       return acc;
     },
-    {}
+    {
+      Food: 0,
+      Fuel: 0,
+      Shopping: 0,
+      Recharge: 0,
+      Travels: 0,
+      Others: 0,
+      Rent: 0,
+      Bill: 0,
+    }
   );
 
   // Convert aggregated data to the format required for the pie chart

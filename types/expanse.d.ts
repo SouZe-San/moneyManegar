@@ -20,6 +20,7 @@ export interface IUdahar {
 export type mainTransactionType = "income" | "expense";
 
 export interface ITransaction {
+  _id?: number;
   amount: number;
   type: mainTransactionType;
   expenseType: expanseType;

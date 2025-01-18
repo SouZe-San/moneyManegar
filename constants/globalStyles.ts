@@ -9,13 +9,6 @@ export const globalStyles = StyleSheet.create({
     alignItems: "flex-start",
     paddingTop: 60,
   },
-  container: {
-    flex: 1,
-    paddingHorizontal: "4%",
-    paddingVertical: "11%",
-    width: "100%",
-  },
-  dateRpw: {},
   entriesViewContainer: {
     flex: 1,
     width: "100%",
@@ -23,6 +16,21 @@ export const globalStyles = StyleSheet.create({
     alignItems: "flex-start",
     paddingTop: 60,
   },
+  // Single Stack screen
+  stack_container: {
+    flex: 1,
+    width: "100%",
+    justifyContent: "flex-start",
+    alignItems: "flex-start",
+  },
+  // THis is used in udhari TAB
+  container: {
+    flex: 1,
+    paddingHorizontal: "4%",
+    paddingVertical: "11%",
+    width: "100%",
+  },
+  // All Input Box
   inputContainer: {
     flex: 1,
     marginTop: 40,
@@ -32,4 +40,27 @@ export const globalStyles = StyleSheet.create({
     borderTopRightRadius: 20,
     borderTopLeftRadius: 20,
   },
+
+  // Used In Entries Stack-screen
+  animated_stackContainer: {
+    flex: 1,
+    width: "100%",
+    justifyContent: "center",
+    alignItems: "center",
+  },
+  submit_btn_container: {
+    marginBottom: 55,
+    width: "100%",
+    justifyContent: "center",
+    alignItems: "center",
+  },
 });
+
+// {
+//     position: "absolute",
+//     bottom: 30,
+//     width: "100%",
+//     left: 10,
+//     justifyContent: "center",
+//     alignItems: "center",
+//   }

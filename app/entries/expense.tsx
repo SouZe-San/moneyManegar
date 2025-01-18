@@ -12,6 +12,7 @@ import { useThemeColorWithName } from "@/hooks/useThemeColor";
 import DateView from "@/components/inputs/DateView";
 import { useExpense } from "@/context/ExpanseContext";
 import ImageHeader from "@/components/comp/ImageHeader";
+import AnimatedStackView from "@/components/animation/AnimatedStackView";
 
 export function expense() {
   // States
@@ -43,58 +44,53 @@ export function expense() {
         WHat U brought NOw !!
       </ThemedText>
       <View style={[globalStyles.inputContainer, { backgroundColor }]}>
-        <View
-          style={{
-            flex: 1,
-            // marginTop: 50,
-            width: "100%",
-            gap: 10,
-          }}
-        >
-          <View>
-            <InputWithIcon
-              icon={<MoneyBagIcon color={iconColor} />}
-              placeholder="00.0 INR"
-              value={expense}
-              setValue={setExpense}
-            />
-          </View>
-          <View>
-            <InputWithIcon
-              icon={<BagIcon color={iconColor} />}
-              placeholder="Description..."
-              value={expense}
-              setValue={setExpense}
-              keyboardType="default"
-            />
-          </View>
-          <View>
-            <DateView date={date} setDate={setDate} />
-          </View>
-
-          <View>
-            {/* <ThemedText>Expanse Type</ThemedText> */}
-            <ExpanseType setValue={setExpenseType} value={expenseType} />
-          </View>
-        </View>
-        <View
-          style={{
-            marginBottom: 40,
-            width: "100%",
-            justifyContent: "center",
-            alignItems: "center",
-          }}
-        >
-          <SubmitButton
-            button_label="Add Expense"
-            onPress={() => {
-              addExpense(Number(expense));
-              setExpense("");
-              setDate(dayjs());
-              setExpenseType("");
+        <AnimatedStackView style={globalStyles.animated_stackContainer}>
+          <View
+            style={{
+              flex: 1,
+              // marginTop: 50,
+              width: "100%",
+              gap: 10,
             }}
-          />
-        </View>
+          >
+            <View>
+              <InputWithIcon
+                icon={<MoneyBagIcon color={iconColor} />}
+                placeholder="00.0 INR"
+                value={expense}
+                setValue={setExpense}
+              />
+            </View>
+            <View>
+              <InputWithIcon
+                icon={<BagIcon color={iconColor} />}
+                placeholder="Description..."
+                value={expense}
+                setValue={setExpense}
+                keyboardType="default"
+              />
+            </View>
+            <View>
+              <DateView date={date} setDate={setDate} />
+            </View>
+
+            <View>
+              {/* <ThemedText>Expanse Type</ThemedText> */}
+              <ExpanseType setValue={setExpenseType} value={expenseType} />
+            </View>
+          </View>
+          <View style={globalStyles.submit_btn_container}>
+            <SubmitButton
+              button_label="Add Expense"
+              onPress={() => {
+                addExpense(Number(expense));
+                setExpense("");
+                setDate(dayjs());
+                setExpenseType("");
+              }}
+            />
+          </View>
+        </AnimatedStackView>
       </View>
     </ThemedView>
   );

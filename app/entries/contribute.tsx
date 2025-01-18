@@ -24,6 +24,7 @@ import EasyAlert from "@/components/comp/EasyAlert";
 import DateView from "@/components/inputs/DateView";
 import { useRouter } from "expo-router";
 import ImageHeader from "@/components/comp/ImageHeader";
+import AnimatedStackView from "@/components/animation/AnimatedStackView";
 
 // ! who are you to ask for money &&& { can take full expense and divide in in some numbers}
 export function contribute() {
@@ -176,156 +177,151 @@ export function contribute() {
           textShadowRadius: 4,
         }}
       >
-        Paisa hee paisa ^_^{" "}
+        Paisa paisa┌(⁠~⁠‾⁠▿⁠‾⁠)⁠~
       </ThemedText>
 
       <View style={[globalStyles.inputContainer, { backgroundColor }]}>
-        <View
-          style={{
-            display: "flex",
-            flexGrow: 0,
-            // marginTop: 50,
-            width: "100%",
-            gap: 10,
-          }}
-        >
-          {/* // Expanse Amount  */}
-          <View>
-            <InputWithIcon
-              icon={<MoneyBagIcon color={iconColor} />}
-              placeholder="00.0 INR"
-              value={amount}
-              setValue={setAmount}
-            />
-          </View>
-          {/* // Expanse Description  */}
-          <View>
-            <InputWithIcon
-              icon={<BagIcon color={iconColor} />}
-              placeholder="Why ?"
-              value={expanseReason}
-              setValue={setExpanseReason}
-              keyboardType="default"
-            />
-          </View>
-
-          {/* Data  */}
-
-          <View>
-            <DateView date={date} setDate={setDate} />
-          </View>
-          {/* // Expanse Type */}
-          <View>
-            <ExpanseType setValue={setExpenseType} value={expenseType} />
-          </View>
-          {/* // Split Section  */}
+        <AnimatedStackView style={globalStyles.animated_stackContainer}>
+          {/* Inputs */}
           <View
             style={{
-              marginTop: 10,
               display: "flex",
-              flexDirection: "row",
-              justifyContent: "space-between",
-              alignItems: "center",
+              flexGrow: 0,
+              // marginTop: 50,
+              width: "100%",
+              gap: 10,
             }}
           >
-            <ThemedText type="defaultSemiBold">Split in Groups</ThemedText>
-            <View
-              style={{
-                borderWidth: 1,
-                borderRadius: 20,
-                overflow: "hidden",
-                borderBlockColor: "transparent",
-              }}
-            >
-              <Switch
-                value={splitInGroups}
-                style={{
-                  padding: 0,
-                  margin: 0,
-                  height: 28,
-                  width: "100%",
-                  backgroundColor: splitInGroups ? toggleButton : unSelectedToggleButton,
-                }}
-                thumbColor={splitInGroups ? selectedThumbColor : thumbColor}
-                trackColor={{ false: "transparent", true: "transparent" }}
-                onValueChange={() => setInGroups((previousState) => !previousState)}
-              />
-            </View>
-          </View>
-          {!splitInGroups ? (
+            {/* // Expanse Amount  */}
             <View>
               <InputWithIcon
-                icon={<UserIcon color={iconColor} />}
-                placeholder="Solo Name ?"
-                value={singlePersonName}
-                setValue={setSinglePersonName}
+                icon={<MoneyBagIcon color={iconColor} />}
+                placeholder="00.0 INR"
+                value={amount}
+                setValue={setAmount}
+              />
+            </View>
+            {/* // Expanse Description  */}
+            <View>
+              <InputWithIcon
+                icon={<BagIcon color={iconColor} />}
+                placeholder="Why ?"
+                value={expanseReason}
+                setValue={setExpanseReason}
                 keyboardType="default"
               />
             </View>
-          ) : (
+
+            {/* Data  */}
+
             <View>
-              {
-                <FlatList
-                  data={groupData}
-                  horizontal
-                  renderItem={({ item }) => (
-                    <SingleBox
-                      label={item.groupName}
-                      icon={item.groupIcon}
-                      isSelected={selectedGroup?.groupId === item.groupId}
-                      onPress={() => groupSelection(item)}
-                    />
-                  )}
-                  keyExtractor={(item) => item.groupId}
-                />
-              }
+              <DateView date={date} setDate={setDate} />
             </View>
-          )}
-        </View>
+            {/* // Expanse Type */}
+            <View>
+              <ExpanseType setValue={setExpenseType} value={expenseType} />
+            </View>
+            {/* // Split Section  */}
+            <View
+              style={{
+                marginTop: 10,
+                display: "flex",
+                flexDirection: "row",
+                justifyContent: "space-between",
+                alignItems: "center",
+              }}
+            >
+              <ThemedText type="defaultSemiBold">Split in Groups</ThemedText>
+              <View
+                style={{
+                  borderWidth: 1,
+                  borderRadius: 20,
+                  overflow: "hidden",
+                  borderBlockColor: "transparent",
+                }}
+              >
+                <Switch
+                  value={splitInGroups}
+                  style={{
+                    padding: 0,
+                    margin: 0,
+                    height: 28,
+                    width: "100%",
+                    backgroundColor: splitInGroups ? toggleButton : unSelectedToggleButton,
+                  }}
+                  thumbColor={splitInGroups ? selectedThumbColor : thumbColor}
+                  trackColor={{ false: "transparent", true: "transparent" }}
+                  onValueChange={() => setInGroups((previousState) => !previousState)}
+                />
+              </View>
+            </View>
+            {!splitInGroups ? (
+              <View>
+                <InputWithIcon
+                  icon={<UserIcon color={iconColor} />}
+                  placeholder="Solo Name ?"
+                  value={singlePersonName}
+                  setValue={setSinglePersonName}
+                  keyboardType="default"
+                />
+              </View>
+            ) : (
+              <View>
+                {
+                  <FlatList
+                    data={groupData}
+                    horizontal
+                    renderItem={({ item }) => (
+                      <SingleBox
+                        label={item.groupName}
+                        icon={item.groupIcon}
+                        isSelected={selectedGroup?.groupId === item.groupId}
+                        onPress={() => groupSelection(item)}
+                      />
+                    )}
+                    keyExtractor={(item) => item.groupId}
+                  />
+                }
+              </View>
+            )}
+          </View>
 
-        <View
-          style={{
-            width: "90%",
-            marginHorizontal: 10,
-            marginTop: 30,
-            height: 1,
-            backgroundColor: horain,
-          }}
-        ></View>
-        {/* All Debt */}
-        <ScrollView
-          style={{
-            marginTop: 10,
-            paddingVertical: 10,
-            flex: 1,
-
-            width: "100%",
-          }}
-        >
+          {/* Horizontal line */}
           <View
             style={{
+              width: "90%",
+              marginHorizontal: 10,
+              marginTop: 30,
+              height: 1,
+              backgroundColor: horain,
+            }}
+          ></View>
+          {/* List of transaction where user will get money */}
+          <ScrollView
+            style={{
+              marginTop: 10,
+              paddingVertical: 10,
               flex: 1,
-              justifyContent: "center",
-              alignItems: "center",
+
+              width: "100%",
             }}
           >
-            <ThemedText type="subtitle">All Debt Listed @_@</ThemedText>
-          </View>
-        </ScrollView>
+            <View
+              style={{
+                flex: 1,
+                justifyContent: "center",
+                alignItems: "center",
+              }}
+            >
+              <ThemedText type="subtitle">Coming Paisa @_@</ThemedText>
+            </View>
+          </ScrollView>
 
-        {/* Submit Button */}
-        <View
-          style={{
-            position: "absolute",
-            bottom: 30,
-            width: "100%",
-            left: 10,
-            justifyContent: "center",
-            alignItems: "center",
-          }}
-        >
-          <SubmitButton button_label="Add Request" onPress={() => finalSubmit()} />
-        </View>
+          {/* Submit Button */}
+          <View style={globalStyles.submit_btn_container}>
+            <SubmitButton button_label="Add Request" onPress={() => finalSubmit()} />
+          </View>
+        </AnimatedStackView>
       </View>
     </ThemedView>
   );
