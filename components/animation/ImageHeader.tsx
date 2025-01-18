@@ -21,7 +21,7 @@ interface imageProps {
   imgUrl: ImageURISource | undefined;
 }
 
-const ImageHeader = () => {
+const ImageHeader = ({ imgUrl, title }: imageProps) => {
   const { width: SCREEN_WIDTH, height: SCREEN_HEIGHT } = useWindowDimensions();
   const translateX = useSharedValue(SCREEN_WIDTH / 2);
   const scale = useSharedValue(1);
@@ -100,10 +100,10 @@ const ImageHeader = () => {
           zIndex: 4,
         }}
       >
-        All Wastes ಠ⁠_⁠ಠ
+        {title}
       </ThemedText>
       <Animated.Image
-        source={require("@/assets/images/temp/green.jpg")}
+        source={imgUrl}
         blurRadius={2}
         resizeMethod="resize"
         style={[
