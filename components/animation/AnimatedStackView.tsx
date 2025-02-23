@@ -9,6 +9,7 @@ import Animated, {
 import { useCallback } from "react";
 import { useThemeColorWithName } from "@/hooks/useThemeColor";
 import { useFocusEffect } from "expo-router";
+
 const AnimatedStackView = ({ style, ...otherProps }: ViewProps) => {
   const scale = useSharedValue(0);
 
@@ -16,6 +17,7 @@ const AnimatedStackView = ({ style, ...otherProps }: ViewProps) => {
   const animatedStyle = useAnimatedStyle(() => {
     return {
       transform: [{ scale: scale.value }],
+      zIndex: 1,
     };
   });
   const backgroundColor = useThemeColorWithName("background");

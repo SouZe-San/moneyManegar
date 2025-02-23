@@ -1,4 +1,4 @@
-import { Groups, IExpanse, ITransaction, IUdahar, expenseType } from "@/types/expanse";
+import { Groups, IExpanse, ITransaction, IUdahar, expenseType, IGroup } from "@/types/expanse";
 import { keyType } from "./keyTypes";
 
 export const USERNAME = "souze";
@@ -132,66 +132,31 @@ export const udharArray: IUdahar[] = [
   ),
 ];
 
-export const groupData: Groups[] = [
+export const groupData: IGroup[] = [
   {
-    groupId: "1",
-    groupName: "Family",
-    members: [
-      {
-        userName: "Dada",
-        useId: "lkf",
-      },
-      {
-        userName: "baba",
-        useId: "lk34",
-      },
-    ],
-    groupIcon: "F1",
+    _id: 1,
+    name: "Family",
+    logo: "F1",
   },
   {
-    groupId: "2",
-    groupName: "Friends",
-    members: [
-      {
-        userName: "Ajay",
-        useId: "4234",
-      },
-      {
-        userName: "Vijay",
-        useId: "234",
-      },
-    ],
-    groupIcon: "🤪",
+    _id: 2,
+    name: "Friends",
+    logo: "🤪",
   },
   {
-    groupId: "3",
-    groupName: "Friends",
-    members: [
-      {
-        userName: "Ajay",
-        useId: "4234",
-      },
-      {
-        userName: "Vijay",
-        useId: "234",
-      },
-    ],
-    groupIcon: "🤪",
+    _id: 3,
+    name: "Friends",
+    logo: "🧐",
   },
   {
-    groupId: "4",
-    groupName: "Friends",
-    members: [
-      {
-        userName: "Ajay",
-        useId: "4234",
-      },
-      {
-        userName: "Vijay",
-        useId: "234",
-      },
-    ],
-    groupIcon: "🤪",
+    _id: 4,
+    name: "Friends",
+    logo: "🚀",
+  },
+  {
+    _id: 5,
+    name: "Faly",
+    logo: "F3",
   },
 ];
 
@@ -200,7 +165,7 @@ export const allTransactions: ITransaction[] = new Array(30).fill(0).map((_, ind
   expanseDesc: "Scuty's Fuel", // Static description
   date: getRandomDate(), // Random date
   amount: parseFloat(getRandomAmount()), // Random amount
-  expenseType: getRandomElement(expenseTypes), // Random expense type
+  expenseType: getRandomElement(expenseTypes) as expenseType, // Random expense type
   type: Math.random() < 0.5 ? "expense" : "income", // Random transaction type
   toWhom: Math.random() < 0.5 ? "own" : getRandomElement(toWhomOptions), // Randomly choose "own" or another option
 }));

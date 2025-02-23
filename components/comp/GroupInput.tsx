@@ -4,9 +4,11 @@ import { UserIcon, GroupsIcon } from "@/assets/icons/SVG/InputIcons";
 import { DeleteIcon } from "@/assets/icons/SVG/RandomIcons";
 import { InputWithIcon, SmallInputBox } from "../inputs/InputBox";
 import { useThemeColorWithName } from "@/hooks/useThemeColor";
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import SubmitButton from "../inputs/SubmitButton";
 import { Members } from "@/types/expanse";
+import { useSQLiteContext } from "expo-sqlite";
+import { fetchAllMember } from "@/hooks/useQueries";
 
 interface GroupInputProps {
   // Props Here
@@ -22,14 +24,6 @@ interface GroupInputProps {
 // Retrieve Data from Local Storage
 // Temporary Data
 
-const mem = [
-  { userName: "JohnDoe1", useId: "1" },
-  { userName: "JaneDoe2", useId: "2" },
-  { userName: "SamSmith1", useId: "411" },
-  { userName: "JaneDoe3", useId: "33" },
-  { userName: "Hekk", useId: "61" },
-];
-
 function GroupInput({
   groupName,
   groupLogo,
@@ -41,6 +35,23 @@ function GroupInput({
 }: GroupInputProps) {
   const iconColor = useThemeColorWithName("inputIcon");
   const buttonBg = useThemeColorWithName("blurBg");
+  const [storedMember, setStoredMember] = useState<Members[]>([]);
+
+  const sqlDB = useSQLiteContext();
+
+  useEffect(() => {
+    // @
+    console.log("Fetching data...");
+    const getMembers = async () => {
+      try {
+        const members = await fetchAllMember(sqlDB);
+        setStoredMember(members);
+      } catch (error) {
+        console.log("Error Fetching Members", error);
+      }
+    };
+    getMembers();
+  }, []);
 
   const [searchName, setSearchName] = useState("");
   const [searchResult, setSearchResult] = useState<Members[]>([]);
@@ -53,7 +64,7 @@ function GroupInput({
     //  Add Members
     const addMembers = (newMember: Members) => {
       // Check if the member is already in the group based on userName
-      if (!members.some((existingMember) => existingMember.useId === newMember.useId)) {
+      if (!members.some((existingMember) => existingMember._id === newMember._id)) {
         // If the member is not already in the list, add them
         setMembers([...members, newMember]);
       } else {
@@ -78,7 +89,7 @@ function GroupInput({
       return;
     }
     // Filter members based on searchName
-    const filteredMembers = mem.filter((member) =>
+    const filteredMembers = storedMember.filter((member) =>
       member.userName.toLowerCase().includes(searchName.trim().toLowerCase())
     );
 
@@ -102,7 +113,7 @@ function GroupInput({
         <TouchableOpacity
           onPress={() => {
             // Remove the member from the list
-            setMembers(members.filter((existingMember) => existingMember.useId !== member.useId));
+            setMembers(members.filter((existingMember) => existingMember.userId !== member.userId));
           }}
         >
           <View style={[styles.deleteBtn, { backgroundColor: buttonBg }]}>
@@ -184,7 +195,7 @@ function GroupInput({
               scrollsToTop={true}
               data={searchResult}
               renderItem={({ item }) => <SearchMember member={item} />}
-              keyExtractor={(member) => member.useId}
+              keyExtractor={(member) => member.userId ?? member.userName}
             />
           )}
         </View>
@@ -203,7 +214,7 @@ function GroupInput({
             scrollsToTop={true}
             data={members}
             renderItem={({ item }) => <SelectedMember member={item} />}
-            keyExtractor={(member) => member.useId}
+            keyExtractor={(member) => member.userId ?? member.userName}
           />
         )}
       </View>
@@ -230,7 +241,7 @@ const MembersRow = ({ member }: { member: Members }) => {
     <View style={[styles.row, { backgroundColor: bg }]}>
       <UserIcon color={iconColor} />
       <ThemedText type="defaultSemiBold">
-        {member.userName} - {member.useId}
+        {member.userName} - {member.userId ?? "no ID"}
       </ThemedText>
     </View>
   );

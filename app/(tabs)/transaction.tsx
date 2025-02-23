@@ -63,9 +63,10 @@ export default function Transaction() {
 
   useEffect(() => {
     const fetchData = async () => {
-      console.log("Fetching data...");
+      console.log("Fetching data... {from Transaction.tsx}");
       try {
         const rows: IUdahar[] = await db.getAllAsync("SELECT * FROM UdharTransactions");
+
         setAllRows(rows);
       } catch (error) {
         console.error("Error fetching data: ", error);

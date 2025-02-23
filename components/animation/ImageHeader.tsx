@@ -95,9 +95,12 @@ const ImageHeader = ({ imgUrl, title }: imageProps) => {
         style={{
           position: "relative",
           bottom: 60,
-          paddingLeft: 50,
+          paddingLeft: 40,
           // left: 10,
           zIndex: 4,
+          textShadowColor: background,
+          textShadowOffset: { width: 1.4, height: 1 },
+          textShadowRadius: 4,
         }}
       >
         {title}

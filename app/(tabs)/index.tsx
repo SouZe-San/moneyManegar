@@ -1,6 +1,6 @@
-import { StyleSheet, View, Text, Image, FlatList, ScrollView } from "react-native";
+import { StyleSheet, View, Text, Image, FlatList, ScrollView, ViewToken } from "react-native";
 import { useRouter } from "expo-router";
-import { useState, useRef, useCallback } from "react";
+import { useState, useRef, useCallback, useEffect } from "react";
 import { PieChartPro } from "react-native-gifted-charts";
 import { useSQLiteContext } from "expo-sqlite";
 import { useDrizzleStudio } from "expo-drizzle-studio-plugin";
@@ -19,6 +19,7 @@ import { totalBudget, expenseTypeData, groupData } from "@/constants/tempVar";
 // Hooks
 import { useThemeColorWithName } from "@/hooks/useThemeColor";
 import { useExpense } from "@/context/ExpanseContext";
+import { clearGroup_MemberTable, clearMemberTable } from "@/hooks/useQueries";
 
 // Icons
 import { DbIcon, StatsIcon } from "@/assets/icons/SVG/RandomIcons";
@@ -26,11 +27,14 @@ import { DbIcon, StatsIcon } from "@/assets/icons/SVG/RandomIcons";
 // Modal
 import BottomSheetModal from "@/components/BottomSheetModal";
 import { BottomSheetRefProps } from "@/components/BottomSheetView";
+import FolioBox from "@/components/comp/FolioBox";
+import { useSharedValue } from "react-native-reanimated";
 
 export default function HomeScreen() {
   // Colors
   const borderColor = useThemeColorWithName("borderColor");
   const expanseBg = useThemeColorWithName("expanseBg");
+  const shadowColor = useThemeColorWithName("background");
   const bg = useThemeColorWithName("blurBg");
   const darkTextColor = "#030f0e";
   const balanceBg = useThemeColorWithName("highLightBackground");
@@ -46,8 +50,10 @@ export default function HomeScreen() {
   const db = useSQLiteContext();
   useDrizzleStudio(db);
 
-  const { totalIncome, totalExpense, leftBalance } = useExpense();
+  const { totalIncome, totalExpense, leftBalance, members } = useExpense();
 
+  const viewableItems1 = useSharedValue<ViewToken[]>([]);
+  const viewableItems2 = useSharedValue<ViewToken[]>([]);
   // Router
   const router = useRouter();
 
@@ -64,14 +70,31 @@ export default function HomeScreen() {
     }
   }, []);
 
+  // useEffect(() => {
+  //   const fetchData = async () => {
+  //     console.log("Fetching data... {from index.tsx}");
+  //     try {
+  //       await clearGroup_MemberTable(db);
+  //       await clearMemberTable(db);
+  //       console.log("DONE ✅");
+  //     } catch (error) {
+  //       console.error("Error fetching data: ", error);
+  //       // Handle error state if needed
+  //     }
+  //   };
+
+  //   fetchData();
+  // }, []);
+
   return (
-    <AnimateTabView style={[globalStyles.container, { paddingBottom: 100 }]}>
+    <AnimateTabView style={[globalStyles.container, { paddingBottom: 100, paddingHorizontal: 0 }]}>
       <ScrollView showsVerticalScrollIndicator={false}>
         <ThemedText
           type="title"
           style={{
             flexDirection: "row",
             alignItems: "flex-end",
+            paddingHorizontal: "4%",
           }}
         >
           Hi,<Text style={{ fontSize: 28 }}>Souze</Text>
@@ -131,7 +154,7 @@ export default function HomeScreen() {
         </View>
 
         {/* New User Image */}
-        {!groupData && (
+        {members.length === 0 && (
           <View style={{ flex: 1, justifyContent: "center", alignItems: "center", padding: 20 }}>
             <Image
               source={require("@/assets/images/hero/heroImg.png")}
@@ -143,68 +166,125 @@ export default function HomeScreen() {
         {/*//^ All New Groups */}
 
         {/* Members */}
-        <View style={[styles.groupContainer, { marginTop: 20 }]}>
-          <ThemedText type="title" style={{ fontSize: 20 }}>
+        <View
+          style={[
+            styles.groupContainer,
+            { marginTop: 20, display: members.length === 0 ? "none" : "flex" },
+          ]}
+        >
+          <ThemedText type="title" style={{ fontSize: 20, paddingHorizontal: "4%" }}>
             Pals & Partners
           </ThemedText>
           <View
             style={{
               flexGrow: 0,
               marginVertical: 5,
-              flexWrap: "wrap",
+              flexDirection: "row",
             }}
           >
+            {/* Shadow View */}
+            <View
+              style={{
+                alignSelf: "flex-start",
+
+                width: 1,
+                height: "100%",
+                shadowColor: balanceBg,
+                elevation: 15,
+                shadowOpacity: 1,
+                shadowRadius: 7,
+                shadowOffset: {
+                  width: -20,
+                  height: 0,
+                },
+              }}
+            ></View>
             <FlatList
-              data={groupData}
-              keyExtractor={(item) => item.groupId}
+              data={members}
+              keyExtractor={(item) => item._id?.toString()!}
               horizontal
               showsHorizontalScrollIndicator={false}
+              style={{
+                paddingLeft: "3%",
+              }}
+              onViewableItemsChanged={({ viewableItems: vItems }) => {
+                viewableItems1.value = vItems;
+              }}
               renderItem={({ item }) => (
-                <SingleBox
-                  key={item.groupId}
-                  label={item.groupName}
-                  icon={item.groupIcon}
-                  onPress={() => onPress(item.groupId)}
+                <FolioBox
+                  label={item.userName}
+                  icon={item.userId}
+                  item={item}
+                  viewableItems={viewableItems1}
+                  isMem={true}
+                  onPress={() => onPress(item._id?.toString()!)}
                 />
               )}
             />
+            <View
+              style={{
+                alignSelf: "flex-end",
+                width: 1,
+                height: "100%",
+                shadowColor,
+                elevation: 15,
+                shadowOpacity: 1,
+                shadowRadius: 7,
+                shadowOffset: {
+                  width: -20,
+                  height: 0,
+                },
+              }}
+            ></View>
           </View>
         </View>
         {/* Groups */}
         <View style={styles.groupContainer}>
-          <ThemedText type="title" style={{ fontSize: 20 }}>
+          <ThemedText type="title" style={{ fontSize: 20, paddingHorizontal: "4%" }}>
             My Circles
           </ThemedText>
           <View
             style={{
               flexGrow: 0,
               marginVertical: 5,
-              flexWrap: "wrap",
-              flexDirection: "row",
             }}
           >
             <FlatList
               data={groupData}
-              keyExtractor={(item) => item.groupId}
+              keyExtractor={(item) => item._id?.toString()!}
               horizontal
               showsHorizontalScrollIndicator={false}
+              style={{
+                paddingLeft: "4%",
+              }}
+              onViewableItemsChanged={({ viewableItems: vItems }) => {
+                viewableItems2.value = vItems;
+              }}
               renderItem={({ item }) => (
-                <SingleBox
-                  key={item.groupId}
-                  label={item.groupName}
-                  icon={item.groupIcon}
-                  onPress={() => router.push(`/groups/${item.groupId}`)}
+                <FolioBox
+                  label={item.name}
+                  icon={item.logo}
+                  item={item}
+                  viewableItems={viewableItems2}
+                  onPress={() => router.push(`/groups/${item._id}`)}
                 />
               )}
             />
           </View>
         </View>
 
-        <RedirectButton
-          icon={<DbIcon color={balanceBg} />}
-          label="All Transactions"
-          redirectUrl={"/allTransaction"}
-        />
+        <View
+          style={{
+            width: "100%",
+            paddingHorizontal: "4%",
+          }}
+        >
+          <RedirectButton
+            icon={<DbIcon color={balanceBg} />}
+            label="All Transactions"
+            redirectUrl={"/allTransaction"}
+          />
+        </View>
         <View style={{ position: "relative" }}>
           <BottomSheetModal isOpen={modalVisible} setIsOpen={setModalVisible} ref={ref}>
             <MemberDetails id={memberId} />
@@ -218,7 +298,7 @@ export default function HomeScreen() {
             justifyContent: "space-between",
             marginVertical: 10,
             marginTop: 40,
-            paddingHorizontal: 15,
+            paddingHorizontal: 20,
           }}
         >
           <View style={{ alignItems: "center" }}>
@@ -275,13 +355,19 @@ export default function HomeScreen() {
             </View>
           </View>
         </View>
-
-        <RedirectButton
-          icon={<StatsIcon color={balanceBg} />}
-          label="Stats"
-          redirectUrl={"/allStats"}
-        />
-
+        <View
+          style={{
+            width: "100%",
+            paddingHorizontal: "4%",
+            marginBottom: 30,
+          }}
+        >
+          <RedirectButton
+            icon={<StatsIcon color={balanceBg} />}
+            label="Stats"
+            redirectUrl={"/allStats"}
+          />
+        </View>
         {/* MoDal */}
       </ScrollView>
     </AnimateTabView>
@@ -293,6 +379,7 @@ const styles = StyleSheet.create({
     marginTop: 20,
     width: "100%",
     gap: 8,
+    paddingHorizontal: "4%",
   },
   costViewBox: {
     width: "auto",

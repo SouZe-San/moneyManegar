@@ -9,11 +9,11 @@ import { ThemedView } from "../ThemedView";
 
 // Retrieve Data from Local Storage
 const mem = [
-  { userName: "JohnDoe1", useId: "1" },
-  { userName: "JaneDoe2", useId: "2" },
-  { userName: "SamSmith1", useId: "411" },
-  { userName: "JaneDoe3", useId: "33" },
-  { userName: "Hekk", useId: "61" },
+  { userName: "JohnDoe1", userId: "1" },
+  { userName: "JaneDoe2", userId: "2" },
+  { userName: "SamSmith1", userId: "411" },
+  { userName: "JaneDoe3", userId: "33" },
+  { userName: "Hekk", userId: "61" },
 ];
 
 type SearchProfileSectionProps = {
@@ -45,7 +45,7 @@ export default function SearchProfileSection({ member, setMember }: SearchProfil
 
     // Update the search result with the filtered members
     setSearchResult(filteredMembers);
-    setMember({ userName: searchName, useId: null });
+    setMember({ userName: searchName, userId: null });
   };
 
   //! Search Member Component
@@ -107,7 +107,7 @@ export default function SearchProfileSection({ member, setMember }: SearchProfil
             scrollsToTop={true}
             data={searchResult}
             renderItem={({ item }) => <SearchMember member={item} />}
-            keyExtractor={(member) => member.useId ?? member.userName}
+            keyExtractor={(member) => member.userId ?? member.userName}
           />
         )}
       </View>
@@ -122,7 +122,7 @@ const MembersRow = ({ member }: { member: Members }) => {
     <View style={[styles.row, { backgroundColor: bg }]}>
       <UserIcon color={iconColor} />
       <ThemedText type="defaultSemiBold">
-        {member.userName} - {member.useId}
+        {member.userName} - {member.userId}
       </ThemedText>
     </View>
   );
