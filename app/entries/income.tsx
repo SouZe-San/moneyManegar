@@ -1,6 +1,8 @@
 import dayjs from "dayjs";
-import { View, Alert } from "react-native";
+import { View, Alert, FlatList } from "react-native";
 import { useState } from "react";
+
+import { ITransaction, expenseType } from "@/types/expanse";
 
 import DateView from "@/components/inputs/DateView";
 import ImageHeader from "@/components/comp/ImageHeader";
@@ -14,19 +16,66 @@ import { MoneyBagIcon, BagIcon } from "@/assets/icons/SVG/InputIcons";
 import { useThemeColorWithName } from "@/hooks/useThemeColor";
 import { useExpense } from "@/context/ExpanseContext";
 import AnimatedStackView from "@/components/animation/AnimatedStackView";
+import { useSQLiteContext } from "expo-sqlite";
+import { addData_in_AllTransaction } from "@/hooks/useQueries";
+import ExpenseTypeButton from "@/components/comp/ExpanseTypeButton";
+
+const incomeExpanseType = ["Salary", "Business", "Gift", "Others"];
 
 export function income() {
   // !States or Input Variables
-  const [amount, setAmount] = useState("");
+  const [amount, setAmount] = useState<string | undefined>(undefined);
   const [date, setDate] = useState(dayjs());
-  const [description, setDescription] = useState("");
+  const [description, setDescription] = useState<string | undefined>("");
+  const [expenseType, setExpenseType] = useState<string | undefined>(undefined);
 
   // Colors
   const backgroundColor = useThemeColorWithName("background");
   const iconColor = useThemeColorWithName("inputIcon");
 
   // !Hooks
-  const { addIncome } = useExpense();
+  const db = useSQLiteContext();
+
+  //  Data Insert Function
+  const insertData = async () => {
+    const dbAmount: number = parseInt(amount || "0");
+    const dbData: string = date.format("DD/MM/YY");
+    const dbDesc: string = description || "";
+    const dbExpenseType: string = expenseType!;
+
+    const newData: ITransaction = {
+      amount: dbAmount,
+      type: "income",
+      expenseType: dbExpenseType as expenseType | "Salary" | "Gift" | "Business",
+      date: dbData,
+      expanseDesc: dbDesc,
+    };
+
+    try {
+      await addData_in_AllTransaction(db, newData);
+      Alert.alert("Income Added", "Your income has been added successfully", [{ text: "OK" }], {
+        cancelable: false,
+      });
+      setAmount("");
+      setDescription("");
+      setDate(dayjs());
+    } catch (error) {
+      console.log("Error form Insert : ", error);
+    }
+  };
+
+  // Button Submit Fun
+  const submitData = async () => {
+    if (!amount || !description || !expenseType) {
+      return;
+    }
+
+    try {
+      await insertData();
+    } catch (e) {
+      console.log("Error form Income data Entries : ", e);
+    }
+  };
 
   return (
     <ThemedView style={globalStyles.entriesViewContainer}>
@@ -42,7 +91,7 @@ export function income() {
           textShadowRadius: 4,
         }}
       >
-        Hee Paisa Paisa {">_<"}
+        Paisa Hee Paisa {">_<"}
       </ThemedText>
       <View style={[globalStyles.inputContainer, { backgroundColor }]}>
         <AnimatedStackView style={globalStyles.animated_stackContainer}>
@@ -54,7 +103,7 @@ export function income() {
               gap: 10,
             }}
           >
-            <View>
+            <View style={{ zIndex: 3, position: "relative" }}>
               <InputWithIcon
                 icon={<MoneyBagIcon color={iconColor} />}
                 placeholder="00.0 INR"
@@ -74,23 +123,26 @@ export function income() {
             <View>
               <DateView date={date} setDate={setDate} />
             </View>
+            <View>
+              <FlatList
+                horizontal
+                style={{
+                  flexGrow: 0,
+                  marginVertical: 5,
+                }}
+                showsHorizontalScrollIndicator={false}
+                data={incomeExpanseType}
+                keyExtractor={(item) => item}
+                renderItem={({ item, index: numbers }) => {
+                  return (
+                    <ExpenseTypeButton value={expenseType} setValue={setExpenseType} item={item} />
+                  );
+                }}
+              />
+            </View>
           </View>
           <View style={globalStyles.submit_btn_container}>
-            <SubmitButton
-              button_label="Add Income"
-              onPress={() => {
-                addIncome(Number(amount));
-                setAmount("");
-                setDescription("");
-                setDate(dayjs());
-                Alert.alert(
-                  "Income Added",
-                  "Your income has been added successfully",
-                  [{ text: "OK" }],
-                  { cancelable: false }
-                );
-              }}
-            />
+            <SubmitButton button_label="Add Income" onPress={submitData} />
           </View>
         </AnimatedStackView>
       </View>

@@ -121,6 +121,7 @@ const styles = StyleSheet.create({
     // gap: 10,
     flexGrow: 0,
     marginVertical: 5,
+    paddingVertical: 5,
   },
   expenseTypeButton: {
     // width: 60,

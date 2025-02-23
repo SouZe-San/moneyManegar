@@ -1,3 +1,13 @@
+export type expenseType =
+  | "Food"
+  | "Fuel"
+  | "Shopping"
+  | "Recharge"
+  | "Travels"
+  | "Others"
+  | "Rent"
+  | "Bill";
+
 export interface IExpanse {
   transactionId: string;
   expanseDescription: string;
@@ -11,7 +21,7 @@ export interface IUdahar {
   _id?: number;
   amount: number;
   type: "debt" | "owned";
-  expenseType: "Food" | "Fuel" | "Shopping" | "Recharge" | "Travels" | "Others" | "Rent" | "Bill";
+  expenseType: expenseType;
   date: string;
   toWhom: string;
   expanseDesc: string;
@@ -23,7 +33,7 @@ export interface ITransaction {
   _id?: number;
   amount: number;
   type: mainTransactionType;
-  expenseType: expanseType;
+  expenseType: expenseType | "Salary" | "Gift" | "Business";
   date: string;
   expanseDesc: string;
   toWhom?: string;
@@ -31,23 +41,34 @@ export interface ITransaction {
 }
 
 export type Members = {
+  _id?: number;
   userName: string;
-  useId: string | null;
+  userId: string | null;
+  ownedAmount?: number;
+  dueAmount?: number;
 };
 
 export type Groups = {
+  _id?: number;
   groupId: string;
   groupName: string;
   groupIcon: string;
   members: Members[];
 };
 
-export type expenseType =
-  | "Food"
-  | "Fuel"
-  | "Shopping"
-  | "Recharge"
-  | "Travels"
-  | "Others"
-  | "Rent"
-  | "Bill";
+export interface IGroup {
+  _id?: number;
+  name: string;
+  logo: string;
+}
+export interface IGroupMember {
+  _id?: number;
+  groupId: number;
+  memberId: number;
+}
+export interface IMember {
+  _id?: number;
+  name: string;
+  imgUrl: string;
+  userId: string | null;
+}

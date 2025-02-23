@@ -1,0 +1,149 @@
+import { View, StyleSheet, Pressable, ViewToken, Image } from "react-native";
+import { useThemeColorWithName } from "@/hooks/useThemeColor";
+import { ThemedText } from "../ThemedText";
+import Animated, {
+  useSharedValue,
+  useAnimatedStyle,
+  withTiming,
+  SharedValue,
+  Easing,
+  withSpring,
+  ReduceMotion,
+} from "react-native-reanimated";
+import { IGroup, Members } from "@/types/expanse";
+
+import { getInfoAsync } from "expo-file-system";
+// import * as FileSystem from "expo-file-system";
+import { useEffect, useState } from "react";
+type SingleBoxProps = {
+  icon: string | null;
+  label: string;
+  isMem?: boolean;
+  item: IGroup | Members;
+  viewableItems: SharedValue<ViewToken[]>;
+  onPress?: () => void;
+};
+
+const FolioBox = ({
+  icon,
+  label,
+  isMem = false,
+  item,
+  viewableItems,
+  onPress = () => console.warn("pressed"),
+}: SingleBoxProps) => {
+  const borderColor = useThemeColorWithName("buttonBg");
+  const unSelectedButtonBgColor = useThemeColorWithName("blurBg");
+  const selectedButtonBgColor = useThemeColorWithName("toggleButton");
+  const [isFile, setIsFile] = useState(false);
+
+  useEffect(() => {
+    if (isMem && icon) {
+      try {
+        getInfoAsync(icon).then((res) => {
+          setIsFile(res.exists);
+        });
+      } catch (error) {
+        console.log("Error Reading File", error);
+      }
+    }
+  });
+
+  const rStyle = useAnimatedStyle(() => {
+    const isVisible = Boolean(
+      viewableItems.value
+        .filter((item) => item.isViewable)
+        .find((viewableItem) => viewableItem.item._id === item._id)
+    );
+    return {
+      opacity: withTiming(isVisible ? 1 : 0, {
+        duration: 300, // Adjust duration for smoother transition
+        easing: Easing.out(Easing.exp), // Use an easing function for smoother transitions
+      }),
+
+      transform: [
+        {
+          scale: withSpring(isVisible ? 1 : 0.3, {
+            duration: 400,
+            stiffness: 75,
+            overshootClamping: false,
+            restDisplacementThreshold: 0.01,
+            restSpeedThreshold: 2,
+            reduceMotion: ReduceMotion.System,
+          }),
+        },
+      ],
+    };
+  }, [viewableItems.value]); // Add dependencies to ensure it updates correctly
+
+  return (
+    <Animated.View style={[rStyle]}>
+      <View style={[styles.expenseTypeButton]}>
+        <Pressable
+          style={[
+            styles.expenseTypeButton_btn,
+            {
+              backgroundColor: unSelectedButtonBgColor,
+            },
+          ]}
+          onPress={onPress}
+        >
+          {isMem ? (
+            isFile ? (
+              <Image
+                source={{ uri: icon as string }}
+                style={{ objectFit: "cover", width: "100%", height: "100%" }}
+              />
+            ) : (
+              <ThemedText style={styles.buttonLabel}>👤</ThemedText>
+            )
+          ) : (
+            <ThemedText style={styles.buttonLabel}>{icon}</ThemedText>
+          )}
+        </Pressable>
+        <ThemedText style={styles.buttonSubLabel} colorName="buttonBg">
+          {label}
+        </ThemedText>
+      </View>
+    </Animated.View>
+  );
+};
+
+export default FolioBox;
+const styles = StyleSheet.create({
+  expenseTypeButton: {
+    // width: 60,
+    height: 150,
+    display: "flex",
+    justifyContent: "center",
+    alignItems: "center",
+    marginRight: 20,
+    shadowColor: "#000",
+    shadowOffset: {
+      width: 0,
+      height: 2,
+    },
+    shadowOpacity: 0.25,
+    shadowRadius: 3.84,
+    elevation: 5,
+  },
+  expenseTypeButton_btn: {
+    backdropFilter: "blur(10px)",
+    backgroundColor: "#bababa93",
+    width: 80,
+    aspectRatio: 3 / 4,
+    display: "flex",
+
+    flexDirection: "column",
+    justifyContent: "center",
+    alignItems: "center",
+    borderRadius: 10,
+    overflow: "hidden",
+  },
+  buttonLabel: {
+    fontSize: 20,
+  },
+  buttonSubLabel: {
+    fontSize: 14,
+  },
+});

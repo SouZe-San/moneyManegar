@@ -6,48 +6,72 @@ import { useState } from "react";
 import { Members } from "@/types/expanse";
 import { Alert } from "react-native";
 import { useRouter } from "expo-router";
-import { useExpense } from "@/context/ExpanseContext";
+import { addMember_in_Group, fetchGroupId, groupCreate } from "@/hooks/useQueries";
+import { useSQLiteContext } from "expo-sqlite";
+import EasyAlert from "@/components/comp/EasyAlert";
 
 export default function create() {
-  const router = useRouter();
   const [groupName, setGroupName] = useState("");
   const [groupLogo, setGroupLogo] = useState("");
   const [members, setMembers] = useState<Members[]>([]);
 
-  const { addGroup } = useExpense();
+  const router = useRouter();
+  const sqlDb = useSQLiteContext();
 
-  const onSubmit = () => {
+  const onSubmit = async () => {
     // Save the Group
 
     const group = {
       groupName,
-      members,
+      groupIcon: groupLogo,
     };
     // Clear the input fields
+
+    try {
+      // Create Group
+      await groupCreate(sqlDb, group);
+      // // Find the id of the group in table
+      const groupId: {
+        _id: number;
+      } | null = await fetchGroupId(sqlDb, groupName);
+
+      // Add Members to the Group
+      if (!groupId) {
+        EasyAlert("Failed", "Some Error Occurred, Tyr Again");
+        return;
+      }
+      for (const member of members) {
+        console.log("Adding Member: ", member);
+
+        await addMember_in_Group(sqlDb, {
+          groupId: String(groupId._id),
+          memberId: String(member._id),
+        });
+      }
+      Alert.alert(
+        "Success",
+        "Group Created Successfully",
+        [
+          {
+            text: "OK",
+            onPress: () => {
+              router.push("/(tabs)");
+            },
+          },
+        ],
+        {
+          cancelable: false,
+        }
+      );
+    } catch (error) {
+      EasyAlert("Failed", "Some Error Occurred, Tyr Again");
+      console.log("Error From group/create : ", error);
+    }
+
     setGroupName("");
     setMembers([]);
 
-    console.log("====================================");
-    console.log("Group Details", group);
-    console.log("====================================");
-
     // Show Success Alert
-    Alert.alert(
-      "Success",
-      "Group Created Successfully",
-      [
-        {
-          text: "OK",
-          onPress: () => {
-            addGroup(group);
-            router.push("/(tabs)");
-          },
-        },
-      ],
-      {
-        cancelable: false,
-      }
-    );
   };
   return (
     <ThemedView style={[globalStyles.mainContainer]}>

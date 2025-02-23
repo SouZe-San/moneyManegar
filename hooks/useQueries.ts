@@ -1,4 +1,4 @@
-import { ITransaction, IUdahar, Members } from "@/types/expanse";
+import { Groups, ITransaction, IUdahar, Members, IGroup } from "@/types/expanse";
 import { type SQLiteDatabase } from "expo-sqlite";
 
 // ! Data INSERTING - INSERTION ---->
@@ -22,27 +22,25 @@ const addData_in_AllTransaction = async (db: SQLiteDatabase, data: ITransaction)
 
 // data insert im UdharTransactions Table
 const add_udhar = async (db: SQLiteDatabase, data: IUdahar) => {
-  db.withTransactionAsync(async () => {
-    try {
-      await db.runAsync(
-        "INSERT INTO UdharTransactions (amount, type, expenseType, date, expanseDesc,toWhom, memberId) VALUES (?, ?, ?, ?, ?,?,?)",
-        [
-          data.amount,
-          data.type,
-          data.expenseType,
-          data.date,
-          data.expanseDesc,
-          data.toWhom,
-          data.memberId,
-        ]
-      );
-      console.log("====================================");
-      console.log("Transaction inserted:");
-      console.log("====================================");
-    } catch (error) {
-      console.error("From useQueries \nError inserting transaction:", error);
-    }
-  });
+  try {
+    await db.runAsync(
+      "INSERT INTO UdharTransactions (amount, type, expenseType, date, expanseDesc,toWhom, memberId) VALUES (?, ?, ?, ?, ?,?,?)",
+      [
+        data.amount,
+        data.type,
+        data.expenseType,
+        data.date,
+        data.expanseDesc,
+        data.toWhom,
+        data.memberId,
+      ]
+    );
+    console.log("====================================");
+    console.log("Transaction inserted:");
+    console.log("====================================");
+  } catch (error) {
+    console.error("From useQueries \nError inserting transaction:", error);
+  }
 };
 
 // data insert im MemberTable Table
@@ -51,7 +49,7 @@ const memberCreate = async (db: SQLiteDatabase, data: Members) => {
     try {
       await db.runAsync("INSERT INTO MemberTable (userName,userId) VALUES (?,?)", [
         data.userName,
-        data.useId,
+        data.userId,
       ]);
       console.log("====================================");
       console.log("Member inserted:");
@@ -84,19 +82,18 @@ const addMember_in_Group = async (
   db: SQLiteDatabase,
   data: { groupId: string; memberId: string }
 ) => {
-  db.withTransactionAsync(async () => {
-    try {
-      await db.runAsync("INSERT INTO Group_Member (groupId, memberId) VALUES (?,?)", [
-        data.groupId,
-        data.memberId,
-      ]);
-      console.log("====================================");
-      console.log("Member Added in Group !!");
-      console.log("===================================");
-    } catch (error) {
-      console.error("From useQueries \nError While Adding Member in Group : ", error);
-    }
-  });
+  try {
+    await db.runAsync("INSERT INTO Group_Member (groupId, memberId) VALUES (?,?)", [
+      data.groupId,
+      data.memberId,
+    ]);
+    console.log("====================================");
+    console.log("Member Added in Group !!");
+    console.log("===================================");
+  } catch (error) {
+    console.error("From useQueries \nError While Adding Member in Group : ", error);
+    throw new Error("Error While Adding Member in Group");
+  }
 };
 
 // ! DATE FETCHING - READ ---->
@@ -134,7 +131,7 @@ const fetchAllMember = async (db: SQLiteDatabase) => {
 // Fetch All Group
 const fetchAllGroup = async (db: SQLiteDatabase) => {
   try {
-    const rows: Members[] = await db.getAllAsync("SELECT * FROM GroupTable");
+    const rows: IGroup[] = await db.getAllAsync("SELECT * FROM GroupTable");
     return rows;
   } catch (error) {
     console.error("Error fetching data: ", error);
@@ -155,11 +152,49 @@ const fetchAllMember_of_Group = async (db: SQLiteDatabase, groupId: string) => {
   }
 };
 
+// Fetch the group of the given name and return the id
+const fetchGroupId = async (db: SQLiteDatabase, groupName: string) => {
+  try {
+    const rowId = await db.getFirstAsync<{ _id: number }>(
+      "SELECT _id FROM GroupTable WHERE name = ?",
+      [groupName]
+    );
+    return rowId;
+  } catch (error) {
+    console.error("Error fetching data: ", error);
+    return null;
+  }
+};
+
 // Calculation
 
 // ! DATA UPDATING - ALTAR ---->
 
 // ! DATA DELETING - DELETION ---->
+const clearGroup_MemberTable = async (db: SQLiteDatabase) => {
+  try {
+    await db.runAsync("DELETE FROM Group_Member;");
+    console.log("All records deleted from Group_Member table.");
+  } catch (error) {
+    console.error("Error clearing Group_Member table:", error);
+  }
+};
+const clearMemberTable = async (db: SQLiteDatabase) => {
+  try {
+    await db.runAsync("DELETE FROM MemberTable;");
+    console.log("All records deleted from MemberTable table.");
+  } catch (error) {
+    console.error("Error on clearing MemberTable table:", error);
+  }
+};
+const clearGroupTable = async (db: SQLiteDatabase) => {
+  try {
+    await db.runAsync("DELETE FROM GroupTable;");
+    console.log("All records deleted from GroupTable table.");
+  } catch (error) {
+    console.error("Error clearing GroupTable table:", error);
+  }
+};
 
 // export all functions
 export {
@@ -172,4 +207,8 @@ export {
   fetchAllMember,
   fetchAllGroup,
   fetchAllMember_of_Group,
+  fetchGroupId,
+  clearGroupTable,
+  clearGroup_MemberTable,
+  clearMemberTable,
 };

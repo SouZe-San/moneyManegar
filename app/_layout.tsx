@@ -142,7 +142,9 @@ export default function RootLayout() {
                 options={{
                   title: "",
                   headerShadowVisible: false,
+                  headerLargeTitle: true,
                   headerTransparent: true,
+                  headerBackVisible: false,
                   headerTintColor: headerTextColor,
                 }}
               />
@@ -151,7 +153,9 @@ export default function RootLayout() {
                 options={{
                   title: "",
                   headerShadowVisible: false,
+                  headerLargeTitle: true,
                   headerTransparent: true,
+                  headerBackVisible: false,
                   headerTintColor: headerTextColor,
                 }}
               />

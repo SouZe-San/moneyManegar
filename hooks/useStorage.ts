@@ -56,6 +56,8 @@ export const migrateDbIfNeeded = async (db: SQLiteDatabase) => {
             ownedAmount REAL DEFAULT 0 CHECK (ownedAmount >= 0), 
             dueAmount REAL DEFAULT 0 CHECK (dueAmount >= 0), 
             userId TEXT
+            imgUrl TEXT
+            
         );
 
         CREATE TABLE IF NOT EXISTS Group_Member (

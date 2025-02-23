@@ -14,6 +14,9 @@ import ImageHeader from "@/components/comp/ImageHeader";
 import { useRouter } from "expo-router";
 import EasyAlert from "@/components/comp/EasyAlert";
 import AnimatedStackView from "@/components/animation/AnimatedStackView";
+import { expenseType, IUdahar } from "@/types/expanse";
+import { add_udhar } from "@/hooks/useQueries";
+import { useSQLiteContext } from "expo-sqlite";
 
 //! TO whom I have to pay
 export function payble() {
@@ -30,11 +33,11 @@ export function payble() {
   const iconColor = useThemeColorWithName("inputIcon");
   // Routes
   const router = useRouter();
-
+  const sqlDb = useSQLiteContext();
   // FUNCTIONS
 
   // Final Submit
-  function finalSubmit() {
+  async function finalSubmit() {
     // Check if the amount is empty
 
     if (amount.trim() === "" || amount === "0") {
@@ -67,30 +70,39 @@ export function payble() {
 
     // All Checks Pass
     // Submit the data to the serve
-    const data = {
-      amount,
-      date,
-      expanseReason,
-      expenseType,
+    const data: IUdahar = {
+      amount: parseInt(amount),
+      date: date.format("DD/MM/YY"),
+      expanseDesc: expanseReason,
+      expenseType: expenseType as expenseType,
       toWhom,
+      type: "debt",
+      memberId: null,
     };
+
     console.log("====================================");
     console.log(" Data", data);
     console.log("====================================");
 
-    Alert.alert(
-      "Success",
-      "Your Udhary Successfully Added",
-      [
+    try {
+      await add_udhar(sqlDb, data);
+      Alert.alert(
+        "Success",
+        "Your Udhary Successfully Added",
+        [
+          {
+            text: "OK",
+            onPress: () => router.push("/(tabs)"),
+          },
+        ],
         {
-          text: "OK",
-          onPress: () => router.push("/(tabs)"),
-        },
-      ],
-      {
-        cancelable: false,
-      }
-    );
+          cancelable: false,
+        }
+      );
+    } catch (error) {
+      EasyAlert("Failed", "Some Error Occurred, Tyr Again");
+      console.log("Error form DEBT insert : ", error);
+    }
   }
 
   return (

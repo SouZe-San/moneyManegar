@@ -1,34 +1,29 @@
-import { MoneyBagIcon, UserIcon, BagIcon } from "@/assets/icons/SVG/InputIcons";
+import { ScrollView, View, Switch, useColorScheme, FlatList, Alert } from "react-native";
 import dayjs from "dayjs";
+import { useSQLiteContext } from "expo-sqlite";
+import { useRouter } from "expo-router";
+
 import { InputWithIcon } from "@/components/inputs/InputBox";
 import SubmitButton from "@/components/inputs/SubmitButton";
 import { ThemedText } from "@/components/ThemedText";
 import { ThemedView } from "@/components/ThemedView";
 import { globalStyles } from "@/constants/globalStyles";
-import { useThemeColorWithName } from "@/hooks/useThemeColor";
 import { useState } from "react";
-import {
-  ScrollView,
-  View,
-  Switch,
-  useColorScheme,
-  FlatList,
-  Alert,
-  useWindowDimensions,
-} from "react-native";
-import { Groups } from "@/types/expanse";
 import ExpanseType from "@/components/inputs/ExpanseType";
 import { groupData } from "@/constants/tempVar";
 import SingleBox from "@/components/SingleBox";
 import EasyAlert from "@/components/comp/EasyAlert";
 import DateView from "@/components/inputs/DateView";
-import { useRouter } from "expo-router";
 import ImageHeader from "@/components/comp/ImageHeader";
 import AnimatedStackView from "@/components/animation/AnimatedStackView";
 
+import { MoneyBagIcon, UserIcon, BagIcon } from "@/assets/icons/SVG/InputIcons";
+import { useThemeColorWithName } from "@/hooks/useThemeColor";
+import { expenseType, Groups, IUdahar } from "@/types/expanse";
+import { add_udhar } from "@/hooks/useQueries";
+
 // ! who are you to ask for money &&& { can take full expense and divide in in some numbers}
 export function contribute() {
-  const { width: SCREEN_WEIGHT, height: SCREEN_HEIGHT } = useWindowDimensions();
   // All states
   const [amount, setAmount] = useState("");
   const [expenseType, setExpenseType] = useState("");
@@ -48,7 +43,7 @@ export function contribute() {
   const backgroundColor = useThemeColorWithName("background");
 
   const router = useRouter();
-
+  const sqlDb = useSQLiteContext();
   // Add Group
   const groupSelection = (item: Groups) => {
     if (!selectedGroup) {
@@ -62,7 +57,7 @@ export function contribute() {
     }
   };
   // Final Submit
-  function finalSubmit() {
+  async function finalSubmit() {
     // Check if the amount is empty
 
     if (amount.trim() === "" || amount === "0") {
@@ -108,58 +103,77 @@ export function contribute() {
     // Submit the data to the server
     if (!splitInGroups) {
       // Submit the data for single person
-      const data = {
-        amount,
-        expanseReason,
-        date,
-        expenseType,
-        singlePersonName,
+      const data: IUdahar = {
+        amount: parseInt(amount),
+        date: date.format("DD/MM/YY"),
+        expanseDesc: expanseReason,
+        expenseType: expenseType as expenseType,
+        toWhom: singlePersonName,
+        type: "owned",
+        memberId: null,
       };
-      console.log(" Data", data);
+      console.log("Single Insert", data);
+
+      try {
+        await add_udhar(sqlDb, data);
+        Alert.alert(
+          "Success",
+          "Contri Successfully Added",
+          [
+            {
+              text: "OK",
+              onPress: () => router.push("/(tabs)"),
+            },
+          ],
+          {
+            cancelable: false,
+          }
+        );
+      } catch (error) {
+        EasyAlert("Failed", "Some Error Occurred, Tyr Again");
+        console.log("Error  From SINGLE insert Contri : ", error);
+      }
     } else {
       // Submit the data for group
       if (selectedGroup === null) return;
       const memberCount = selectedGroup?.members.length;
-      const data = {
-        amount,
-        expanseReason,
-        date,
-        expenseType,
-        selectedGroup,
-      };
-      console.log("Group Data", data);
-
-      const eachContri = Number(amount) / memberCount;
-      const allList: any = [];
+      const eachContri = Number(amount) / (memberCount + 1);
+      const allList: IUdahar[] = [];
       selectedGroup.members.forEach((member) => {
         allList.push({
-          userName: member.userName,
-          Amount: eachContri,
-          Date: date,
-          expanseReason,
-          expenseType,
+          amount: eachContri,
+          date: date.format("DD/MM/YY"),
+          expanseDesc: expanseReason,
+          expenseType: expenseType as expenseType,
+          toWhom: member.userName,
+          type: "debt",
+          memberId: null,
         });
       });
-      console.log("====================================");
-      console.log("All List", allList);
 
-      console.log("====================================");
+      console.log("Multi Insert");
 
+      try {
+        await Promise.all(allList.map((item) => add_udhar(sqlDb, item)));
+        Alert.alert(
+          "Success",
+          "Contri Successfully Added",
+          [
+            {
+              text: "OK",
+              onPress: () => router.push("/(tabs)"),
+            },
+          ],
+          {
+            cancelable: false,
+          }
+        );
+      } catch (error) {
+        EasyAlert("Failed", "Some Error Occurred, Tyr Again");
+        console.log("Error From Multi insert Contri: ", error);
+      }
       //
     }
-    Alert.alert(
-      "Success",
-      "Debt Added Successfully",
-      [
-        {
-          text: "OK",
-          onPress: () => router.push("/(tabs)"),
-        },
-      ],
-      {
-        cancelable: false,
-      }
-    );
   }
 
   return (
