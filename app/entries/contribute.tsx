@@ -20,12 +20,10 @@ import { ThemedView } from "@/components/ThemedView";
 
 // icons
 import { MoneyBagIcon, UserIcon, BagIcon } from "@/assets/icons/SVG/InputIcons";
-
-// hooks
-import { add_udhar } from "@/hooks/useQueries";
 import { useThemeColorWithName } from "@/hooks/useThemeColor";
-
-import { expenseType, Groups, IGroup, IUdahar } from "@/types/expanse";
+import { expenseType, Groups, IGroup, IUdahar, Members } from "@/types/expanse";
+import { add_udhar } from "@/hooks/useQueries";
+import SearchProfileSection from "@/components/comp/SearchProfileSection";
 
 // ! who are you to ask for money &&& { can take full expense and divide in in some numbers}
 export function contribute() {
@@ -33,7 +31,7 @@ export function contribute() {
   const [amount, setAmount] = useState("");
   const [expenseType, setExpenseType] = useState("");
   const [expanseReason, setExpanseReason] = useState("");
-  const [singlePersonName, setSinglePersonName] = useState("");
+  const [singlePersonName, setSinglePersonName] = useState<Members | null>(null);
   const [selectedGroup, setGroup] = useState<IGroup | null>(null);
   const [splitInGroups, setInGroups] = useState(false);
   const [date, setDate] = useState(dayjs());
@@ -89,7 +87,7 @@ export function contribute() {
     // Check if the splitInGroups is false
     if (!splitInGroups) {
       // Check if the singlePersonName is empty
-      if (singlePersonName.trim() === "") {
+      if (singlePersonName) {
         // Show an alert or feedback to the user
         console.log("Single Person Name is empty");
         EasyAlert("Person's Name is empty", "Please enter the Reason to continue");
@@ -114,7 +112,7 @@ export function contribute() {
         date: date.format("DD/MM/YY"),
         expanseDesc: expanseReason,
         expenseType: expenseType as expenseType,
-        toWhom: singlePersonName,
+        toWhom: singlePersonName?.userName!,
         type: "owned",
         memberId: null,
       };
@@ -142,22 +140,22 @@ export function contribute() {
     } else {
       // Submit the data for group
       if (selectedGroup === null) return;
-
-      // get count of members
-      const memberCount = selectedGroup?.members.length;
-      const eachContri = Number(amount) / (memberCount + 1);
+      // ! Have to call Function for get all members of this group
+      // @ Need - member's Id
+      // const memberCount = selectedGroup?.members.length;
+      // const eachContri = Number(amount) / (memberCount + 1);
       const allList: IUdahar[] = [];
-      selectedGroup.members.forEach((member) => {
-        allList.push({
-          amount: eachContri,
-          date: date.format("DD/MM/YY"),
-          expanseDesc: expanseReason,
-          expenseType: expenseType as expenseType,
-          toWhom: member.userName,
-          type: "debt",
-          memberId: null,
-        });
-      });
+      // selectedGroup.members.forEach((member) => {
+      //   allList.push({
+      //     amount: eachContri,
+      //     date: date.format("DD/MM/YY"),
+      //     expanseDesc: expanseReason,
+      //     expenseType: expenseType as expenseType,
+      //     toWhom: member.userName,
+      //     type: "debt",
+      //     memberId: null,
+      //   });
+      // });
 
       console.log("Multi Insert");
 
@@ -253,7 +251,7 @@ export function contribute() {
                 alignItems: "center",
               }}
             >
-              <ThemedText type="defaultSemiBold">Split in Groups</ThemedText>
+              <ThemedText type="defaultSemiBold">Split in Groups ?</ThemedText>
               <View
                 style={{
                   borderWidth: 1,
@@ -279,13 +277,14 @@ export function contribute() {
             </View>
             {!splitInGroups ? (
               <View>
-                <InputWithIcon
+                {/* <InputWithIcon
                   icon={<UserIcon color={iconColor} />}
                   placeholder="Solo Name ?"
                   value={singlePersonName}
                   setValue={setSinglePersonName}
                   keyboardType="default"
-                />
+                /> */}
+                <SearchProfileSection member={singlePersonName} setMember={setSinglePersonName} />
               </View>
             ) : (
               <View>
@@ -297,7 +296,7 @@ export function contribute() {
                       <SingleBox
                         label={item.name}
                         icon={item.logo}
-                        isSelected={selectedGroup?.groupId === item._id?.toString()}
+                        isSelected={selectedGroup?._id === item._id}
                         onPress={() => groupSelection(item)}
                       />
                     )}

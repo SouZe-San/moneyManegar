@@ -47,6 +47,7 @@ export const migrateDbIfNeeded = async (db: SQLiteDatabase) => {
             _id INTEGER PRIMARY KEY AUTOINCREMENT,
             name TEXT NOT NULL UNIQUE,
             logo TEXT NOT NULL
+            imgUrl TEXT
         );
 
 
@@ -57,7 +58,6 @@ export const migrateDbIfNeeded = async (db: SQLiteDatabase) => {
             dueAmount REAL DEFAULT 0 CHECK (dueAmount >= 0), 
             userId TEXT
             imgUrl TEXT
-            
         );
 
         CREATE TABLE IF NOT EXISTS Group_Member (

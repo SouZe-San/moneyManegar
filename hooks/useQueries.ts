@@ -47,9 +47,10 @@ const add_udhar = async (db: SQLiteDatabase, data: IUdahar) => {
 const memberCreate = async (db: SQLiteDatabase, data: Members) => {
   db.withTransactionAsync(async () => {
     try {
-      await db.runAsync("INSERT INTO MemberTable (userName,userId) VALUES (?,?)", [
+      await db.runAsync("INSERT INTO MemberTable (userName,userId,imgUrl) VALUES (?,?,?)", [
         data.userName,
         data.userId,
+        data.imgUrl,
       ]);
       console.log("====================================");
       console.log("Member inserted:");
@@ -61,12 +62,13 @@ const memberCreate = async (db: SQLiteDatabase, data: Members) => {
 };
 
 // Create new Group
-const groupCreate = async (db: SQLiteDatabase, data: { groupName: string; groupIcon: string }) => {
+const groupCreate = async (db: SQLiteDatabase, data: IGroup) => {
   db.withTransactionAsync(async () => {
     try {
-      await db.runAsync("INSERT INTO GroupTable (name,logo) VALUES (?,?)", [
-        data.groupName,
-        data.groupIcon,
+      await db.runAsync("INSERT INTO GroupTable (name,logo,imgUrl) VALUES (?,?,?)", [
+        data.name,
+        data.logo,
+        data.imgUrl,
       ]);
       console.log("====================================");
       console.log("Group Created !!");
@@ -99,8 +101,28 @@ const addMember_in_Group = async (
 // ! DATE FETCHING - READ ---->
 
 // Fetch All Transaction
+const fetchAllTransaction = async (db: SQLiteDatabase) => {
+  try {
+    const rows: ITransaction[] = await db.getAllAsync("SELECT * FROM AllTransactions");
+    return rows;
+  } catch (error) {
+    console.error("Error fetching AllTransactions: ", error);
+    return [];
+  }
+};
 // Fetch All unPaid Transaction
 
+const fetchAllUnPaidTransaction = async (db: SQLiteDatabase) => {
+  try {
+    const rows: IUdahar[] = await db.getAllAsync(
+      "SELECT * FROM UdharTransactions WHERE type = 'debt'"
+    );
+    return rows;
+  } catch (error) {
+    console.error("Error fetching Udhari Data: ", error);
+    return [];
+  }
+};
 // calculate total Income and expense
 const totalIncome = async (db: SQLiteDatabase) => {
   try {
@@ -112,7 +134,7 @@ const totalIncome = async (db: SQLiteDatabase) => {
 
     return;
   } catch (error) {
-    console.error("Error fetching data: ", error);
+    console.error("Error fetching totalIncome: ", error);
     return 0;
   }
 };
@@ -123,7 +145,7 @@ const fetchAllMember = async (db: SQLiteDatabase) => {
     const rows: Members[] = await db.getAllAsync("SELECT * FROM MemberTable");
     return rows;
   } catch (error) {
-    console.error("Error fetching data: ", error);
+    console.error("Error fetching Members: ", error);
     return [];
   }
 };
@@ -134,7 +156,7 @@ const fetchAllGroup = async (db: SQLiteDatabase) => {
     const rows: IGroup[] = await db.getAllAsync("SELECT * FROM GroupTable");
     return rows;
   } catch (error) {
-    console.error("Error fetching data: ", error);
+    console.error("Error fetching All groups: ", error);
     return [];
   }
 };
@@ -147,7 +169,7 @@ const fetchAllMember_of_Group = async (db: SQLiteDatabase, groupId: string) => {
     ]);
     return rows;
   } catch (error) {
-    console.error("Error fetching data: ", error);
+    console.error("Error fetching Members of a group: ", error);
     return [];
   }
 };
@@ -161,10 +183,14 @@ const fetchGroupId = async (db: SQLiteDatabase, groupName: string) => {
     );
     return rowId;
   } catch (error) {
-    console.error("Error fetching data: ", error);
+    console.error("Error fetching GroupId: ", error);
     return null;
   }
 };
+
+// Fetch according Expanse
+
+// Fetch according Date
 
 // Calculation
 
@@ -196,6 +222,16 @@ const clearGroupTable = async (db: SQLiteDatabase) => {
   }
 };
 
+const resetDb = async (db: SQLiteDatabase) => {
+  try {
+    await clearGroup_MemberTable(db);
+    await clearGroupTable(db);
+    await clearMemberTable(db);
+  } catch (error) {
+    console.error("Error clearing GroupTable table:", error);
+  }
+};
+
 // export all functions
 export {
   addData_in_AllTransaction,
@@ -211,4 +247,5 @@ export {
   clearGroupTable,
   clearGroup_MemberTable,
   clearMemberTable,
+  resetDb,
 };

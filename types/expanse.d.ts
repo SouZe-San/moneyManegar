@@ -46,6 +46,7 @@ export type Members = {
   userId: string | null;
   ownedAmount?: number;
   dueAmount?: number;
+  imgUrl: string | null;
 };
 
 export type Groups = {
@@ -60,6 +61,7 @@ export interface IGroup {
   _id?: number;
   name: string;
   logo: string;
+  imgUrl: string | null;
 }
 export interface IGroupMember {
   _id?: number;

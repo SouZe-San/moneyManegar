@@ -16,9 +16,10 @@ import { getInfoAsync } from "expo-file-system";
 // import * as FileSystem from "expo-file-system";
 import { useEffect, useState } from "react";
 type SingleBoxProps = {
-  icon: string | null;
+  icon?: string | null;
   label: string;
   isMem?: boolean;
+  imgUrl: string | null;
   item: IGroup | Members;
   viewableItems: SharedValue<ViewToken[]>;
   onPress?: () => void;
@@ -29,6 +30,7 @@ const FolioBox = ({
   label,
   isMem = false,
   item,
+  imgUrl,
   viewableItems,
   onPress = () => console.warn("pressed"),
 }: SingleBoxProps) => {
@@ -38,9 +40,9 @@ const FolioBox = ({
   const [isFile, setIsFile] = useState(false);
 
   useEffect(() => {
-    if (isMem && icon) {
+    if (imgUrl) {
       try {
-        getInfoAsync(icon).then((res) => {
+        getInfoAsync(imgUrl).then((res) => {
           setIsFile(res.exists);
         });
       } catch (error) {
@@ -88,15 +90,13 @@ const FolioBox = ({
           ]}
           onPress={onPress}
         >
-          {isMem ? (
-            isFile ? (
-              <Image
-                source={{ uri: icon as string }}
-                style={{ objectFit: "cover", width: "100%", height: "100%" }}
-              />
-            ) : (
-              <ThemedText style={styles.buttonLabel}>👤</ThemedText>
-            )
+          {isFile ? (
+            <Image
+              source={{ uri: imgUrl! }}
+              style={{ objectFit: "cover", width: "100%", height: "100%" }}
+            />
+          ) : isMem ? (
+            <ThemedText style={styles.buttonLabel}>🙂</ThemedText>
           ) : (
             <ThemedText style={styles.buttonLabel}>{icon}</ThemedText>
           )}

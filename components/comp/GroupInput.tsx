@@ -8,7 +8,7 @@ import { useEffect, useState } from "react";
 import SubmitButton from "../inputs/SubmitButton";
 import { Members } from "@/types/expanse";
 import { useSQLiteContext } from "expo-sqlite";
-import { fetchAllMember } from "@/hooks/useQueries";
+import { useExpense } from "@/context/ExpanseContext";
 
 interface GroupInputProps {
   // Props Here
@@ -35,23 +35,7 @@ function GroupInput({
 }: GroupInputProps) {
   const iconColor = useThemeColorWithName("inputIcon");
   const buttonBg = useThemeColorWithName("blurBg");
-  const [storedMember, setStoredMember] = useState<Members[]>([]);
-
-  const sqlDB = useSQLiteContext();
-
-  useEffect(() => {
-    // @
-    console.log("Fetching data...");
-    const getMembers = async () => {
-      try {
-        const members = await fetchAllMember(sqlDB);
-        setStoredMember(members);
-      } catch (error) {
-        console.log("Error Fetching Members", error);
-      }
-    };
-    getMembers();
-  }, []);
+  const [storedMember, setStoredMember] = useState<Members[]>(useExpense().members);
 
   const [searchName, setSearchName] = useState("");
   const [searchResult, setSearchResult] = useState<Members[]>([]);
@@ -59,6 +43,7 @@ function GroupInput({
   const borderColor = useThemeColorWithName("borderColor");
   const placeTextColor = useThemeColorWithName("tabIconDefault");
   const inputTextColor = useThemeColorWithName("text");
+
   //! Search Member Component
   const SearchMember = ({ member }: { member: Members }) => {
     //  Add Members
@@ -79,7 +64,7 @@ function GroupInput({
     );
   };
 
-  // !Searching the members from Api
+  //Searching the members from Api
   const searchMembers = () => {
     // Check Network Connection
 
@@ -241,7 +226,7 @@ const MembersRow = ({ member }: { member: Members }) => {
     <View style={[styles.row, { backgroundColor: bg }]}>
       <UserIcon color={iconColor} />
       <ThemedText type="defaultSemiBold">
-        {member.userName} - {member.userId ?? "no ID"}
+        {member.userName} - {member._id ?? "no ID"}
       </ThemedText>
     </View>
   );

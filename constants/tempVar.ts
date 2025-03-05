@@ -137,26 +137,31 @@ export const groupData: IGroup[] = [
     _id: 1,
     name: "Family",
     logo: "F1",
+    imgUrl: null,
   },
   {
     _id: 2,
     name: "Friends",
     logo: "🤪",
+    imgUrl: null,
   },
   {
     _id: 3,
     name: "Friends",
     logo: "🧐",
+    imgUrl: null,
   },
   {
     _id: 4,
     name: "Friends",
     logo: "🚀",
+    imgUrl: null,
   },
   {
     _id: 5,
     name: "Faly",
     logo: "F3",
+    imgUrl: null,
   },
 ];
 
