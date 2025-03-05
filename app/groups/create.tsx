@@ -3,7 +3,7 @@ import { ThemedText } from "@/components/ThemedText";
 import { ThemedView } from "@/components/ThemedView";
 import { globalStyles } from "@/constants/globalStyles";
 import { useState } from "react";
-import { Members } from "@/types/expanse";
+import { IGroup, Members } from "@/types/expanse";
 import { Alert } from "react-native";
 import { useRouter } from "expo-router";
 import { addMember_in_Group, fetchGroupId, groupCreate } from "@/hooks/useQueries";
@@ -21,9 +21,10 @@ export default function create() {
   const onSubmit = async () => {
     // Save the Group
 
-    const group = {
-      groupName,
-      groupIcon: groupLogo,
+    const group: IGroup = {
+      name: groupName,
+      logo: groupLogo,
+      imgUrl: null,
     };
     // Clear the input fields
 

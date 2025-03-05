@@ -9,11 +9,11 @@ import { ThemedView } from "../ThemedView";
 
 // Retrieve Data from Local Storage
 const mem = [
-  { userName: "JohnDoe1", userId: "1" },
-  { userName: "JaneDoe2", userId: "2" },
-  { userName: "SamSmith1", userId: "411" },
-  { userName: "JaneDoe3", userId: "33" },
-  { userName: "Hekk", userId: "61" },
+  { userName: "JohnDoe1", userId: "1", imgUrl: null },
+  { userName: "JaneDoe2", userId: "2", imgUrl: null },
+  { userName: "SamSmith1", userId: "411", imgUrl: null },
+  { userName: "JaneDoe3", userId: "33", imgUrl: null },
+  { userName: "Hekk", userId: "61", imgUrl: null },
 ];
 
 type SearchProfileSectionProps = {
@@ -45,7 +45,7 @@ export default function SearchProfileSection({ member, setMember }: SearchProfil
 
     // Update the search result with the filtered members
     setSearchResult(filteredMembers);
-    setMember({ userName: searchName, userId: null });
+    setMember({ userName: searchName, userId: null, imgUrl: null });
   };
 
   //! Search Member Component
