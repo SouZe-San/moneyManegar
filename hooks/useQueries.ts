@@ -47,9 +47,10 @@ const add_udhar = async (db: SQLiteDatabase, data: IUdahar) => {
 const memberCreate = async (db: SQLiteDatabase, data: Members) => {
   db.withTransactionAsync(async () => {
     try {
-      await db.runAsync("INSERT INTO MemberTable (userName,userId) VALUES (?,?)", [
+      await db.runAsync("INSERT INTO MemberTable (userName,userId,imgUrl) VALUES (?,?,?)", [
         data.userName,
         data.userId,
+        data.imgUrl!,
       ]);
       console.log("====================================");
       console.log("Member inserted:");

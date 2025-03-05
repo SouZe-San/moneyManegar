@@ -14,7 +14,9 @@ export default function TabLayout() {
       screenOptions={{
         tabBarActiveTintColor: Colors[colorScheme ?? "light"].tint,
         headerShown: false,
+        tabBarHideOnKeyboard: true,
       }}
+      safeAreaInsets={{ top: -10, bottom: 0 }}
     >
       <Tabs.Screen
         name="index"

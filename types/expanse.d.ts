@@ -46,6 +46,7 @@ export type Members = {
   userId: string | null;
   ownedAmount?: number;
   dueAmount?: number;
+  imgUrl?: string | null;
 };
 
 export type Groups = {

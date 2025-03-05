@@ -239,7 +239,7 @@ export default function HomeScreen() {
           </View>
         </View>
         {/* Groups */}
-        <View style={styles.groupContainer}>
+        <View style={[styles.groupContainer, { display: members.length === 0 ? "none" : "flex" }]}>
           <ThemedText type="title" style={{ fontSize: 20, paddingHorizontal: "4%" }}>
             My Circles
           </ThemedText>

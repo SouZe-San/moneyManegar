@@ -38,8 +38,6 @@ export const ExpenseProvider: React.FC<{ children: React.ReactNode }> = ({ child
       try {
         // const rows = await fetchAllGroup(db);
         const members = await fetchAllMember(db);
-        console.log("Members: ", members);
-
         // setGroups(rows);
         setMember(members);
       } catch (error) {

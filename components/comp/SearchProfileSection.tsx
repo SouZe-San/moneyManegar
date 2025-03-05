@@ -1,20 +1,15 @@
 import { View, TouchableOpacity, StyleSheet, FlatList, Alert } from "react-native";
 import { UserIcon } from "@/assets/icons/SVG/InputIcons";
 import { useThemeColorWithName } from "@/hooks/useThemeColor";
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import { SmallInputBox } from "../inputs/InputBox";
 import { Members } from "@/types/expanse";
 import { ThemedText } from "../ThemedText";
 import { ThemedView } from "../ThemedView";
+import { useExpense } from "@/context/ExpanseContext";
+import { store } from "expo-router/build/global-state/router-store";
 
 // Retrieve Data from Local Storage
-const mem = [
-  { userName: "JohnDoe1", userId: "1" },
-  { userName: "JaneDoe2", userId: "2" },
-  { userName: "SamSmith1", userId: "411" },
-  { userName: "JaneDoe3", userId: "33" },
-  { userName: "Hekk", userId: "61" },
-];
 
 type SearchProfileSectionProps = {
   member: Members | null;
@@ -24,9 +19,14 @@ type SearchProfileSectionProps = {
 export default function SearchProfileSection({ member, setMember }: SearchProfileSectionProps) {
   const [searchName, setSearchName] = useState(member ? member.userName : "");
   const [searchResult, setSearchResult] = useState<Members[]>([]);
-
+  const [storeMembers, setStoreMembers] = useState<Members[]>([]);
   const iconColor = useThemeColorWithName("inputIcon");
   const buttonBg = useThemeColorWithName("blurBg");
+
+  const { members } = useExpense();
+  useEffect(() => {
+    setStoreMembers(members);
+  }, []);
 
   // !Searching the members from Api
   const searchMembers = () => {
@@ -39,7 +39,7 @@ export default function SearchProfileSection({ member, setMember }: SearchProfil
       return;
     }
     // Filter members based on searchName
-    const filteredMembers = mem.filter((member) =>
+    const filteredMembers = storeMembers.filter((member) =>
       member.userName.toLowerCase().includes(searchName.trim().toLowerCase())
     );
 
@@ -55,6 +55,7 @@ export default function SearchProfileSection({ member, setMember }: SearchProfil
       // Check if the member is already in the group based on userName
       setSearchName(newMember.userName);
       setMember(newMember);
+      setSearchResult(searchResult.filter((mem) => mem._id === newMember._id));
     };
     return (
       <TouchableOpacity onPress={() => addMembers(member)}>
@@ -121,9 +122,7 @@ const MembersRow = ({ member }: { member: Members }) => {
   return (
     <View style={[styles.row, { backgroundColor: bg }]}>
       <UserIcon color={iconColor} />
-      <ThemedText type="defaultSemiBold">
-        {member.userName} - {member.userId}
-      </ThemedText>
+      <ThemedText type="defaultSemiBold">{member.userName}</ThemedText>
     </View>
   );
 };
