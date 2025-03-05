@@ -1,24 +1,27 @@
 import dayjs from "dayjs";
 import { View, Alert, FlatList } from "react-native";
 import { useState } from "react";
+import { useSQLiteContext } from "expo-sqlite";
 
 import { ITransaction, expenseType } from "@/types/expanse";
 
+// components
+import AnimatedStackView from "@/components/animation/AnimatedStackView";
 import DateView from "@/components/inputs/DateView";
+import ExpenseTypeButton from "@/components/comp/ExpanseTypeButton";
+import { globalStyles } from "@/constants/globalStyles";
 import ImageHeader from "@/components/comp/ImageHeader";
 import { InputWithIcon } from "@/components/inputs/InputBox";
+import SubmitButton from "@/components/inputs/SubmitButton";
 import { ThemedText } from "@/components/ThemedText";
 import { ThemedView } from "@/components/ThemedView";
-import SubmitButton from "@/components/inputs/SubmitButton";
 
-import { globalStyles } from "@/constants/globalStyles";
-import { MoneyBagIcon, BagIcon } from "@/assets/icons/SVG/InputIcons";
-import { useThemeColorWithName } from "@/hooks/useThemeColor";
-import { useExpense } from "@/context/ExpanseContext";
-import AnimatedStackView from "@/components/animation/AnimatedStackView";
-import { useSQLiteContext } from "expo-sqlite";
+// hooks
 import { addData_in_AllTransaction } from "@/hooks/useQueries";
-import ExpenseTypeButton from "@/components/comp/ExpanseTypeButton";
+import { useThemeColorWithName } from "@/hooks/useThemeColor";
+
+// icons
+import { MoneyBagIcon, BagIcon } from "@/assets/icons/SVG/InputIcons";
 
 const incomeExpanseType = ["Salary", "Business", "Gift", "Others"];
 

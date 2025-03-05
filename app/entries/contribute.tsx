@@ -1,26 +1,31 @@
-import { ScrollView, View, Switch, useColorScheme, FlatList, Alert } from "react-native";
 import dayjs from "dayjs";
-import { useSQLiteContext } from "expo-sqlite";
+import { ScrollView, View, Switch, useColorScheme, FlatList, Alert } from "react-native";
 import { useRouter } from "expo-router";
+import { useSQLiteContext } from "expo-sqlite";
+import { useState } from "react";
 
+// components
+import AnimatedStackView from "@/components/animation/AnimatedStackView";
+import DateView from "@/components/inputs/DateView";
+import { globalStyles } from "@/constants/globalStyles";
+import EasyAlert from "@/components/comp/EasyAlert";
+import ExpanseType from "@/components/inputs/ExpanseType";
+import { groupData } from "@/constants/tempVar";
+import ImageHeader from "@/components/comp/ImageHeader";
 import { InputWithIcon } from "@/components/inputs/InputBox";
+import SingleBox from "@/components/SingleBox";
 import SubmitButton from "@/components/inputs/SubmitButton";
 import { ThemedText } from "@/components/ThemedText";
 import { ThemedView } from "@/components/ThemedView";
-import { globalStyles } from "@/constants/globalStyles";
-import { useState } from "react";
-import ExpanseType from "@/components/inputs/ExpanseType";
-import { groupData } from "@/constants/tempVar";
-import SingleBox from "@/components/SingleBox";
-import EasyAlert from "@/components/comp/EasyAlert";
-import DateView from "@/components/inputs/DateView";
-import ImageHeader from "@/components/comp/ImageHeader";
-import AnimatedStackView from "@/components/animation/AnimatedStackView";
 
+// icons
 import { MoneyBagIcon, UserIcon, BagIcon } from "@/assets/icons/SVG/InputIcons";
-import { useThemeColorWithName } from "@/hooks/useThemeColor";
-import { expenseType, Groups, IUdahar } from "@/types/expanse";
+
+// hooks
 import { add_udhar } from "@/hooks/useQueries";
+import { useThemeColorWithName } from "@/hooks/useThemeColor";
+
+import { expenseType, Groups, IGroup, IUdahar } from "@/types/expanse";
 
 // ! who are you to ask for money &&& { can take full expense and divide in in some numbers}
 export function contribute() {
@@ -29,7 +34,7 @@ export function contribute() {
   const [expenseType, setExpenseType] = useState("");
   const [expanseReason, setExpanseReason] = useState("");
   const [singlePersonName, setSinglePersonName] = useState("");
-  const [selectedGroup, setGroup] = useState<Groups | null>(null);
+  const [selectedGroup, setGroup] = useState<IGroup | null>(null);
   const [splitInGroups, setInGroups] = useState(false);
   const [date, setDate] = useState(dayjs());
 
@@ -44,12 +49,13 @@ export function contribute() {
 
   const router = useRouter();
   const sqlDb = useSQLiteContext();
+
   // Add Group
-  const groupSelection = (item: Groups) => {
+  const groupSelection = (item: IGroup) => {
     if (!selectedGroup) {
       setGroup(item);
     } else {
-      if (selectedGroup.groupId === item.groupId) {
+      if (selectedGroup._id === item._id) {
         setGroup(null);
       } else {
         setGroup(item);
@@ -136,6 +142,8 @@ export function contribute() {
     } else {
       // Submit the data for group
       if (selectedGroup === null) return;
+
+      // get count of members
       const memberCount = selectedGroup?.members.length;
       const eachContri = Number(amount) / (memberCount + 1);
       const allList: IUdahar[] = [];
@@ -287,13 +295,13 @@ export function contribute() {
                     horizontal
                     renderItem={({ item }) => (
                       <SingleBox
-                        label={item.groupName}
-                        icon={item.groupIcon}
-                        isSelected={selectedGroup?.groupId === item.groupId}
+                        label={item.name}
+                        icon={item.logo}
+                        isSelected={selectedGroup?.groupId === item._id?.toString()}
                         onPress={() => groupSelection(item)}
                       />
                     )}
-                    keyExtractor={(item) => item.groupId}
+                    keyExtractor={(item) => item._id?.toString()!}
                   />
                 }
               </View>
