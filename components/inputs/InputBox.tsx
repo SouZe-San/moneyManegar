@@ -1,5 +1,13 @@
 import { useThemeColorWithName } from "@/hooks/useThemeColor";
-import { Text, View, StyleSheet, TextInput, type TextProps } from "react-native";
+import {
+  Text,
+  View,
+  StyleSheet,
+  TextInput,
+  type TextProps,
+  KeyboardAvoidingView,
+  Platform,
+} from "react-native";
 import { ThemedText } from "../ThemedText";
 
 type InputBoxProps = {
@@ -44,7 +52,12 @@ export function InputWithIcon({
 }: InputBoxProps & { icon: React.JSX.Element }) {
   const borderColor = useThemeColorWithName("borderColor");
   return (
-    <View style={[styles.iconInputBox, { borderColor, borderWidth: 1, paddingHorizontal: 10 }]}>
+    <KeyboardAvoidingView
+      style={[styles.iconInputBox, { borderColor, borderWidth: 0.4, paddingHorizontal: 10 }]}
+      behavior={Platform.OS === "ios" ? "padding" : "height"}
+      keyboardVerticalOffset={30}
+      enabled
+    >
       {icon}
       <InputBox
         placeholder={placeholder}
@@ -54,7 +67,7 @@ export function InputWithIcon({
         maxLength={maxLength}
         style={{ marginLeft: 5, marginVertical: 10 }}
       />
-    </View>
+    </KeyboardAvoidingView>
   );
 }
 
@@ -68,8 +81,13 @@ export function SmallInputBox({
   const borderColor = useThemeColorWithName("borderColor");
 
   return (
-    <View
-      style={[styles.iconInputBox, { borderColor, borderWidth: 1, paddingLeft: 10, width: "70%" }]}
+    <KeyboardAvoidingView
+      style={[
+        styles.iconInputBox,
+        { borderColor, borderWidth: 0.4, paddingLeft: 10, width: "70%" },
+      ]}
+      enabled
+      behavior={Platform.OS === "ios" ? "padding" : "height"}
     >
       {icon}
       <InputBox
@@ -79,7 +97,7 @@ export function SmallInputBox({
         setValue={setValue}
         style={{ marginLeft: 5, marginTop: 10, marginBottom: 5 }}
       />
-    </View>
+    </KeyboardAvoidingView>
   );
 }
 

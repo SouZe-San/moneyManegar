@@ -33,7 +33,6 @@ const ExpanseButton = ({
         .filter((item) => item.isViewable)
         .find((viewableItem) => viewableItem.item === item)
     );
-    // const isVisible = true;
     return {
       opacity: withTiming(isVisible ? 1 : 0, {
         duration: 300, // Adjust duration for smoother transition
@@ -50,14 +49,10 @@ const ExpanseButton = ({
             restSpeedThreshold: 2,
             reduceMotion: ReduceMotion.System,
           }),
-          // scale: withTiming(isVisible ? 1 : 0.2, {
-          //   duration: 300, // Match duration with opacity for synchronization
-          //   easing: Easing.bounce, // Use an easing function for smoother transitions
-          // }),
         },
       ],
     };
-  }, [viewableItems.value]); // Add dependencies to ensure it updates correctly
+  }, [viewableItems.value]);
 
   return (
     <Animated.View style={[rStyle]}>

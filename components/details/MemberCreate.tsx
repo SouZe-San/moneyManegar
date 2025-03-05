@@ -4,7 +4,7 @@ import { ThemedView } from "../ThemedView";
 import { useState } from "react";
 import { ThemedText } from "../ThemedText";
 import SubmitButton from "../inputs/SubmitButton";
-import { View, KeyboardAvoidingView, Alert, TouchableOpacity, Image } from "react-native";
+import { View, Alert, TouchableOpacity, Image } from "react-native";
 import { memberCreate } from "@/hooks/useQueries";
 import { useSQLiteContext } from "expo-sqlite";
 import EasyAlert from "../comp/EasyAlert";
@@ -33,7 +33,11 @@ const MemberCreate = ({ setModalVisibility }: { setModalVisibility: (value: bool
           {
             text: "Yes",
             onPress: async () => {
-              const newMember: Members = { userName: member?.userName, userId: selectedImage };
+              const newMember: Members = {
+                userName: member?.userName,
+                userId: member.userId,
+                imgUrl: selectedImage,
+              };
               try {
                 await memberCreate(sqlDb, newMember);
                 setModalVisibility(false);
@@ -82,60 +86,58 @@ const MemberCreate = ({ setModalVisibility }: { setModalVisibility: (value: bool
 
   return (
     <ThemedView>
-      <KeyboardAvoidingView enabled behavior="padding">
-        <ThemedText type="title" style={{ marginTop: 15, marginBottom: 20 }}>
-          NewOne ~_~
-        </ThemedText>
-        <View
+      <ThemedText type="title" style={{ marginTop: 15, marginBottom: 20 }}>
+        NewOne ~_~
+      </ThemedText>
+      <View
+        style={{
+          flexDirection: "row",
+          alignItems: "center",
+          gap: 10,
+          // paddingHorizontal: 10,
+          marginTop: 10,
+          marginBottom: 5,
+          // paddingVertical: 15,
+        }}
+      >
+        <TouchableOpacity
           style={{
-            flexDirection: "row",
-            alignItems: "center",
-            gap: 10,
-            // paddingHorizontal: 10,
-            marginTop: 10,
-            marginBottom: 5,
-            // paddingVertical: 15,
+            borderColor: bg,
+            backgroundColor: bg,
+            borderRadius: 10,
+            padding: selectedImage ? 0 : 15,
+            borderWidth: 1,
+            width: selectedImage ? 100 : "auto",
+            aspectRatio: 1,
+            overflow: "hidden",
           }}
+          onPress={pickImage}
+          activeOpacity={0.8}
         >
-          <TouchableOpacity
-            style={{
-              borderColor: bg,
-              backgroundColor: bg,
-              borderRadius: 10,
-              padding: selectedImage ? 0 : 15,
-              borderWidth: 1,
-              width: selectedImage ? 100 : "auto",
-              aspectRatio: 1,
-              overflow: "hidden",
-            }}
-            onPress={pickImage}
-            activeOpacity={0.8}
-          >
-            {selectedImage ? (
-              <Image
-                source={{ uri: selectedImage }}
-                style={{ objectFit: "cover", width: "100%", height: "100%" }}
-              />
-            ) : (
-              <ProCamIcon color={iconColor} />
-            )}
-          </TouchableOpacity>
-          <ThemedText type="defaultSemiBold">Profile Photo</ThemedText>
-        </View>
-        <SearchProfileSection member={member} setMember={setMember} />
+          {selectedImage ? (
+            <Image
+              source={{ uri: selectedImage }}
+              style={{ objectFit: "cover", width: "100%", height: "100%" }}
+            />
+          ) : (
+            <ProCamIcon color={iconColor} />
+          )}
+        </TouchableOpacity>
+        <ThemedText type="defaultSemiBold">Profile Photo</ThemedText>
+      </View>
+      <SearchProfileSection member={member} setMember={setMember} />
 
-        <View
-          style={{
-            width: "100%",
-            left: 10,
-            justifyContent: "center",
-            alignItems: "center",
-            alignSelf: "center",
-          }}
-        >
-          <SubmitButton button_label="Add New" onPress={memberSubmit} />
-        </View>
-      </KeyboardAvoidingView>
+      <View
+        style={{
+          width: "100%",
+          left: 10,
+          justifyContent: "center",
+          alignItems: "center",
+          alignSelf: "center",
+        }}
+      >
+        <SubmitButton button_label="Add New" onPress={memberSubmit} />
+      </View>
     </ThemedView>
   );
 };

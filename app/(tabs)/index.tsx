@@ -213,7 +213,7 @@ export default function HomeScreen() {
               renderItem={({ item }) => (
                 <FolioBox
                   label={item.userName}
-                  icon={item.userId}
+                  imgUrl={item.userId}
                   item={item}
                   viewableItems={viewableItems1}
                   isMem={true}
@@ -239,7 +239,7 @@ export default function HomeScreen() {
           </View>
         </View>
         {/* Groups */}
-        <View style={styles.groupContainer}>
+        <View style={[styles.groupContainer, { display: members.length === 0 ? "none" : "flex" }]}>
           <ThemedText type="title" style={{ fontSize: 20, paddingHorizontal: "4%" }}>
             My Circles
           </ThemedText>
@@ -264,6 +264,7 @@ export default function HomeScreen() {
                 <FolioBox
                   label={item.name}
                   icon={item.logo}
+                  imgUrl={null}
                   item={item}
                   viewableItems={viewableItems2}
                   onPress={() => router.push(`/groups/${item._id}`)}
