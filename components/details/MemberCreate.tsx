@@ -4,7 +4,7 @@ import { ThemedView } from "../ThemedView";
 import { useState } from "react";
 import { ThemedText } from "../ThemedText";
 import SubmitButton from "../inputs/SubmitButton";
-import { View, KeyboardAvoidingView, Alert, TouchableOpacity, Image } from "react-native";
+import { View, Alert, TouchableOpacity, Image } from "react-native";
 import { memberCreate } from "@/hooks/useQueries";
 import { useSQLiteContext } from "expo-sqlite";
 import EasyAlert from "../comp/EasyAlert";

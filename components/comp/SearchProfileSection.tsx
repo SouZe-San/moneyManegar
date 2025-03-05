@@ -7,8 +7,6 @@ import { Members } from "@/types/expanse";
 import { ThemedText } from "../ThemedText";
 import { ThemedView } from "../ThemedView";
 import { useExpense } from "@/context/ExpanseContext";
-import { store } from "expo-router/build/global-state/router-store";
-
 // Retrieve Data from Local Storage
 
 type SearchProfileSectionProps = {

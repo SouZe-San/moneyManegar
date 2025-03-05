@@ -213,7 +213,7 @@ export default function HomeScreen() {
               renderItem={({ item }) => (
                 <FolioBox
                   label={item.userName}
-                  icon={item.userId}
+                  imgUrl={item.userId}
                   item={item}
                   viewableItems={viewableItems1}
                   isMem={true}
@@ -264,6 +264,7 @@ export default function HomeScreen() {
                 <FolioBox
                   label={item.name}
                   icon={item.logo}
+                  imgUrl={null}
                   item={item}
                   viewableItems={viewableItems2}
                   onPress={() => router.push(`/groups/${item._id}`)}

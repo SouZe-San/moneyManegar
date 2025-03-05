@@ -94,7 +94,7 @@ const styles = StyleSheet.create({
     justifyContent: "flex-start",
     borderRadius: 10,
 
-    borderWidth: 1,
+    borderWidth: 0.4,
     paddingHorizontal: 10,
   },
   viewSection: {

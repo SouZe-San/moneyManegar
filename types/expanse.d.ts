@@ -61,6 +61,7 @@ export interface IGroup {
   _id?: number;
   name: string;
   logo: string;
+  imgUrl: string | null;
 }
 export interface IGroupMember {
   _id?: number;

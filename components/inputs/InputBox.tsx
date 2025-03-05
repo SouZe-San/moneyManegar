@@ -53,7 +53,7 @@ export function InputWithIcon({
   const borderColor = useThemeColorWithName("borderColor");
   return (
     <KeyboardAvoidingView
-      style={[styles.iconInputBox, { borderColor, borderWidth: 1, paddingHorizontal: 10 }]}
+      style={[styles.iconInputBox, { borderColor, borderWidth: 0.4, paddingHorizontal: 10 }]}
       behavior={Platform.OS === "ios" ? "padding" : "height"}
       keyboardVerticalOffset={30}
       enabled
@@ -82,7 +82,10 @@ export function SmallInputBox({
 
   return (
     <KeyboardAvoidingView
-      style={[styles.iconInputBox, { borderColor, borderWidth: 1, paddingLeft: 10, width: "70%" }]}
+      style={[
+        styles.iconInputBox,
+        { borderColor, borderWidth: 0.4, paddingLeft: 10, width: "70%" },
+      ]}
       enabled
       behavior={Platform.OS === "ios" ? "padding" : "height"}
     >
