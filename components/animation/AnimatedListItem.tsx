@@ -8,11 +8,11 @@ import Animated, {
   FadeOut,
   LinearTransition,
 } from "react-native-reanimated";
-import { IUdahar } from "@/types/expanse";
+import { ITransaction, IUdahar } from "@/types/expanse";
 
 type ListItemProps = ViewProps & {
   viewableItems: SharedValue<ViewToken[]>;
-  item: IUdahar;
+  item: IUdahar | ITransaction;
 };
 
 const AnimatedListItem = React.memo(

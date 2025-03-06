@@ -1,20 +1,12 @@
-import { View, StyleSheet, Text, TouchableOpacity } from "react-native";
-
+import { View, StyleSheet, Text } from "react-native";
 import { ThemedText } from "../ThemedText";
 import { useThemeColorWithName } from "@/hooks/useThemeColor";
-import { DeleteIcon, PayIcon, DownIcon, UpIcon } from "@/assets/icons/SVG/RandomIcons";
+import { DownIcon, UpIcon } from "@/assets/icons/SVG/RandomIcons";
 import { iconReturn } from "@/constants/expanseIcon";
-import { expenseType, ITransaction } from "@/types/expanse";
+import { ITransaction } from "@/types/expanse";
 
-const TransactionItem = ({
-  expenseType,
-  amount,
-  expanseDesc,
-  date,
-  toWhom,
-  type,
-}: ITransaction) => {
-  const payIconColor = useThemeColorWithName("highLightBackground");
+const TransactionItem = (data: ITransaction) => {
+  const gg = useThemeColorWithName("highLightBackground");
   const backgroundColor = useThemeColorWithName("background");
   const blurBackgroundColor = useThemeColorWithName("blurBg");
   return (
@@ -35,21 +27,21 @@ const TransactionItem = ({
         <View style={styles.details}>
           {/* Expanse Icon  */}
           <View>
-            <ThemedText style={styles.expanseIcon}>{iconReturn(expenseType)}</ThemedText>
+            <ThemedText style={styles.expanseIcon}>{iconReturn(data.expenseType)}</ThemedText>
           </View>
           {/* Description  */}
           <View style={[styles.description]}>
-            <ThemedText type="defaultSemiBold">{expanseDesc}</ThemedText>
+            <ThemedText type="defaultSemiBold">{data.expanseDesc}</ThemedText>
             <ThemedText style={styles.expanseDate}>
-              {date} &mdash; {toWhom}
+              {data.date} &mdash; {data.toWhom}
             </ThemedText>
           </View>
         </View>
         {/* Amount */}
         <View style={styles.expanseAmount}>
-          <ThemedText type="defaultSemiBold">₹{amount}</ThemedText>
+          <ThemedText type="defaultSemiBold">₹{data.amount}</ThemedText>
           <Text style={{ fontSize: 10 }}>
-            {type === "expense" ? <UpIcon color="red" /> : <DownIcon color="green" />}
+            {data.type === "expense" ? <DownIcon color="red" /> : <UpIcon color={gg} />}
           </Text>
         </View>
       </View>
