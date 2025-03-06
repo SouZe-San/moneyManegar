@@ -7,17 +7,21 @@ import {
   Image,
   TextInput,
 } from "react-native";
-import { ThemedText } from "../ThemedText";
-import { UserIcon, GroupsIcon } from "@/assets/icons/SVG/InputIcons";
-import { DeleteIcon } from "@/assets/icons/SVG/RandomIcons";
-import { InputWithIcon, SmallInputBox } from "../inputs/InputBox";
-import { useThemeColorWithName } from "@/hooks/useThemeColor";
 import { useEffect, useState } from "react";
-import SubmitButton from "../inputs/SubmitButton";
-import { Members } from "@/types/expanse";
 import { useSQLiteContext } from "expo-sqlite";
+
+import { InputWithIcon, SmallInputBox } from "../inputs/InputBox";
+import SubmitButton from "../inputs/SubmitButton";
+import { ThemedText } from "../ThemedText";
+
+import { useThemeColorWithName } from "@/hooks/useThemeColor";
+
 import { useExpense } from "@/context/ExpanseContext";
 
+import { DeleteIcon } from "@/assets/icons/SVG/RandomIcons";
+import { UserIcon, GroupsIcon } from "@/assets/icons/SVG/InputIcons";
+
+import { Members } from "@/types/expanse";
 interface GroupInputProps {
   // Props Here
   groupName: string;

@@ -1,18 +1,18 @@
 import { View, StyleSheet, ScrollView, Image } from "react-native";
-import { useLocalSearchParams } from "expo-router";
+import { useEffect, useState } from "react";
+import { useSQLiteContext } from "expo-sqlite";
+
+// components
 import { ThemedView } from "@/components/ThemedView";
 import { ThemedText } from "@/components/ThemedText";
+
+// hooks
 import { useThemeColorWithName } from "@/hooks/useThemeColor";
-import { globalStyles } from "@/constants/globalStyles";
-import { useEffect, useState } from "react";
 import { fetchMemberBy_id } from "@/hooks/useQueries";
-import { useSQLiteContext } from "expo-sqlite";
+
+// types
 import { Members } from "@/types/expanse";
 
-const memberCost = {
-  expanse: 0,
-  income: 0,
-};
 const MemberDetails = ({ id }: { id: string | null }) => {
   const borderColor = useThemeColorWithName("borderColor");
   const darkTextColor = "#030f0e";
@@ -81,7 +81,7 @@ const MemberDetails = ({ id }: { id: string | null }) => {
             Pending Payment
           </ThemedText>
           <ThemedText type="subtitle" style={{ fontSize: 26, color: darkTextColor }}>
-            {memberCost.expanse.toFixed(2)} ₹
+            {member?.ownedAmount?.toFixed(2) || 0} ₹
           </ThemedText>
         </View>
         {/* He/She will get the money */}
@@ -90,7 +90,7 @@ const MemberDetails = ({ id }: { id: string | null }) => {
             Deu Payment
           </ThemedText>
           <ThemedText type="subtitle" style={{ fontSize: 26 }}>
-            {memberCost.income.toFixed(2)} ₹
+            {member?.dueAmount?.toFixed(2) ?? 0} ₹
           </ThemedText>
         </View>
       </View>
@@ -111,7 +111,6 @@ const styles = StyleSheet.create({
     borderRadius: 10,
     borderColor: "transparent",
     justifyContent: "space-between",
-    // justifyContent: "flex-end",
     paddingBottom: 15,
     height: 100,
     padding: 10,

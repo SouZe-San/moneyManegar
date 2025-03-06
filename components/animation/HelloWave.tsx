@@ -6,7 +6,6 @@ import Animated, {
   withRepeat,
   withSequence,
 } from "react-native-reanimated";
-// import { useFocusEffect, useIsFocused } from "@react-navigation/native";
 
 import { ThemedText } from "@/components/ThemedText";
 import { useCallback } from "react";
@@ -14,11 +13,6 @@ import { useFocusEffect } from "expo-router";
 export function HelloWave() {
   const rotationAnimation = useSharedValue(0);
 
-  // rotationAnimation.value = withRepeat(
-  //   withSequence(withTiming(25, { duration: 150 }), withTiming(0, { duration: 150 })),
-  //   4 // Run the animation 4 times
-  // );
-  // const isFocused = useIsFocused();
   // // Function to start the animation
   const startAnimation = () => {
     rotationAnimation.value = withRepeat(
