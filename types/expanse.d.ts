@@ -25,7 +25,7 @@ export interface IUdahar {
   date: string;
   toWhom: string;
   expanseDesc: string;
-  memberId: number | null;
+  memberId: string | null;
 }
 export type mainTransactionType = "income" | "expense";
 

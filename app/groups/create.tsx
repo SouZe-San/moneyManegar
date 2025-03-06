@@ -52,8 +52,8 @@ export default function create() {
         console.log("Adding Member: ", member);
 
         await addMember_in_Group(sqlDb, {
-          groupId: String(groupId._id),
-          memberId: String(member._id),
+          groupId: groupId._id,
+          memberId: member._id!,
         });
       }
       Alert.alert(

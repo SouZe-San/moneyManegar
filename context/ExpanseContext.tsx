@@ -36,9 +36,9 @@ export const ExpenseProvider: React.FC<{ children: React.ReactNode }> = ({ child
     const fetchData = async () => {
       console.log("Fetching data... {from Context Provider}");
       try {
-        // const rows = await fetchAllGroup(db);
+        const groups = await fetchAllGroup(db);
         const members = await fetchAllMember(db);
-        // setGroups(rows);
+        setGroups(groups);
         setMember(members);
       } catch (error) {
         console.error("Error fetching data: ", error);

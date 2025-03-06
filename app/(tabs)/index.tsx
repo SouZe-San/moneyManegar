@@ -1,4 +1,13 @@
-import { StyleSheet, View, Text, Image, FlatList, ScrollView, ViewToken } from "react-native";
+import {
+  StyleSheet,
+  View,
+  Text,
+  Image,
+  FlatList,
+  ScrollView,
+  ViewToken,
+  Dimensions,
+} from "react-native";
 import { useRouter } from "expo-router";
 import { useState, useRef, useCallback, useEffect } from "react";
 import { PieChartPro } from "react-native-gifted-charts";
@@ -19,7 +28,7 @@ import { totalBudget, expenseTypeData, groupData } from "@/constants/tempVar";
 // Hooks
 import { useThemeColorWithName } from "@/hooks/useThemeColor";
 import { useExpense } from "@/context/ExpanseContext";
-import { clearGroup_MemberTable, clearMemberTable } from "@/hooks/useQueries";
+import { clearGroup_MemberTable, clearMemberTable, fetchAllGroup } from "@/hooks/useQueries";
 
 // Icons
 import { DbIcon, StatsIcon } from "@/assets/icons/SVG/RandomIcons";
@@ -29,6 +38,8 @@ import BottomSheetModal from "@/components/BottomSheetModal";
 import { BottomSheetRefProps } from "@/components/BottomSheetView";
 import FolioBox from "@/components/comp/FolioBox";
 import { useSharedValue } from "react-native-reanimated";
+
+const { height: SCREEN_HEIGHT } = Dimensions.get("window");
 
 export default function HomeScreen() {
   // Colors
@@ -50,7 +61,7 @@ export default function HomeScreen() {
   const db = useSQLiteContext();
   useDrizzleStudio(db);
 
-  const { totalIncome, totalExpense, leftBalance, members } = useExpense();
+  const { totalIncome, totalExpense, leftBalance, members, groups } = useExpense();
 
   const viewableItems1 = useSharedValue<ViewToken[]>([]);
   const viewableItems2 = useSharedValue<ViewToken[]>([]);
@@ -155,10 +166,15 @@ export default function HomeScreen() {
 
         {/* New User Image */}
         {members.length === 0 && (
-          <View style={{ flex: 1, justifyContent: "center", alignItems: "center", padding: 20 }}>
+          <View style={{ justifyContent: "center", alignItems: "center", padding: 20 }}>
             <Image
               source={require("@/assets/images/hero/heroImg.png")}
-              style={{ opacity: 0.5, objectFit: "contain", width: "100%", height: "100%" }}
+              style={{
+                opacity: 0.5,
+                objectFit: "contain",
+                width: "100%",
+                height: SCREEN_HEIGHT * 0.6,
+              }}
             />
           </View>
         )}
@@ -213,7 +229,7 @@ export default function HomeScreen() {
               renderItem={({ item }) => (
                 <FolioBox
                   label={item.userName}
-                  imgUrl={item.userId}
+                  imgUrl={item.imgUrl}
                   item={item}
                   viewableItems={viewableItems1}
                   isMem={true}
@@ -239,7 +255,7 @@ export default function HomeScreen() {
           </View>
         </View>
         {/* Groups */}
-        <View style={[styles.groupContainer, { display: members.length === 0 ? "none" : "flex" }]}>
+        <View style={[styles.groupContainer, { display: groups.length === 0 ? "none" : "flex" }]}>
           <ThemedText type="title" style={{ fontSize: 20, paddingHorizontal: "4%" }}>
             My Circles
           </ThemedText>
@@ -250,7 +266,7 @@ export default function HomeScreen() {
             }}
           >
             <FlatList
-              data={groupData}
+              data={groups}
               keyExtractor={(item) => item._id?.toString()!}
               horizontal
               showsHorizontalScrollIndicator={false}
@@ -264,7 +280,7 @@ export default function HomeScreen() {
                 <FolioBox
                   label={item.name}
                   icon={item.logo}
-                  imgUrl={null}
+                  imgUrl={item.imgUrl}
                   item={item}
                   viewableItems={viewableItems2}
                   onPress={() => router.push(`/groups/${item._id}`)}

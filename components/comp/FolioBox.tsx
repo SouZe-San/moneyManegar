@@ -86,6 +86,7 @@ const FolioBox = ({
             styles.expenseTypeButton_btn,
             {
               backgroundColor: unSelectedButtonBgColor,
+              filter: "brightness(1.2) contrast(1.12)",
             },
           ]}
           onPress={onPress}
@@ -113,7 +114,7 @@ export default FolioBox;
 const styles = StyleSheet.create({
   expenseTypeButton: {
     // width: 60,
-    height: 150,
+    height: 170,
     display: "flex",
     justifyContent: "center",
     alignItems: "center",
@@ -130,7 +131,7 @@ const styles = StyleSheet.create({
   expenseTypeButton_btn: {
     backdropFilter: "blur(10px)",
     backgroundColor: "#bababa93",
-    width: 80,
+    width: 100,
     aspectRatio: 3 / 4,
     display: "flex",
 
