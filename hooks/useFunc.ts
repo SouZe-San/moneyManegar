@@ -22,8 +22,33 @@ enum ToastType {
   ERROR = "Error Occurred 🚫",
   CONTRI = "Contri added 🎉",
   DEBT = "Debt added 💸",
+  USER = "User added 🧑",
+  BUDGET = "Budget added 📊",
 }
 
 export const showToast = (type: keyof typeof ToastType) => {
   ToastAndroid.show(ToastType[type], ToastAndroid.SHORT);
 };
+
+const arrayOfFaces = [
+  "🤡",
+  "🐲",
+  "🤪",
+  "🙄",
+  "😎",
+  "🫠",
+  "🥸",
+  "🤖",
+  "💩",
+  "🐺",
+  "🐷",
+  "🥴",
+  "🦄",
+  "🐒",
+  "🕷️",
+  "👶🏻",
+  "🧐",
+  "👩🏻‍💻",
+  "👾",
+];
+export const getRandomFaces = () => arrayOfFaces[Math.floor(Math.random() * arrayOfFaces.length)];

@@ -15,6 +15,7 @@ import { ThemedText } from "../ThemedText";
 import { IGroup, Members } from "@/types/expanse";
 
 import { useThemeColorWithName } from "@/hooks/useThemeColor";
+import { getRandomFaces } from "@/hooks/useFunc";
 // import * as FileSystem from "expo-file-system";
 type SingleBoxProps = {
   icon?: string | null;
@@ -85,7 +86,7 @@ const FolioBox = ({
             styles.expenseTypeButton_btn,
             {
               backgroundColor: unSelectedButtonBgColor,
-              filter: "brightness(1.2) contrast(1.12)",
+              filter: "brightness(1.01)",
             },
           ]}
           onPress={onPress}
@@ -96,7 +97,7 @@ const FolioBox = ({
               style={{ objectFit: "cover", width: "100%", height: "100%" }}
             />
           ) : isMem ? (
-            <ThemedText style={styles.buttonLabel}>🙂</ThemedText>
+            <ThemedText style={[styles.buttonLabel]}>{getRandomFaces()}</ThemedText>
           ) : (
             <ThemedText style={styles.buttonLabel}>{icon}</ThemedText>
           )}

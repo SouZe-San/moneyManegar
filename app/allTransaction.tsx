@@ -19,32 +19,33 @@ const allTransaction = () => {
   const viewableItems = useSharedValue<ViewToken[]>([]);
 
   return (
-    <ScrollView showsVerticalScrollIndicator={false}>
-      <ThemedView style={globalStyles.stack_container}>
-        <ImageHeader imgUrl={imgUrl} title={headerTitle} />
-        <View style={[globalStyles.container, { width: SCREEN_Width, paddingBottom: 0 }]}>
-          <FlatList
-            data={allTransactions}
-            style={{
-              marginTop: 30,
-              height: SCREEN_HEIGHT,
-              gap: 10,
-            }}
-            showsVerticalScrollIndicator={false}
-            nestedScrollEnabled={true}
-            onViewableItemsChanged={({ viewableItems: vItems }) => {
-              viewableItems.value = vItems;
-            }}
-            renderItem={({ item }) => (
-              <AnimatedListItem item={item} viewableItems={viewableItems}>
-                <TransactionItem {...item} />
-              </AnimatedListItem>
-            )}
-            keyExtractor={(item) => item._id!.toString()}
-          />
-        </View>
-      </ThemedView>
-    </ScrollView>
+    // <ScrollView showsVerticalScrollIndicator={false}>
+    <ThemedView style={globalStyles.stack_container}>
+      <ImageHeader imgUrl={imgUrl} title={headerTitle} />
+      <View style={[globalStyles.container, { width: SCREEN_Width, paddingBottom: 0 }]}>
+        <FlatList
+          data={allTransactions}
+          style={{
+            marginTop: 30,
+            height: SCREEN_HEIGHT,
+            gap: 10,
+            borderRadius: 10,
+          }}
+          showsVerticalScrollIndicator={false}
+          nestedScrollEnabled={true}
+          onViewableItemsChanged={({ viewableItems: vItems }) => {
+            viewableItems.value = vItems;
+          }}
+          renderItem={({ item }) => (
+            <AnimatedListItem item={item} viewableItems={viewableItems}>
+              <TransactionItem {...item} />
+            </AnimatedListItem>
+          )}
+          keyExtractor={(item) => item._id!.toString()}
+        />
+      </View>
+    </ThemedView>
+    // </ScrollView>
   );
 };
 
