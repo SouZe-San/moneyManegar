@@ -1,8 +1,4 @@
-import { View, StyleSheet, Pressable, ViewToken, Image } from "react-native";
-import { useThemeColorWithName } from "@/hooks/useThemeColor";
-import { ThemedText } from "../ThemedText";
 import Animated, {
-  useSharedValue,
   useAnimatedStyle,
   withTiming,
   SharedValue,
@@ -10,11 +6,16 @@ import Animated, {
   withSpring,
   ReduceMotion,
 } from "react-native-reanimated";
+import { getInfoAsync } from "expo-file-system";
+import { View, StyleSheet, Pressable, ViewToken, Image } from "react-native";
+import { useEffect, useState } from "react";
+
+import { ThemedText } from "../ThemedText";
+
 import { IGroup, Members } from "@/types/expanse";
 
-import { getInfoAsync } from "expo-file-system";
+import { useThemeColorWithName } from "@/hooks/useThemeColor";
 // import * as FileSystem from "expo-file-system";
-import { useEffect, useState } from "react";
 type SingleBoxProps = {
   icon?: string | null;
   label: string;
@@ -34,9 +35,7 @@ const FolioBox = ({
   viewableItems,
   onPress = () => console.warn("pressed"),
 }: SingleBoxProps) => {
-  const borderColor = useThemeColorWithName("buttonBg");
   const unSelectedButtonBgColor = useThemeColorWithName("blurBg");
-  const selectedButtonBgColor = useThemeColorWithName("toggleButton");
   const [isFile, setIsFile] = useState(false);
 
   useEffect(() => {
@@ -49,7 +48,7 @@ const FolioBox = ({
         console.log("Error Reading File", error);
       }
     }
-  });
+  }, []);
 
   const rStyle = useAnimatedStyle(() => {
     const isVisible = Boolean(

@@ -69,7 +69,7 @@ export default function SearchProfileSection({ member, setMember }: SearchProfil
           flexDirection: "row",
           justifyContent: "space-between",
           alignItems: "center",
-          marginVertical: 15,
+          marginVertical: 10,
         }}
       >
         <SmallInputBox
@@ -97,7 +97,7 @@ export default function SearchProfileSection({ member, setMember }: SearchProfil
 
       <View style={[styles.searchMemberView]}>
         {searchResult.length === 0 ? (
-          <ThemedText style={{ marginVertical: 10, textAlign: "center" }} colorName="blurBg">
+          <ThemedText style={{ marginTop: 5, textAlign: "center" }} colorName="blurBg">
             Nonnnnnn
           </ThemedText>
         ) : (

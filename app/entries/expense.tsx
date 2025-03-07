@@ -1,8 +1,8 @@
-import { Alert, View } from "react-native";
 import dayjs from "dayjs";
 import { useRouter } from "expo-router";
 import { useSQLiteContext } from "expo-sqlite";
 import { useState } from "react";
+import { View } from "react-native";
 
 // components
 import AnimatedStackView from "@/components/animation/AnimatedStackView";
@@ -23,6 +23,7 @@ import { useThemeColorWithName } from "@/hooks/useThemeColor";
 // icons
 import { BagIcon, MoneyBagIcon } from "@/assets/icons/SVG/InputIcons";
 import { expenseType, ITransaction } from "@/types/expanse";
+import { showToast } from "@/hooks/useFunc";
 
 export function expense() {
   // States
@@ -61,20 +62,21 @@ export function expense() {
 
     try {
       await addData_in_AllTransaction(sqlDb, newData);
-
-      Alert.alert(
-        "Success",
-        "Your income has been added successfully",
-        [
-          {
-            text: "OK",
-            onPress: () => router.push("/(tabs)"),
-          },
-        ],
-        {
-          cancelable: false,
-        }
-      );
+      router.push("/(tabs)");
+      showToast("EXPENSE");
+      // Alert.alert(
+      //   "Success",
+      //   "Your income has been added successfully",
+      //   [
+      //     {
+      //       text: "OK",
+      //       onPress: () => ,
+      //     },
+      //   ],
+      //   {
+      //     cancelable: false,
+      //   }
+      // );
       setExpense("");
       setExpenseType(undefined);
       setDescription("");

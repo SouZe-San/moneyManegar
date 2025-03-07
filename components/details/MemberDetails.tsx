@@ -1,12 +1,17 @@
+import { getInfoAsync } from "expo-file-system";
 import { View, StyleSheet, ScrollView, Image } from "react-native";
-import { useLocalSearchParams } from "expo-router";
+import { useEffect, useState } from "react";
+import { useSQLiteContext } from "expo-sqlite";
+
+// components
 import { ThemedView } from "@/components/ThemedView";
 import { ThemedText } from "@/components/ThemedText";
+
+//Hooks
 import { useThemeColorWithName } from "@/hooks/useThemeColor";
-import { globalStyles } from "@/constants/globalStyles";
-import { useEffect, useState } from "react";
 import { fetchMemberBy_id } from "@/hooks/useQueries";
-import { useSQLiteContext } from "expo-sqlite";
+
+// types
 import { Members } from "@/types/expanse";
 
 const memberCost = {
@@ -14,11 +19,13 @@ const memberCost = {
   income: 0,
 };
 const MemberDetails = ({ id }: { id: string | null }) => {
+  // Colors
   const borderColor = useThemeColorWithName("borderColor");
   const darkTextColor = "#030f0e";
   const balanceBg = useThemeColorWithName("highLightBackground");
 
   const [member, setMember] = useState<Members | null>(null);
+  const [isFile, setIsFile] = useState(false);
 
   const sqlDb = useSQLiteContext();
 
@@ -31,6 +38,18 @@ const MemberDetails = ({ id }: { id: string | null }) => {
     }
     memberFetch();
   });
+
+  useEffect(() => {
+    if (member && member.imgUrl) {
+      try {
+        getInfoAsync(member.imgUrl).then((res) => {
+          setIsFile(res.exists);
+        });
+      } catch (error) {
+        console.log("Error Reading File", error);
+      }
+    }
+  }, []);
 
   return (
     <ThemedView>
@@ -57,7 +76,7 @@ const MemberDetails = ({ id }: { id: string | null }) => {
             backgroundColor: balanceBg,
           }}
         >
-          {member?.imgUrl ? (
+          {member?.imgUrl && isFile ? (
             <Image
               source={{ uri: member.imgUrl }}
               style={{ objectFit: "cover", width: "100%", height: "100%" }}

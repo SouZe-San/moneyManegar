@@ -1,5 +1,6 @@
 import dayjs from "dayjs";
-import { View, Alert, FlatList } from "react-native";
+import { View, FlatList } from "react-native";
+import { useRouter } from "expo-router";
 import { useState } from "react";
 import { useSQLiteContext } from "expo-sqlite";
 
@@ -22,11 +23,12 @@ import { useThemeColorWithName } from "@/hooks/useThemeColor";
 
 // icons
 import { MoneyBagIcon, BagIcon } from "@/assets/icons/SVG/InputIcons";
+import { showToast } from "@/hooks/useFunc";
 
 const incomeExpanseType = ["Salary", "Business", "Gift", "Others"];
 
 export function income() {
-  // !States or Input Variables
+  // States or Input Variables
   const [amount, setAmount] = useState<string | undefined>(undefined);
   const [date, setDate] = useState(dayjs());
   const [description, setDescription] = useState<string | undefined>("");
@@ -36,8 +38,9 @@ export function income() {
   const backgroundColor = useThemeColorWithName("background");
   const iconColor = useThemeColorWithName("inputIcon");
 
-  // !Hooks
+  // Hooks
   const db = useSQLiteContext();
+  const router = useRouter();
 
   //  Data Insert Function
   const insertData = async () => {
@@ -56,12 +59,14 @@ export function income() {
 
     try {
       await addData_in_AllTransaction(db, newData);
-      Alert.alert("Income Added", "Your income has been added successfully", [{ text: "OK" }], {
-        cancelable: false,
-      });
+      router.push("/(tabs)");
       setAmount("");
       setDescription("");
       setDate(dayjs());
+      showToast("INCOME");
+      // Alert.alert("Income Added", "Your income has been added successfully", [{ text: "OK" }], {
+      //   cancelable: false,
+      // });
     } catch (error) {
       console.log("Error form Insert : ", error);
     }

@@ -7,15 +7,20 @@ import {
   Image,
   TextInput,
 } from "react-native";
-import { ThemedText } from "../ThemedText";
-import { UserIcon, GroupsIcon } from "@/assets/icons/SVG/InputIcons";
-import { DeleteIcon } from "@/assets/icons/SVG/RandomIcons";
-import { InputWithIcon, SmallInputBox } from "../inputs/InputBox";
-import { useThemeColorWithName } from "@/hooks/useThemeColor";
 import { useEffect, useState } from "react";
-import SubmitButton from "../inputs/SubmitButton";
-import { Members } from "@/types/expanse";
 import { useSQLiteContext } from "expo-sqlite";
+
+import { ThemedText } from "../ThemedText";
+import SubmitButton from "../inputs/SubmitButton";
+
+import { DeleteIcon } from "@/assets/icons/SVG/RandomIcons";
+import { UserIcon, GroupsIcon } from "@/assets/icons/SVG/InputIcons";
+import { InputWithIcon, SmallInputBox } from "../inputs/InputBox";
+
+import { useThemeColorWithName } from "@/hooks/useThemeColor";
+
+import { Members } from "@/types/expanse";
+
 import { useExpense } from "@/context/ExpanseContext";
 
 interface GroupInputProps {
@@ -41,13 +46,14 @@ function GroupInput({
   onSubmit,
   setGroupLogo,
 }: GroupInputProps) {
-  const iconColor = useThemeColorWithName("inputIcon");
-  const buttonBg = useThemeColorWithName("blurBg");
+  // states
   const [storedMember, setStoredMember] = useState<Members[]>(useExpense().members);
-
   const [searchName, setSearchName] = useState("");
   const [searchResult, setSearchResult] = useState<Members[]>([]);
 
+  // colors
+  const iconColor = useThemeColorWithName("inputIcon");
+  const buttonBg = useThemeColorWithName("blurBg");
   const borderColor = useThemeColorWithName("borderColor");
   const placeTextColor = useThemeColorWithName("tabIconDefault");
   const inputTextColor = useThemeColorWithName("text");
