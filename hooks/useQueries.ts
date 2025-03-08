@@ -1,4 +1,4 @@
-import { Groups, ITransaction, IUdahar, Members, IGroup } from "@/types/expanse";
+import { Groups, ITransaction, IUdahar, Members, IGroup, expenseType } from "@/types/expanse";
 import { type SQLiteDatabase } from "expo-sqlite";
 
 // ! Data INSERTING - INSERTION ---->
@@ -35,9 +35,8 @@ const add_udhar = async (db: SQLiteDatabase, data: IUdahar) => {
         data.memberId,
       ]
     );
-    console.log("====================================");
-    console.log("Transaction inserted:");
-    console.log("====================================");
+
+    await db.runAsync("UPDATE MemberTable SET dueAmount = dueAmount + ? WHERE _id = ?", []); // update dueAmount in MemberTable
   } catch (error) {
     console.error("From useQueries \nError inserting transaction:", error);
   }
@@ -138,6 +137,39 @@ const totalIncome = async (db: SQLiteDatabase) => {
     return 0;
   }
 };
+const totalExpense = async (db: SQLiteDatabase) => {
+  try {
+    const rows = await db.getAllAsync(
+      "SELECT SUM(amount) as total FROM AllTransactions WHERE type = 'expense'"
+    );
+    console.log("============All Tra========================");
+    console.log(rows);
+
+    return;
+  } catch (error) {
+    console.error("Error fetching totalIncome: ", error);
+    return 0;
+  }
+};
+
+const fetchOnlyExpense = async (db: SQLiteDatabase) => {
+  try {
+    const rows = await db.getAllAsync("SELECT amount FROM AllTransactions WHERE type = 'expense'");
+    return rows;
+  } catch (error) {
+    console.error("Error fetching totalIncome: ", error);
+    return [];
+  }
+};
+const fetchOnlyIncome = async (db: SQLiteDatabase) => {
+  try {
+    const rows = await db.getAllAsync("SELECT amount FROM AllTransactions WHERE type = 'income'");
+    return rows;
+  } catch (error) {
+    console.error("Error fetching totalIncome: ", error);
+    return [];
+  }
+};
 
 // Fetch All Member
 const fetchAllMember = async (db: SQLiteDatabase) => {
@@ -189,12 +221,117 @@ const fetchGroupId = async (db: SQLiteDatabase, groupName: string) => {
 };
 
 // Fetch according Expanse
+const fetchTotalExpenseAccordingExpanse = async (db: SQLiteDatabase) => {
+  const query =
+    "SELECT expenseType, SUM(amount) AS total_expense as total FROM AllTransactions WHERE type = 'expense' GROUP BY expenseType";
+  try {
+    const rows = await db.getAllAsync<{ expenseType: expenseType; total_expense: number }>(query);
 
+    return rows;
+  } catch (error) {
+    console.error("Error fetching GroupId: ", error);
+    return [];
+  }
+};
 // Fetch according Date
 
 // Calculation
 
 // ! DATA UPDATING - ALTAR ---->
+
+//member
+const updateDueAmount_of_Member = async (
+  db: SQLiteDatabase,
+  data: { _id: string; amount: number }
+) => {
+  try {
+    await db.runAsync("UPDATE MemberTable SET dueAmount = dueAmount + ? WHERE _id = ?", [
+      data.amount,
+      data._id,
+    ]);
+  } catch (error) {
+    console.error("Error updating dueAmount in MemberTable: ", error);
+  }
+};
+const updateOweAmount_of_Member = async (
+  db: SQLiteDatabase,
+  data: { _id: string; amount: number }
+) => {
+  try {
+    await db.runAsync("UPDATE MemberTable SET ownedAmount = ownedAmount + ? WHERE _id = ?", [
+      data.amount,
+      data._id,
+    ]);
+  } catch (error) {
+    console.error("Error updating dueAmount in MemberTable: ", error);
+  }
+};
+
+const updateMember = async (db: SQLiteDatabase, data: Members) => {
+  try {
+    if (!data._id) {
+      throw new Error("Member Id not provided");
+    }
+    await db.runAsync(
+      "UPDATE MemberTable SET userName = ? ownedAmount = ? dueAmount = ? imgUrl = ? WHERE _id = ?",
+      [data.userName, data._id]
+    );
+  } catch (error) {
+    console.error("Error updating MemberTable: ", error);
+  }
+};
+
+const updateImage_of_Member = async (db: SQLiteDatabase, data: { _id: string; imgUrl: string }) => {
+  try {
+    await db.runAsync("UPDATE MemberTable SET imgUrl = ? WHERE _id = ?", [data.imgUrl, data._id]);
+  } catch (error) {
+    console.error("Error updating MemberTable: ", error);
+  }
+};
+
+const updateGroup = async (db: SQLiteDatabase, data: IGroup) => {
+  try {
+    if (!data._id) {
+      throw new Error("Group Id not provided");
+    }
+    await db.runAsync("UPDATE GroupTable SET name = ? logo = ? imgUrl = ? WHERE _id = ?", [
+      data.name,
+      data.logo,
+      data.imgUrl,
+      data._id,
+    ]);
+  } catch (error) {
+    console.error("Error updating GroupTable: ", error);
+  }
+};
+
+const updateGroupMember = async (
+  db: SQLiteDatabase,
+  data: { groupId: number; memberId: number; _id: number }
+) => {
+  try {
+    await db.runAsync("UPDATE Group_Member SET groupId = ? memberId = ? WHERE _id = ?", [
+      data.groupId,
+      data.memberId,
+      data._id,
+    ]);
+  } catch (error) {
+    console.error("Error updating Group_Member: ", error);
+  }
+};
+const updateGroupMember2 = async (
+  db: SQLiteDatabase,
+  data: { groupId: number; memberId: number }
+) => {
+  try {
+    await db.runAsync(
+      "INSERT INTO Group_Member (groupId, memberId) VALUES (?, ?) ON CONFLICT(groupId, memberId) DO UPDATE SET groupId = ?, memberId = ?",
+      [data.groupId, data.memberId]
+    );
+  } catch (error) {
+    console.error("Error updating Group_Member: ", error);
+  }
+};
 
 // ! DATA DELETING - DELETION ---->
 const clearGroup_MemberTable = async (db: SQLiteDatabase) => {
@@ -221,12 +358,74 @@ const clearGroupTable = async (db: SQLiteDatabase) => {
     console.error("Error clearing GroupTable table:", error);
   }
 };
+const clearAllTransactionTable = async (db: SQLiteDatabase) => {
+  try {
+    await db.runAsync("DELETE FROM AllTransactions;");
+    console.log("All records deleted from AllTransactions table.");
+  } catch (error) {
+    console.error("Error clearing AllTransactions table:", error);
+  }
+};
+const clearUdharTransactionTable = async (db: SQLiteDatabase) => {
+  try {
+    await db.runAsync("DELETE FROM UdharTransactions;");
+    console.log("All records deleted from UdharTransactions table.");
+  } catch (error) {
+    console.error("Error clearing UdharTransactions table:", error);
+  }
+};
+
+const deleteMember = async (db: SQLiteDatabase, memberId: string) => {
+  try {
+    await db.runAsync("DELETE FROM MemberTable WHERE _id = ?", [memberId]);
+    console.log("Member deleted.");
+  } catch (error) {
+    console.error("Error deleting Member: ", error);
+  }
+};
+
+const deleteGroup = async (db: SQLiteDatabase, groupId: string) => {
+  try {
+    await db.runAsync("DELETE FROM GroupTable WHERE _id = ?", [groupId]);
+    console.log("Group deleted.");
+  } catch (error) {
+    console.error("Error deleting Group: ", error);
+  }
+};
+
+const deleteGroupMember_ON_grpDelete = async (db: SQLiteDatabase, groupId: string) => {
+  try {
+    await db.runAsync("DELETE FROM Group_Member WHERE groupId = ? ", [groupId]);
+    console.log("Group Member deleted.");
+  } catch (error) {
+    console.error("Error deleting Group Member on Group Delete: ", error);
+  }
+};
+const deleteGroupMember_ON_memDelete = async (db: SQLiteDatabase, memberId: string) => {
+  try {
+    await db.runAsync("DELETE FROM Group_Member WHERE memberId = ? ", [memberId]);
+    console.log("Group Member deleted.");
+  } catch (error) {
+    console.error("Error deleting Group-Member on MemberDelete: ", error);
+  }
+};
+
+const deleteSingleTransaction = async (db: SQLiteDatabase, transactionId: string) => {
+  try {
+    await db.runAsync("DELETE FROM UdharTransactions WHERE _id = ?", [transactionId]);
+    console.log("Transaction deleted.");
+  } catch (error) {
+    console.error("Error deleting Transaction: ", error);
+  }
+};
 
 const resetDb = async (db: SQLiteDatabase) => {
   try {
     await clearGroup_MemberTable(db);
     await clearGroupTable(db);
     await clearMemberTable(db);
+    await clearAllTransactionTable(db);
+    await clearUdharTransactionTable(db);
   } catch (error) {
     console.error("Error clearing GroupTable table:", error);
   }
@@ -234,16 +433,45 @@ const resetDb = async (db: SQLiteDatabase) => {
 
 // export all functions
 export {
+  // Insert
   addData_in_AllTransaction,
   add_udhar,
   memberCreate,
   groupCreate,
   addMember_in_Group,
+
+  // Fetch
   totalIncome,
+  totalExpense,
   fetchAllMember,
   fetchAllGroup,
   fetchAllMember_of_Group,
   fetchGroupId,
+  fetchAllTransaction,
+  fetchAllUnPaidTransaction,
+  fetchTotalExpenseAccordingExpanse,
+  fetchOnlyExpense,
+  fetchOnlyIncome,
+
+  // Update
+  updateDueAmount_of_Member,
+  updateOweAmount_of_Member,
+  updateImage_of_Member,
+  updateMember,
+  updateGroup,
+  updateGroupMember,
+  updateGroupMember2,
+
+  // Delete
+  deleteMember,
+  deleteGroup,
+  deleteGroupMember_ON_grpDelete,
+  deleteGroupMember_ON_memDelete,
+  deleteSingleTransaction,
+
+  // Clear
+  clearAllTransactionTable,
+  clearUdharTransactionTable,
   clearGroupTable,
   clearGroup_MemberTable,
   clearMemberTable,

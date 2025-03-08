@@ -65,7 +65,8 @@ export const migrateDbIfNeeded = async (db: SQLiteDatabase) => {
             groupId INTEGER NOT NULL,
             memberId INTEGER NOT NULL,
             FOREIGN KEY (groupId) REFERENCES GroupTable (_id),
-            FOREIGN KEY (memberId) REFERENCES MemberTable (_id)
+            FOREIGN KEY (memberId) REFERENCES MemberTable (_id),
+            UNIQUE(groupId, memberId)
         );
 
         `);
