@@ -1,23 +1,28 @@
+import { Alert, View } from "react-native";
+import dayjs from "dayjs";
+import { useRouter } from "expo-router";
+import { useSQLiteContext } from "expo-sqlite";
+import { useState } from "react";
+
+// components
+import AnimatedStackView from "@/components/animation/AnimatedStackView";
+import DateView from "@/components/inputs/DateView";
+import EasyAlert from "@/components/comp/EasyAlert";
+import ExpanseType from "@/components/inputs/ExpanseType";
+import { globalStyles } from "@/constants/globalStyles";
+import ImageHeader from "@/components/comp/ImageHeader";
+import { InputWithIcon } from "@/components/inputs/InputBox";
+import SubmitButton from "@/components/inputs/SubmitButton";
 import { ThemedText } from "@/components/ThemedText";
 import { ThemedView } from "@/components/ThemedView";
-import { InputWithIcon } from "@/components/inputs/InputBox";
-import { globalStyles } from "@/constants/globalStyles";
-import { useState } from "react";
-import { Alert, View } from "react-native";
-import { BagIcon, MoneyBagIcon } from "@/assets/icons/SVG/InputIcons";
-import dayjs from "dayjs";
-import SubmitButton from "@/components/inputs/SubmitButton";
-import ExpanseType from "@/components/inputs/ExpanseType";
-import { useThemeColorWithName } from "@/hooks/useThemeColor";
-import DateView from "@/components/inputs/DateView";
-import { useExpense } from "@/context/ExpanseContext";
-import ImageHeader from "@/components/comp/ImageHeader";
-import AnimatedStackView from "@/components/animation/AnimatedStackView";
-import { expenseType, ITransaction } from "@/types/expanse";
+
+// hooks
 import { addData_in_AllTransaction } from "@/hooks/useQueries";
-import { useSQLiteContext } from "expo-sqlite";
-import { useRouter } from "expo-router";
-import EasyAlert from "@/components/comp/EasyAlert";
+import { useThemeColorWithName } from "@/hooks/useThemeColor";
+
+// icons
+import { BagIcon, MoneyBagIcon } from "@/assets/icons/SVG/InputIcons";
+import { expenseType, ITransaction } from "@/types/expanse";
 
 export function expense() {
   // States
@@ -30,6 +35,7 @@ export function expense() {
   const iconColor = useThemeColorWithName("inputIcon");
   const backgroundColor = useThemeColorWithName("background");
   // const shadowColor = useThemeColorWithName("antiFlash");
+
   // Routers
   const router = useRouter();
   const sqlDb = useSQLiteContext();

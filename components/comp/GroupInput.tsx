@@ -1,15 +1,27 @@
-import { View, StyleSheet, Alert, TouchableOpacity, FlatList, TextInput } from "react-native";
-import { ThemedText } from "../ThemedText";
-import { UserIcon, GroupsIcon } from "@/assets/icons/SVG/InputIcons";
-import { DeleteIcon } from "@/assets/icons/SVG/RandomIcons";
-import { InputWithIcon, SmallInputBox } from "../inputs/InputBox";
-import { useThemeColorWithName } from "@/hooks/useThemeColor";
+import {
+  View,
+  StyleSheet,
+  Alert,
+  TouchableOpacity,
+  FlatList,
+  Image,
+  TextInput,
+} from "react-native";
 import { useEffect, useState } from "react";
-import SubmitButton from "../inputs/SubmitButton";
-import { Members } from "@/types/expanse";
 import { useSQLiteContext } from "expo-sqlite";
+
+import { InputWithIcon, SmallInputBox } from "../inputs/InputBox";
+import SubmitButton from "../inputs/SubmitButton";
+import { ThemedText } from "../ThemedText";
+
+import { useThemeColorWithName } from "@/hooks/useThemeColor";
+
 import { useExpense } from "@/context/ExpanseContext";
 
+import { DeleteIcon } from "@/assets/icons/SVG/RandomIcons";
+import { UserIcon, GroupsIcon } from "@/assets/icons/SVG/InputIcons";
+
+import { Members } from "@/types/expanse";
 interface GroupInputProps {
   // Props Here
   groupName: string;
@@ -88,7 +100,7 @@ function GroupInput({
       <View
         style={{
           flexDirection: "row",
-
+          alignItems: "center",
           justifyContent: "space-between",
         }}
       >
@@ -122,7 +134,7 @@ function GroupInput({
       </View>
       {/* placeholder="Enter logo (one character or emoji)" */}
       <View style={{ marginTop: 10 }}></View>
-      <View style={[styles.iconInputBox, { borderColor, borderWidth: 1, paddingHorizontal: 10 }]}>
+      <View style={[styles.iconInputBox, { borderColor, borderWidth: 0.6, paddingHorizontal: 10 }]}>
         <ThemedText>{"(?)"}</ThemedText>
         <TextInput
           placeholder="Logo (1 letter or emoji)"
@@ -199,7 +211,7 @@ function GroupInput({
             scrollsToTop={true}
             data={members}
             renderItem={({ item }) => <SelectedMember member={item} />}
-            keyExtractor={(member) => member.userId ?? member.userName}
+            keyExtractor={(member) => member.userName}
           />
         )}
       </View>
@@ -223,11 +235,30 @@ const MembersRow = ({ member }: { member: Members }) => {
   const iconColor = useThemeColorWithName("icon");
   const bg = useThemeColorWithName("blurBg");
   return (
-    <View style={[styles.row, { backgroundColor: bg }]}>
-      <UserIcon color={iconColor} />
-      <ThemedText type="defaultSemiBold">
-        {member.userName} - {member._id ?? "no ID"}
-      </ThemedText>
+    <View
+      style={[
+        styles.row,
+        { borderColor: bg, borderWidth: 0.7, paddingVertical: member.imgUrl ? 5 : 15 },
+      ]}
+    >
+      {member.imgUrl ? (
+        <View
+          style={{
+            width: 50,
+            aspectRatio: 1,
+            borderRadius: "50%",
+            overflow: "hidden",
+          }}
+        >
+          <Image
+            source={{ uri: member.imgUrl }}
+            style={{ objectFit: "cover", width: "100%", height: "100%" }}
+          />
+        </View>
+      ) : (
+        <UserIcon color={iconColor} />
+      )}
+      <ThemedText type="defaultSemiBold">{member.userName}</ThemedText>
     </View>
   );
 };
@@ -247,7 +278,6 @@ const styles = StyleSheet.create({
   row: {
     marginBottom: 10,
     paddingHorizontal: 10,
-    paddingVertical: 15,
     borderRadius: 10,
     flexDirection: "row",
     alignItems: "center",

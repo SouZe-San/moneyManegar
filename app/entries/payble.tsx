@@ -1,22 +1,28 @@
-import { MoneyBagIcon, UserIcon, BagIcon } from "@/assets/icons/SVG/InputIcons";
-import ExpanseType from "@/components/inputs/ExpanseType";
 import dayjs from "dayjs";
+import { ScrollView, Alert, View } from "react-native";
+import { useState } from "react";
+import { useRouter } from "expo-router";
+import { useSQLiteContext } from "expo-sqlite";
+
+import AnimatedStackView from "@/components/animation/AnimatedStackView";
+import DateView from "@/components/inputs/DateView";
+import EasyAlert from "@/components/comp/EasyAlert";
+import ExpanseType from "@/components/inputs/ExpanseType";
+import { globalStyles } from "@/constants/globalStyles";
+import ImageHeader from "@/components/comp/ImageHeader";
 import { InputWithIcon } from "@/components/inputs/InputBox";
 import SubmitButton from "@/components/inputs/SubmitButton";
-import { ThemedText } from "@/components/ThemedText";
 import { ThemedView } from "@/components/ThemedView";
-import { globalStyles } from "@/constants/globalStyles";
-import { useThemeColorWithName } from "@/hooks/useThemeColor";
-import { useState } from "react";
-import { ScrollView, Alert, View } from "react-native";
-import DateView from "@/components/inputs/DateView";
-import ImageHeader from "@/components/comp/ImageHeader";
-import { useRouter } from "expo-router";
-import EasyAlert from "@/components/comp/EasyAlert";
-import AnimatedStackView from "@/components/animation/AnimatedStackView";
-import { expenseType, IUdahar } from "@/types/expanse";
+import { ThemedText } from "@/components/ThemedText";
+
+// hooks
 import { add_udhar } from "@/hooks/useQueries";
-import { useSQLiteContext } from "expo-sqlite";
+import { useThemeColorWithName } from "@/hooks/useThemeColor";
+
+// icons
+import { MoneyBagIcon, UserIcon, BagIcon } from "@/assets/icons/SVG/InputIcons";
+
+import { expenseType, IUdahar } from "@/types/expanse";
 
 //! TO whom I have to pay
 export function payble() {
@@ -34,6 +40,7 @@ export function payble() {
   // Routes
   const router = useRouter();
   const sqlDb = useSQLiteContext();
+
   // FUNCTIONS
 
   // Final Submit

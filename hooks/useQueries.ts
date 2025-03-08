@@ -81,7 +81,7 @@ const groupCreate = async (db: SQLiteDatabase, data: IGroup) => {
 // add Member in Group
 const addMember_in_Group = async (
   db: SQLiteDatabase,
-  data: { groupId: string; memberId: string }
+  data: { groupId: number; memberId: number }
 ) => {
   try {
     await db.runAsync("INSERT INTO Group_Member (groupId, memberId) VALUES (?,?)", [
@@ -194,11 +194,12 @@ const fetchAllGroup = async (db: SQLiteDatabase) => {
 };
 
 // Fetch All Member of a Group
-const fetchAllMember_of_Group = async (db: SQLiteDatabase, groupId: string) => {
+const fetchAllMember_of_Group = async (db: SQLiteDatabase, groupId: number) => {
   try {
-    const rows: Members[] = await db.getAllAsync("SELECT * FROM Group_Member WHERE groupId = ?", [
-      groupId,
-    ]);
+    const rows = await db.getAllAsync<{ memberId: number }>(
+      "SELECT memberId FROM Group_Member WHERE groupId = ?",
+      [groupId]
+    );
     return rows;
   } catch (error) {
     console.error("Error fetching Members of a group: ", error);
@@ -216,6 +217,31 @@ const fetchGroupId = async (db: SQLiteDatabase, groupName: string) => {
     return rowId;
   } catch (error) {
     console.error("Error fetching GroupId: ", error);
+    return null;
+  }
+};
+
+const fetchGroupBy_id = async (db: SQLiteDatabase, id: string) => {
+  try {
+    const grp: IGroup | null = await db.getFirstAsync("SELECT * FROM GroupTable WHERE _id = ?", [
+      Number(id),
+    ]);
+    return grp;
+  } catch (error) {
+    console.log("Error From Fetch single Group,: ", error);
+    return null;
+  }
+};
+
+const fetchMemberBy_id = async (db: SQLiteDatabase, id: number) => {
+  try {
+    const member: Members | null = await db.getFirstAsync(
+      "SELECT * FROM MemberTable WHERE _id = ?",
+      [id]
+    );
+    return member;
+  } catch (error) {
+    console.log("Error From Fetch single Member,: ", error);
     return null;
   }
 };
@@ -240,6 +266,8 @@ const fetchTotalExpenseAccordingExpanse = async (db: SQLiteDatabase) => {
 // ! DATA UPDATING - ALTAR ---->
 
 //member
+
+// update any member's due amount
 const updateDueAmount_of_Member = async (
   db: SQLiteDatabase,
   data: { _id: string; amount: number }
@@ -253,6 +281,8 @@ const updateDueAmount_of_Member = async (
     console.error("Error updating dueAmount in MemberTable: ", error);
   }
 };
+
+// update any member's owned amount
 const updateOweAmount_of_Member = async (
   db: SQLiteDatabase,
   data: { _id: string; amount: number }
@@ -267,6 +297,7 @@ const updateOweAmount_of_Member = async (
   }
 };
 
+// update any member's details
 const updateMember = async (db: SQLiteDatabase, data: Members) => {
   try {
     if (!data._id) {
@@ -288,6 +319,8 @@ const updateImage_of_Member = async (db: SQLiteDatabase, data: { _id: string; im
     console.error("Error updating MemberTable: ", error);
   }
 };
+
+// update any group's details
 
 const updateGroup = async (db: SQLiteDatabase, data: IGroup) => {
   try {
@@ -472,6 +505,8 @@ export {
   // Clear
   clearAllTransactionTable,
   clearUdharTransactionTable,
+  fetchGroupBy_id,
+  fetchMemberBy_id,
   clearGroupTable,
   clearGroup_MemberTable,
   clearMemberTable,

@@ -1,24 +1,34 @@
+import { Alert, View, TouchableOpacity, Image } from "react-native";
+import * as ImagePicker from "expo-image-picker";
+import { useRouter } from "expo-router";
+import { useState } from "react";
+import { useSQLiteContext } from "expo-sqlite";
+
+// style
+import { globalStyles } from "@/constants/globalStyles";
+
+// components
+import EasyAlert from "@/components/comp/EasyAlert";
 import GroupInput from "@/components/comp/GroupInput";
 import { ThemedText } from "@/components/ThemedText";
 import { ThemedView } from "@/components/ThemedView";
-import { globalStyles } from "@/constants/globalStyles";
-import { useState } from "react";
-import { IGroup, Members } from "@/types/expanse";
-import { Alert, View, TouchableOpacity, Image } from "react-native";
-import { useRouter } from "expo-router";
+
+// hooks
 import { addMember_in_Group, fetchGroupId, groupCreate } from "@/hooks/useQueries";
-import { useSQLiteContext } from "expo-sqlite";
-import EasyAlert from "@/components/comp/EasyAlert";
 import { useThemeColorWithName } from "@/hooks/useThemeColor";
-import * as ImagePicker from "expo-image-picker";
+
+import { IGroup, Members } from "@/types/expanse";
+// icons
 import { ProCamIcon } from "@/assets/icons/SVG/RandomIcons";
 
 export default function create() {
+  // States
   const [groupName, setGroupName] = useState("");
   const [groupLogo, setGroupLogo] = useState("");
   const [members, setMembers] = useState<Members[]>([]);
   const [selectedImage, setSelectedImage] = useState<string | null>(null);
 
+  // colors
   const bg = useThemeColorWithName("blurBg");
   const iconColor = useThemeColorWithName("icon");
 
@@ -52,8 +62,8 @@ export default function create() {
         console.log("Adding Member: ", member);
 
         await addMember_in_Group(sqlDb, {
-          groupId: String(groupId._id),
-          memberId: String(member._id),
+          groupId: groupId._id,
+          memberId: member._id!,
         });
       }
       Alert.alert(

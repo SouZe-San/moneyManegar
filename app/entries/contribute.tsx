@@ -1,27 +1,29 @@
-import { ScrollView, View, Switch, useColorScheme, FlatList, Alert } from "react-native";
 import dayjs from "dayjs";
-import { useSQLiteContext } from "expo-sqlite";
+import { ScrollView, View, Switch, useColorScheme, FlatList, Alert } from "react-native";
 import { useRouter } from "expo-router";
+import { useSQLiteContext } from "expo-sqlite";
+import { useState } from "react";
 
+// components
+import AnimatedStackView from "@/components/animation/AnimatedStackView";
+import DateView from "@/components/inputs/DateView";
+import EasyAlert from "@/components/comp/EasyAlert";
+import ExpanseType from "@/components/inputs/ExpanseType";
+import { globalStyles } from "@/constants/globalStyles";
+import { groupData } from "@/constants/tempVar";
+import ImageHeader from "@/components/comp/ImageHeader";
 import { InputWithIcon } from "@/components/inputs/InputBox";
+import SearchProfileSection from "@/components/comp/SearchProfileSection";
+import SingleBox from "@/components/SingleBox";
 import SubmitButton from "@/components/inputs/SubmitButton";
 import { ThemedText } from "@/components/ThemedText";
 import { ThemedView } from "@/components/ThemedView";
-import { globalStyles } from "@/constants/globalStyles";
-import { useState } from "react";
-import ExpanseType from "@/components/inputs/ExpanseType";
-import { groupData } from "@/constants/tempVar";
-import SingleBox from "@/components/SingleBox";
-import EasyAlert from "@/components/comp/EasyAlert";
-import DateView from "@/components/inputs/DateView";
-import ImageHeader from "@/components/comp/ImageHeader";
-import AnimatedStackView from "@/components/animation/AnimatedStackView";
 
+// icons
 import { MoneyBagIcon, UserIcon, BagIcon } from "@/assets/icons/SVG/InputIcons";
 import { useThemeColorWithName } from "@/hooks/useThemeColor";
 import { expenseType, Groups, IGroup, IUdahar, Members } from "@/types/expanse";
-import { add_udhar } from "@/hooks/useQueries";
-import SearchProfileSection from "@/components/comp/SearchProfileSection";
+import { add_udhar, fetchAllMember_of_Group } from "@/hooks/useQueries";
 
 // ! who are you to ask for money &&& { can take full expense and divide in in some numbers}
 export function contribute() {
@@ -45,6 +47,7 @@ export function contribute() {
 
   const router = useRouter();
   const sqlDb = useSQLiteContext();
+
   // Add Group
   const groupSelection = (item: IGroup) => {
     if (!selectedGroup) {
@@ -136,23 +139,25 @@ export function contribute() {
       }
     } else {
       // Submit the data for group
-      if (selectedGroup === null) return;
+      if (selectedGroup === null || selectedGroup._id === undefined) return;
       // ! Have to call Function for get all members of this group
       // @ Need - member's Id
-      // const memberCount = selectedGroup?.members.length;
-      // const eachContri = Number(amount) / (memberCount + 1);
+      const members = await fetchAllMember_of_Group(sqlDb, selectedGroup._id);
+      const memberCount = members.length;
+      const eachContri = Number(amount) / (memberCount + 1);
       const allList: IUdahar[] = [];
-      // selectedGroup.members.forEach((member) => {
-      //   allList.push({
-      //     amount: eachContri,
-      //     date: date.format("DD/MM/YY"),
-      //     expanseDesc: expanseReason,
-      //     expenseType: expenseType as expenseType,
-      //     toWhom: member.userName,
-      //     type: "debt",
-      //     memberId: null,
-      //   });
-      // });
+
+      members.forEach((member) => {
+        // allList.push({
+        //   amount: eachContri,
+        //   date: date.format("DD/MM/YY"),
+        //   expanseDesc: expanseReason,
+        //   expenseType: expenseType as expenseType,
+        //   toWhom: member.userName,
+        //   type: "debt",
+        //   memberId: member.userId,
+        // });
+      });
 
       console.log("Multi Insert");
 

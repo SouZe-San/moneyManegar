@@ -1,7 +1,11 @@
+import { View, StyleSheet, ScrollView } from "react-native";
+import { Href, Link } from "expo-router";
+
+// hooks
 import { ThemedText } from "@/components/ThemedText";
 import { useThemeColorWithName } from "@/hooks/useThemeColor";
-import { Href, Link } from "expo-router";
-import { View, StyleSheet, ScrollView } from "react-native";
+
+// components
 import AnimateTabView from "@/components/animation/AnimateTabView";
 
 const linkBtns: { linkLabel: string; link: Href }[] = [

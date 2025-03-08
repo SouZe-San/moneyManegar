@@ -1,7 +1,8 @@
-import { useState, useRef, useCallback } from "react";
 import { StyleSheet, View, TouchableOpacity } from "react-native";
+import { useState, useRef, useCallback } from "react";
 import { useRouter } from "expo-router";
 
+// components
 import BottomSheetModal from "@/components/BottomSheetModal";
 import { BottomSheetRefProps } from "@/components/BottomSheetView";
 import { Collapsible } from "@/components/Collapsible";
@@ -11,13 +12,16 @@ import { ThemedText } from "@/components/ThemedText";
 import ImageAndName from "@/components/profile/ImageAndName";
 import SingleBox from "@/components/SingleBox";
 
+// hooks
 import { openBottomSheetModal } from "@/hooks/useFunc";
 import { useThemeColorWithName } from "@/hooks/useThemeColor";
 
+// icons
 import { SettingIcon } from "@/assets/icons/SVG/RandomIcons";
 import { UserIcon, GroupsIcon } from "@/assets/icons/SVG/InputIcons";
 
 export default function TabTwoScreen() {
+  // colors
   const iconColor = useThemeColorWithName("icon");
   const bg = useThemeColorWithName("blurBg");
 
@@ -28,6 +32,7 @@ export default function TabTwoScreen() {
   const ref = useRef<BottomSheetRefProps>(null);
 
   const router = useRouter();
+
   // Open Modal
   const onPress = useCallback(() => {
     openBottomSheetModal(ref, setModalVisible);
@@ -88,17 +93,10 @@ export default function TabTwoScreen() {
 
             <BottomSheetModal isOpen={modalVisible} setIsOpen={setModalVisible} ref={ref}>
               <MemberCreate setModalVisibility={setModalVisible} />
-              {/* <ThemedText>HEkko</ThemedText> */}
             </BottomSheetModal>
           </View>
         </View>
       </Collapsible>
-      {/* <Collapsible title="Setting" iconName="settingIcon">
-        <ThemedText>
-          You can open this project on Android, iOS, and the web. To open the web version, press{" "}
-          <ThemedText type="defaultSemiBold">w</ThemedText> in the terminal running this project.
-        </ThemedText>
-      </Collapsible> */}
 
       <View style={[styles.titleBox, { borderColor: bg, backgroundColor: bg }]}>
         <TouchableOpacity
@@ -132,7 +130,7 @@ export default function TabTwoScreen() {
         </ThemedText>
       </Collapsible>
 
-      {/* Legal info - Add Some web page link and details */}
+      {/* // Legal info - Add Some web page link and details */}
       <ThemedText type="subtitle">Legal Information</ThemedText>
       <Collapsible title="Privacy And Policy" iconName="privacyIcon">
         <ThemedText>

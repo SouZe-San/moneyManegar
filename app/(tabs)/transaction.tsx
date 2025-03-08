@@ -35,32 +35,6 @@ export default function Transaction() {
     }
   };
 
-  // Function to insert dummy data into the table
-  // const insertDummyData = async () => {
-  //   console.log("====================================");
-
-  //   console.log("====================================");
-  //   for (const transaction of expenses) {
-  //     console.log("inserting...");
-  //     const query = `
-  //       INSERT INTO UdharTransactions (amount, type, expenseType, date, toWhom,expanseDesc) VALUES (?, ?, ?, ?, ?, ?)`;
-
-  //     try {
-  //       await db.runAsync(query, [
-  //         transaction.expanseAmount,
-  //         transaction.type,
-  //         transaction.expanseType,
-  //         transaction.expanseData,
-  //         transaction.toWhom || "", // Default empty string if 'toWhom' is missing
-  //         transaction.expanseDescription,
-  //       ]);
-  //       console.log("Transaction inserted:", transaction);
-  //     } catch (error) {
-  //       console.error("Error inserting transaction:", error);
-  //     }
-  //   }
-  // };
-
   useEffect(() => {
     const fetchData = async () => {
       console.log("Fetching data... {from Transaction.tsx}");
