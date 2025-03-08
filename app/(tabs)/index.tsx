@@ -7,6 +7,7 @@ import {
   ScrollView,
   ViewToken,
   Dimensions,
+  RefreshControl,
 } from "react-native";
 import { useRouter } from "expo-router";
 import { useState, useRef, useCallback, useEffect } from "react";
@@ -61,7 +62,8 @@ export default function HomeScreen() {
   const db = useSQLiteContext();
   useDrizzleStudio(db);
 
-  const { totalIncome, totalExpense, leftBalance, members, groups } = useExpense();
+  const { totalIncome, totalExpense, leftBalance, members, groups, refresh, onRefresh } =
+    useExpense();
 
   const viewableItems1 = useSharedValue<ViewToken[]>([]);
   const viewableItems2 = useSharedValue<ViewToken[]>([]);
@@ -99,7 +101,10 @@ export default function HomeScreen() {
 
   return (
     <AnimateTabView style={[globalStyles.container, { paddingBottom: 100, paddingHorizontal: 0 }]}>
-      <ScrollView showsVerticalScrollIndicator={false}>
+      <ScrollView
+        showsVerticalScrollIndicator={false}
+        refreshControl={<RefreshControl refreshing={refresh} onRefresh={onRefresh} />}
+      >
         <ThemedText
           type="title"
           style={{

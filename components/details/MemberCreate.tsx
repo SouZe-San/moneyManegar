@@ -11,6 +11,7 @@ import EasyAlert from "../comp/EasyAlert";
 import { useThemeColorWithName } from "@/hooks/useThemeColor";
 import * as ImagePicker from "expo-image-picker";
 import { ProCamIcon } from "@/assets/icons/SVG/RandomIcons";
+import { showToast } from "@/hooks/useFunc";
 
 const MemberCreate = ({ setModalVisibility }: { setModalVisibility: (value: boolean) => void }) => {
   const [member, setMember] = useState<Members | null>(null);
@@ -25,43 +26,41 @@ const MemberCreate = ({ setModalVisibility }: { setModalVisibility: (value: bool
       return;
     }
 
-    if (!member?.userId) {
-      Alert.alert(
-        "New User Added",
-        `Are you Sure you want to add ${member.userName}?`,
-        [
-          {
-            text: "Yes",
-            onPress: async () => {
-              const newMember: Members = {
-                userName: member?.userName,
-                userId: member.userId,
-                imgUrl: selectedImage,
-              };
-              try {
-                await memberCreate(sqlDb, newMember);
-                setModalVisibility(false);
-              } catch (error) {
-                console.log("Error From Member Create 1 :", error);
-              }
-            },
-          },
-          { text: "No" },
-        ],
-        { cancelable: true }
-      );
-      console.log("====================================");
-
-      return;
-    }
-
     try {
-      await memberCreate(sqlDb, { userName: member?.userName, userId: member?.userId });
-      EasyAlert("New User Added", `${member.userName} added to the group`);
+      if (!member?.userId) {
+        Alert.alert(
+          "New User Creating",
+          `Are you Sure you want to add ${member.userName}?`,
+          [
+            {
+              text: "Yes",
+              onPress: async () => {
+                const newMember: Members = {
+                  userName: member?.userName,
+                  userId: member.userId,
+                  imgUrl: selectedImage,
+                };
+                await memberCreate(sqlDb, newMember);
+                showToast("USER");
+              },
+            },
+            { text: "No" },
+          ],
+          { cancelable: true }
+        );
+      } else {
+        await memberCreate(sqlDb, {
+          userName: member?.userName,
+          userId: member?.userId,
+          imgUrl: selectedImage,
+        });
+        showToast("USER");
+      }
     } catch (error) {
-      console.log("Error From Member Create 2 :", error);
+      console.log("Error From Member Create :", error);
+    } finally {
+      setModalVisibility(false);
     }
-    setModalVisibility(false);
   };
 
   // Image Picking logic
@@ -73,10 +72,6 @@ const MemberCreate = ({ setModalVisibility }: { setModalVisibility: (value: bool
       aspect: [1, 1],
       quality: 1,
     });
-
-    console.log("====================================");
-    console.log("Image Picked : ", result);
-
     if (!result.canceled) {
       setSelectedImage(result.assets[0].uri);
       return;

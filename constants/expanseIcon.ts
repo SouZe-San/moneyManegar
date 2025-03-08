@@ -1,15 +1,29 @@
 export const iconReturn = (
-  icon: "Food" | "Fuel" | "Shopping" | "Recharge" | "Travels" | "Others" | "Rent" | "Bill"
+  icon:
+    | "Food"
+    | "Fuel"
+    | "Shopping"
+    | "Recharge"
+    | "Travels"
+    | "Others"
+    | "Rent"
+    | "Bill"
+    | "Salary"
+    | "Gift"
+    | "Business"
 ) => {
   const icons = {
+    Bill: "📜",
+    Business: "👤",
     Food: "🍔",
     Fuel: "⛽",
-    Shopping: "🛍️",
-    Recharge: "📱",
-    Travels: "🚌",
+    Gift: "🎁",
     Others: "🧻",
+    Recharge: "📱",
     Rent: "🏠",
-    Bill: "📜",
+    Salary: "💰",
+    Shopping: "🛍️",
+    Travels: "🚌",
   };
   return icons[icon as keyof typeof icons];
 };

@@ -1,4 +1,3 @@
-import { useCallback } from "react";
 import { BottomSheetRefProps } from "@/components/BottomSheetView";
 export const openBottomSheetModal = (
   ref: React.RefObject<BottomSheetRefProps>,
@@ -12,3 +11,44 @@ export const openBottomSheetModal = (
     ref?.current?.scrollTo(-200);
   }
 };
+
+import { ToastAndroid } from "react-native";
+
+enum ToastType {
+  EXPENSE = "Expense added 💸",
+  INCOME = "Income added 💰",
+  DELETE = "Transaction Deleted ❌",
+  UPDATE = "Transaction Updated ✅",
+  ERROR = "Error Occurred 🚫",
+  CONTRI = "Contri added 🎉",
+  DEBT = "Debt added 💸",
+  USER = "User added 🧑",
+  BUDGET = "Budget added 📊",
+}
+
+export const showToast = (type: keyof typeof ToastType) => {
+  ToastAndroid.show(ToastType[type], ToastAndroid.SHORT);
+};
+
+const arrayOfFaces = [
+  "🤡",
+  "🐲",
+  "🤪",
+  "🙄",
+  "😎",
+  "🫠",
+  "🥸",
+  "🤖",
+  "💩",
+  "🐺",
+  "🐷",
+  "🥴",
+  "🦄",
+  "🐒",
+  "🕷️",
+  "👶🏻",
+  "🧐",
+  "👩🏻‍💻",
+  "👾",
+];
+export const getRandomFaces = () => arrayOfFaces[Math.floor(Math.random() * arrayOfFaces.length)];

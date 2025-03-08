@@ -1,10 +1,11 @@
+import AnimatedStackView from "@/components/animation/AnimatedStackView";
 import dayjs from "dayjs";
-import { ScrollView, Alert, View } from "react-native";
-import { useState } from "react";
+import { ScrollView, View, Image } from "react-native";
+import { useEffect, useState } from "react";
 import { useRouter } from "expo-router";
 import { useSQLiteContext } from "expo-sqlite";
 
-import AnimatedStackView from "@/components/animation/AnimatedStackView";
+// components
 import DateView from "@/components/inputs/DateView";
 import EasyAlert from "@/components/comp/EasyAlert";
 import ExpanseType from "@/components/inputs/ExpanseType";
@@ -22,26 +23,49 @@ import { useThemeColorWithName } from "@/hooks/useThemeColor";
 // icons
 import { MoneyBagIcon, UserIcon, BagIcon } from "@/assets/icons/SVG/InputIcons";
 
-import { expenseType, IUdahar } from "@/types/expanse";
+import { expenseType, IUdahar, Members } from "@/types/expanse";
+import SearchProfileSection from "@/components/comp/SearchProfileSection";
+import { getInfoAsync } from "expo-file-system";
+import { showToast } from "@/hooks/useFunc";
 
 //! TO whom I have to pay
 export function payble() {
   // States
   const [amount, setAmount] = useState("");
-  const [expenseType, setExpenseType] = useState("");
-  const [toWhom, setToWhom] = useState("");
-  const [expanseReason, setExpanseReason] = useState("");
   const [date, setDate] = useState(dayjs());
+  const [expenseType, setExpenseType] = useState("");
+  const [expanseReason, setExpanseReason] = useState("");
+  const [isImgFile, setIsImgPresent] = useState(false);
+  const [member, setMember] = useState<Members | null>(null);
+  const [toWhom, setToWhom] = useState<string | null>(null);
 
   // Colors
   const backgroundColor = useThemeColorWithName("background");
   const horain = useThemeColorWithName("navBg");
   const iconColor = useThemeColorWithName("inputIcon");
+  const borderColor = useThemeColorWithName("borderColor");
+
   // Routes
   const router = useRouter();
   const sqlDb = useSQLiteContext();
 
   // FUNCTIONS
+  useEffect(() => {
+    if (member?._id) {
+      console.log("set Member");
+
+      setToWhom(member.userName);
+      if (member.imgUrl) {
+        try {
+          getInfoAsync(member.imgUrl).then((res) => {
+            setIsImgPresent(res.exists);
+          });
+        } catch (error) {
+          console.log("Error Reading File", error);
+        }
+      }
+    }
+  }, [member]);
 
   // Final Submit
   async function finalSubmit() {
@@ -68,7 +92,7 @@ export function payble() {
       return;
     }
     // Check if the Debt Person Name is empty
-    if (toWhom.trim() === "") {
+    if (toWhom && toWhom.trim() === "") {
       // Show an alert or feedback to the user
       console.log("Person's is empty");
       EasyAlert("Name Missing", "Owned Person's Name should be selected to continue");
@@ -82,9 +106,9 @@ export function payble() {
       date: date.format("DD/MM/YY"),
       expanseDesc: expanseReason,
       expenseType: expenseType as expenseType,
-      toWhom,
+      toWhom: toWhom!,
       type: "debt",
-      memberId: null,
+      memberId: member?.userId!,
     };
 
     console.log("====================================");
@@ -93,19 +117,21 @@ export function payble() {
 
     try {
       await add_udhar(sqlDb, data);
-      Alert.alert(
-        "Success",
-        "Your Udhary Successfully Added",
-        [
-          {
-            text: "OK",
-            onPress: () => router.push("/(tabs)"),
-          },
-        ],
-        {
-          cancelable: false,
-        }
-      );
+      router.push("/(tabs)");
+      showToast("DEBT");
+      // Alert.alert(
+      //   "Success",
+      //   "Your Udhary Successfully Added",
+      //   [
+      //     {
+      //       text: "OK",
+      //       onPress: () => router.push("/(tabs)"),
+      //     },
+      //   ],
+      //   {
+      //     cancelable: false,
+      //   }
+      // );
     } catch (error) {
       EasyAlert("Failed", "Some Error Occurred, Tyr Again");
       console.log("Error form DEBT insert : ", error);
@@ -151,13 +177,37 @@ export function payble() {
               />
             </View>
             <View>
-              <InputWithIcon
-                icon={<UserIcon color={iconColor} />}
+              <View style={[globalStyles.iconInputBox, { borderColor, borderWidth: 0.4 }]}>
+                {isImgFile && member?.imgUrl ? (
+                  <View
+                    style={{
+                      width: 50,
+                      aspectRatio: 1,
+                      borderRadius: "50%",
+                      overflow: "hidden",
+                    }}
+                  >
+                    <Image
+                      source={{ uri: member.imgUrl }}
+                      style={{ objectFit: "cover", width: "100%", height: "100%" }}
+                    />
+                  </View>
+                ) : (
+                  <UserIcon color={iconColor} />
+                )}
+                <View style={[globalStyles.input, { justifyContent: "center" }]}>
+                  <ThemedText colorName="tabIconDefault" style={{ fontSize: 17 }}>
+                    {toWhom ?? "To whom"}
+                  </ThemedText>
+                </View>
+              </View>
+
+              {/* <InputWithIcon
                 placeholder="To Whom"
                 value={toWhom}
                 setValue={setToWhom}
                 keyboardType="default"
-              />
+              /> */}
             </View>
             <View>
               <InputWithIcon
@@ -175,6 +225,10 @@ export function payble() {
 
             <View>
               <ExpanseType setValue={setExpenseType} value={expenseType} />
+            </View>
+
+            <View>
+              <SearchProfileSection member={member} setMember={setMember} />
             </View>
           </View>
 

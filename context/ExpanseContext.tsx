@@ -12,9 +12,8 @@ export interface ExpenseContextType {
   groups: IGroup[];
   members: Members[];
   allTransaction: ITransaction[];
-
-  setIsLoadNeeded: React.Dispatch<React.SetStateAction<boolean>>;
-  reset: () => void;
+  onRefresh: () => void;
+  refresh: boolean;
   addTransaction: (transaction: ITransaction) => void;
   removeTransaction: (transactionId: string) => void;
 }
@@ -28,31 +27,34 @@ export const ExpenseProvider: React.FC<{ children: React.ReactNode }> = ({ child
   const [groups, setGroups] = useState<IGroup[]>([]);
   const [members, setMember] = useState<Members[]>([]);
 
-  const [isLoadNeeded, setIsLoadNeeded] = useState<boolean>(true);
+  const [refresh, setRefresh] = useState<boolean>(false);
   const leftBalance: number = totalIncome - totalExpense;
   const db = useSQLiteContext();
 
+  const fetchData = async () => {
+    console.log("Fetching data... {from Context Provider}");
+    try {
+      const groups = await fetchAllGroup(db);
+      const members = await fetchAllMember(db);
+      setGroups(groups);
+      setMember(members);
+    } catch (error) {
+      console.error("Error fetching data: ", error);
+      // Handle error state if needed
+    } finally {
+      setRefresh(false);
+    }
+  };
   useEffect(() => {
-    const fetchData = async () => {
-      console.log("Fetching data... {from Context Provider}");
-      try {
-        const groups = await fetchAllGroup(db);
-        const members = await fetchAllMember(db);
-        setGroups(groups);
-        setMember(members);
-      } catch (error) {
-        console.error("Error fetching data: ", error);
-        // Handle error state if needed
-      }
-    };
-
     fetchData();
   }, []);
 
-  const reset = () => {
-    setTotalIncome(0);
-    setTotalExpense(0);
-  };
+  const onRefresh = useCallback(() => {
+    setRefresh(true);
+    console.log("Refreshing !! ");
+
+    fetchData();
+  }, []);
 
   const addTransaction = (transaction: ITransaction) => {
     setAllTransaction((prev) => [...prev, transaction]);
@@ -71,11 +73,11 @@ export const ExpenseProvider: React.FC<{ children: React.ReactNode }> = ({ child
         totalIncome,
         totalExpense,
         leftBalance,
-        reset,
         allTransaction,
         addTransaction,
         removeTransaction,
-        setIsLoadNeeded,
+        refresh,
+        onRefresh,
         groups,
         members,
       }}

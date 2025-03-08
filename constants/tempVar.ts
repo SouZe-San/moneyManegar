@@ -266,3 +266,13 @@ const aggregateExpenses = (transactions: ITransaction[]) => {
 };
 
 export const expenseTypeData = aggregateExpenses(allTransactions);
+export const onlyExpenseData = allTransactions
+  .filter((transaction) => transaction.type === "expense")
+  .map((transaction) => {
+    return { value: transaction.amount };
+  });
+export const onlyIncomeData = allTransactions
+  .filter((transaction) => transaction.type === "income")
+  .map((transaction) => {
+    return { value: transaction.amount };
+  });

@@ -1,4 +1,4 @@
-import { Image, useWindowDimensions, type ImageURISource } from "react-native";
+import { StyleProp, TextStyle, useWindowDimensions, type ImageURISource } from "react-native";
 import { ThemedView } from "../ThemedView";
 import { ThemedText } from "../ThemedText";
 
@@ -19,9 +19,10 @@ import { useFocusEffect } from "expo-router";
 interface imageProps {
   title: string;
   imgUrl: ImageURISource | undefined;
+  textStyle?: StyleProp<TextStyle>;
 }
 
-const ImageHeader = ({ imgUrl, title }: imageProps) => {
+const ImageHeader = ({ imgUrl, title, textStyle = {} }: imageProps) => {
   const { width: SCREEN_WIDTH, height: SCREEN_HEIGHT } = useWindowDimensions();
   const translateX = useSharedValue(SCREEN_WIDTH / 2);
   const scale = useSharedValue(1);
@@ -92,16 +93,19 @@ const ImageHeader = ({ imgUrl, title }: imageProps) => {
       />
       <ThemedText
         type="title"
-        style={{
-          position: "relative",
-          bottom: 60,
-          paddingLeft: 40,
-          // left: 10,
-          zIndex: 4,
-          textShadowColor: background,
-          textShadowOffset: { width: 1.4, height: 1 },
-          textShadowRadius: 4,
-        }}
+        style={[
+          {
+            position: "relative",
+            bottom: 60,
+            paddingLeft: 40,
+            // left: 10,
+            zIndex: 4,
+            textShadowColor: background,
+            textShadowOffset: { width: 1.4, height: 1 },
+            textShadowRadius: 4,
+          },
+          textStyle,
+        ]}
       >
         {title}
       </ThemedText>

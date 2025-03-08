@@ -10,11 +10,16 @@ import {
 import { useEffect, useState } from "react";
 import { useSQLiteContext } from "expo-sqlite";
 
-import { InputWithIcon, SmallInputBox } from "../inputs/InputBox";
-import SubmitButton from "../inputs/SubmitButton";
 import { ThemedText } from "../ThemedText";
+import SubmitButton from "../inputs/SubmitButton";
+
+import { DeleteIcon } from "@/assets/icons/SVG/RandomIcons";
+import { UserIcon, GroupsIcon } from "@/assets/icons/SVG/InputIcons";
+import { InputWithIcon, SmallInputBox } from "../inputs/InputBox";
 
 import { useThemeColorWithName } from "@/hooks/useThemeColor";
+
+import { Members } from "@/types/expanse";
 
 import { useExpense } from "@/context/ExpanseContext";
 
@@ -45,13 +50,14 @@ function GroupInput({
   onSubmit,
   setGroupLogo,
 }: GroupInputProps) {
-  const iconColor = useThemeColorWithName("inputIcon");
-  const buttonBg = useThemeColorWithName("blurBg");
+  // states
   const [storedMember, setStoredMember] = useState<Members[]>(useExpense().members);
-
   const [searchName, setSearchName] = useState("");
   const [searchResult, setSearchResult] = useState<Members[]>([]);
 
+  // colors
+  const iconColor = useThemeColorWithName("inputIcon");
+  const buttonBg = useThemeColorWithName("blurBg");
   const borderColor = useThemeColorWithName("borderColor");
   const placeTextColor = useThemeColorWithName("tabIconDefault");
   const inputTextColor = useThemeColorWithName("text");

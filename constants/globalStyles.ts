@@ -54,6 +54,21 @@ export const globalStyles = StyleSheet.create({
     justifyContent: "center",
     alignItems: "center",
   },
+  iconInputBox: {
+    flexDirection: "row",
+    alignItems: "center",
+    justifyContent: "flex-start",
+    borderRadius: 10,
+    paddingHorizontal: 10,
+  },
+  input: {
+    height: 40,
+    fontSize: 15,
+    marginLeft: 5,
+    marginVertical: 10,
+    paddingHorizontal: 5,
+    width: "80%",
+  },
 });
 
 // {

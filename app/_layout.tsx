@@ -105,6 +105,16 @@ export default function RootLayout() {
                 }}
               />
               <Stack.Screen
+                name="entries/budget"
+                options={{
+                  title: "",
+                  headerShadowVisible: false,
+                  headerTransparent: true,
+                  headerBackVisible: false,
+                  headerTintColor: headerTextColor,
+                }}
+              />
+              <Stack.Screen
                 name="setting"
                 options={{
                   title: "",
