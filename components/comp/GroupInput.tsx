@@ -19,14 +19,10 @@ import { InputWithIcon, SmallInputBox } from "../inputs/InputBox";
 
 import { useThemeColorWithName } from "@/hooks/useThemeColor";
 
-import { Members } from "@/types/expanse";
-
 import { useExpense } from "@/context/ExpanseContext";
 
-import { DeleteIcon } from "@/assets/icons/SVG/RandomIcons";
-import { UserIcon, GroupsIcon } from "@/assets/icons/SVG/InputIcons";
-
 import { Members } from "@/types/expanse";
+
 interface GroupInputProps {
   // Props Here
   groupName: string;
