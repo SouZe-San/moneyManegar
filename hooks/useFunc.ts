@@ -23,11 +23,19 @@ enum ToastType {
   CONTRI = "Contri added 🎉",
   DEBT = "Debt added 💸",
   USER = "User added 🧑",
+  USER_DELETE = "User Deleted 👾",
+  GROUP = "Group added 🫂",
+  GROUP_DELETE = "Group Delete 👾",
+  DETAILS_UPDATE = "Details Updated 📝",
   BUDGET = "Budget added 📊",
+  CLEAR = "Clean 🧹",
 }
 
 export const showToast = (type: keyof typeof ToastType) => {
   ToastAndroid.show(ToastType[type], ToastAndroid.SHORT);
+};
+export const showToastWithMsg = (msg: string) => {
+  ToastAndroid.show(msg, ToastAndroid.SHORT);
 };
 
 const arrayOfFaces = [

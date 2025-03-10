@@ -5,7 +5,7 @@
 
 import { useColorScheme } from "react-native";
 
-import { Colors } from "@/constants/Colors";
+import { Colors, ColorMapping } from "@/constants/Colors";
 
 export function useThemeColor(
   props: { light?: string; dark?: string },
@@ -26,4 +26,10 @@ export function useThemeColorWithName(
   const theme = useColorScheme() ?? "light";
 
   return Colors[theme][colorName];
+}
+export function useThemeColorMapping(
+  theme: "light" | "dark",
+  colorName: keyof typeof ColorMapping.light & keyof typeof ColorMapping.dark
+) {
+  return ColorMapping[theme][colorName];
 }

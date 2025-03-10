@@ -33,7 +33,10 @@ const ColorLabeling = ({
           {label}
         </ThemedText>
         <ThemedText type="smallText" style={{ fontSize: 15, fontWeight: "600" }}>
-          {Math.round((amount / totalAmt) * 100)}%
+          {(amount / totalAmt) * 100 < 1
+            ? ((amount / totalAmt) * 100).toFixed(2)
+            : Math.round((amount / totalAmt) * 100)}
+          %
         </ThemedText>
       </View>
     </View>

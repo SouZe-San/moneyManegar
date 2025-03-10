@@ -1,13 +1,18 @@
 import ImageHeader from "@/components/animation/ImageHeader";
-import ParallaxScrollView from "@/components/ParallaxScrollView";
+
 import { ThemedText } from "@/components/ThemedText";
 import { ThemedView } from "@/components/ThemedView";
 import TransactionItem from "@/components/transaction/TransactionItem";
 import { globalStyles } from "@/constants/globalStyles";
-import { allTransactions } from "@/constants/tempVar";
-import { FlatList, Dimensions, View, ScrollView, ViewToken } from "react-native";
+// import { allTransactions } from "@/constants/tempVar";
+import { FlatList, Dimensions, View, ScrollView, ViewToken, RefreshControl } from "react-native";
 import AnimatedListItem from "@/components/animation/AnimatedListItem";
 import { useSharedValue } from "react-native-reanimated";
+import { useCallback, useState } from "react";
+import { useFocusEffect } from "expo-router";
+import { ITransaction } from "@/types/expanse";
+import { fetchAllTransaction } from "@/hooks/useQueries";
+import { useSQLiteContext } from "expo-sqlite";
 
 const { width: SCREEN_Width, height: SCREEN_HEIGHT } = Dimensions.get("screen");
 
@@ -18,11 +23,42 @@ const allTransaction = () => {
 
   const viewableItems = useSharedValue<ViewToken[]>([]);
 
+  const [refresh, setRefresh] = useState(false);
+  const [allTransactions, setAllTransaction] = useState<ITransaction[]>([]);
+
+  const sqlDb = useSQLiteContext();
+  const fetch = async () => {
+    if (!refresh)
+      try {
+        setRefresh(true);
+        const data = await fetchAllTransaction(sqlDb);
+        setAllTransaction(data);
+      } catch (error) {
+        console.log("ERROR :", error);
+      } finally {
+        setRefresh(false);
+      }
+  };
+  useFocusEffect(
+    useCallback(() => {
+      fetch();
+    }, [])
+  );
+
   return (
     // <ScrollView showsVerticalScrollIndicator={false}>
     <ThemedView style={globalStyles.stack_container}>
       <ImageHeader imgUrl={imgUrl} title={headerTitle} />
       <View style={[globalStyles.container, { width: SCREEN_Width, paddingBottom: 0 }]}>
+        {allTransactions.length === 0 && (
+          <ThemedText
+            type="title"
+            colorName="tabIconDefault"
+            style={{ textAlign: "center", marginTop: 100 }}
+          >
+            Itne Jema Karke Kya kare Ga !!!
+          </ThemedText>
+        )}
         <FlatList
           data={allTransactions}
           style={{

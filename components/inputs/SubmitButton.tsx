@@ -16,7 +16,7 @@ const SubmitButton = (props: SubmitButtonProps) => {
       style={[styles.button, { backgroundColor: buttonBgColor }]}
       onPress={props.onPress}
     >
-      <ThemedText style={{ color: buttonTextColor }} type="defaultSemiBold">
+      <ThemedText style={{ color: buttonTextColor, letterSpacing: 1.12 }} type="defaultSemiBold">
         {" "}
         {props.button_label}
       </ThemedText>

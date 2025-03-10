@@ -20,6 +20,7 @@ import { useThemeColorWithName } from "@/hooks/useThemeColor";
 import { IGroup, Members } from "@/types/expanse";
 // icons
 import { ProCamIcon } from "@/assets/icons/SVG/RandomIcons";
+import { showToast } from "@/hooks/useFunc";
 
 export default function create() {
   // States
@@ -66,23 +67,10 @@ export default function create() {
           memberId: member._id!,
         });
       }
-      Alert.alert(
-        "Success",
-        "Group Created Successfully",
-        [
-          {
-            text: "OK",
-            onPress: () => {
-              router.push("/(tabs)");
-            },
-          },
-        ],
-        {
-          cancelable: false,
-        }
-      );
+      router.push("/(tabs)");
+      showToast("GROUP");
     } catch (error) {
-      EasyAlert("Failed", "Some Error Occurred, Tyr Again");
+      showToast("ERROR");
       console.log("Error From group/create : ", error);
     }
 

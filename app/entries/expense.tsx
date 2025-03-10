@@ -54,7 +54,7 @@ export function expense() {
 
     const newData: ITransaction = {
       amount: dbAmount,
-      type: "income",
+      type: "expense",
       expenseType: dbExpenseType as expenseType | "Salary" | "Gift" | "Business",
       date: dbData,
       expanseDesc: dbDesc,

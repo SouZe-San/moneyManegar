@@ -1,52 +1,89 @@
 import { getInfoAsync } from "expo-file-system";
-import { View, StyleSheet, ScrollView, Image } from "react-native";
-import { useEffect, useState } from "react";
+import { View, StyleSheet, ScrollView, Image, TouchableOpacity, Alert } from "react-native";
+import { useCallback, useState } from "react";
+import { router, useFocusEffect } from "expo-router";
 import { useSQLiteContext } from "expo-sqlite";
 
 // components
 import { ThemedView } from "@/components/ThemedView";
 import { ThemedText } from "@/components/ThemedText";
+import UpdateDetails from "./UpdateDetails";
 
 //Hooks
 import { useThemeColorWithName } from "@/hooks/useThemeColor";
-import { fetchMemberBy_id } from "@/hooks/useQueries";
+import { deleteGroupMember_ON_memDelete, deleteMember, fetchMemberBy_id } from "@/hooks/useQueries";
+import { showToast } from "@/hooks/useFunc";
 
 // types
 import { Members } from "@/types/expanse";
+import { PenIcon } from "@/assets/icons/SVG/InputIcons";
+import { DeleteIcon } from "@/assets/icons/SVG/RandomIcons";
+import React from "react";
 
 const MemberDetails = ({ id }: { id: string | null }) => {
   // Colors
   const borderColor = useThemeColorWithName("borderColor");
   const darkTextColor = "#030f0e";
   const balanceBg = useThemeColorWithName("highLightBackground");
+  const icon = useThemeColorWithName("icon");
+  const bg = useThemeColorWithName("blurBg");
 
   const [member, setMember] = useState<Members | null>(null);
   const [isFile, setIsFile] = useState(false);
+  const [isUpdate, setIsUpdate] = useState(false);
 
   const sqlDb = useSQLiteContext();
 
-  useEffect(() => {
-    async function memberFetch() {
-      try {
-        const member = await fetchMemberBy_id(sqlDb, Number(id));
-        setMember(member);
-      } catch (error) {}
-    }
-    memberFetch();
-  });
-
-  useEffect(() => {
-    if (member && member.imgUrl) {
-      try {
-        getInfoAsync(member.imgUrl).then((res) => {
-          setIsFile(res.exists);
-        });
-      } catch (error) {
-        console.log("Error Reading File", error);
+  async function memberFetch() {
+    try {
+      const member = await fetchMemberBy_id(sqlDb, Number(id));
+      setMember(member);
+      console.log("Member", member);
+      if (member && member.imgUrl) {
+        try {
+          getInfoAsync(member.imgUrl).then((res) => {
+            setIsFile(res.exists);
+          });
+        } catch (error) {
+          console.log("Error Reading File", error);
+        }
       }
+    } catch (error) {
+      console.error("ERROR: ", error);
+      showToast("ERROR");
     }
-  }, []);
+  }
+  useFocusEffect(
+    useCallback(() => {
+      memberFetch();
+    }, [])
+  );
 
+  const deleteMemberHandler = async () => {
+    try {
+      await deleteGroupMember_ON_memDelete(sqlDb, Number(id));
+      await deleteMember(sqlDb, Number(id));
+      showToast("USER_DELETE");
+    } catch (error) {
+      console.error("ERROR: ", error);
+      showToast("ERROR");
+    }
+  };
+
+  const deleteHandler = () => {
+    Alert.alert("Delete Group", "Are you sure you want to delete the group?", [
+      {
+        text: "Yes",
+        onPress: async () => {
+          await deleteMemberHandler();
+        },
+      },
+      {
+        text: "No",
+        onPress: () => {},
+      },
+    ]);
+  };
   return (
     <ThemedView>
       <View
@@ -57,7 +94,43 @@ const MemberDetails = ({ id }: { id: string | null }) => {
           marginVertical: 20,
         }}
       >
-        <ThemedText type="title">{member?.userName}</ThemedText>
+        <View style={{ flexDirection: "row", alignItems: "center", gap: 10 }}>
+          <ThemedText type="title">{member?.userName}</ThemedText>
+          <View
+            style={{
+              height: 40,
+              width: 3,
+              backgroundColor: bg,
+              marginLeft: 10,
+              borderRadius: 10,
+            }}
+          ></View>
+          <TouchableOpacity
+            style={{
+              padding: 10,
+            }}
+            onPress={() => setIsUpdate(true)}
+          >
+            <PenIcon color={balanceBg} outline={icon} />
+          </TouchableOpacity>
+          <View
+            style={{
+              height: 40,
+              width: 3,
+              backgroundColor: bg,
+              marginLeft: 10,
+              borderRadius: 10,
+            }}
+          ></View>
+          <TouchableOpacity
+            style={{
+              padding: 10,
+            }}
+            onPress={deleteHandler}
+          >
+            <DeleteIcon color="#de0000ce" />
+          </TouchableOpacity>
+        </View>
 
         <View
           style={{
@@ -89,29 +162,31 @@ const MemberDetails = ({ id }: { id: string | null }) => {
           )}
         </View>
       </View>
-      <View style={{ marginVertical: 20, width: "100%", gap: 8 }}>
-        {/* I will get the money */}
-        <View style={[styles.costViewBox, { backgroundColor: balanceBg, borderColor: balanceBg }]}>
-          <ThemedText type="defaultSemiBold" style={{ fontSize: 14, color: darkTextColor }}>
-            Pending Payment
-          </ThemedText>
-          <ThemedText type="subtitle" style={{ fontSize: 26, color: darkTextColor }}>
-            {member?.ownedAmount?.toFixed(2) || 0} ₹
-          </ThemedText>
+      {isUpdate ? (
+        <UpdateDetails setIsUpdate={setIsUpdate} _id={Number(id)} />
+      ) : (
+        <View style={{ marginVertical: 20, width: "100%", gap: 8 }}>
+          <View
+            style={[styles.costViewBox, { backgroundColor: balanceBg, borderColor: balanceBg }]}
+          >
+            <ThemedText type="defaultSemiBold" style={{ fontSize: 14, color: darkTextColor }}>
+              Pending Payment
+            </ThemedText>
+            <ThemedText type="subtitle" style={{ fontSize: 26, color: darkTextColor }}>
+              {member?.ownedAmount?.toFixed(2) || 0} ₹
+            </ThemedText>
+          </View>
+          <View style={[styles.costViewBox, { borderColor }]}>
+            <ThemedText type="default" style={{ fontSize: 14 }}>
+              Deu Payment
+            </ThemedText>
+            <ThemedText type="subtitle" style={{ fontSize: 26 }}>
+              {member?.dueAmount?.toFixed(2) ?? 0} ₹
+            </ThemedText>
+          </View>
         </View>
-        {/* He/She will get the money */}
-        <View style={[styles.costViewBox, { borderColor }]}>
-          <ThemedText type="default" style={{ fontSize: 14 }}>
-            Deu Payment
-          </ThemedText>
-          <ThemedText type="subtitle" style={{ fontSize: 26 }}>
-            {member?.dueAmount?.toFixed(2) ?? 0} ₹
-          </ThemedText>
-        </View>
-      </View>
-
-      {/* All Transaction */}
-      <ThemedText type="subtitle">All Transactions</ThemedText>
+      )}
+      {!isUpdate && <ThemedText type="subtitle">All Transactions</ThemedText>}
       <ScrollView></ScrollView>
     </ThemedView>
   );

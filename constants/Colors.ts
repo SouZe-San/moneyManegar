@@ -57,3 +57,26 @@ export const Colors = {
     // toggleButton: "rgba(25, 143, 227, 1)",
   },
 };
+
+export const ColorMapping = {
+  light: {
+    Food: "#D94F4F",
+    Fuel: "#3B82F6",
+    Shopping: "#F59E0B ",
+    Recharge: "#10B981",
+    Travels: "#8B5CF6",
+    Others: "#6B7280",
+    Rent: "#14B8A6",
+    Bill: "#4F46E5",
+  },
+  dark: {
+    Food: "#FF6B6B", // Vibrant Red - great for Food category
+    Fuel: "#3B82F6", // Calm Blue - Fuel
+    Shopping: "#FBBF24", // Golden Yellow - Shopping
+    Recharge: "#34D399", // Fresh Green - Recharge
+    Travels: "#A855F7", // Purple - Travels
+    Others: "#9CA3AF", // Muted Grey - Others
+    Rent: "#2DD4BF", // Aqua Cyan - Rent
+    Bill: "#6366F1", // Soft Indigo - Bill
+  },
+};

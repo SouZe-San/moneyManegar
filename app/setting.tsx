@@ -1,24 +1,46 @@
+import { View, StyleSheet, TouchableOpacity } from "react-native";
+import { useSQLiteContext } from "expo-sqlite";
+
+// components
+import { ThemedText } from "@/components/ThemedText";
+import { ThemedView } from "@/components/ThemedView";
+import { globalStyles } from "@/constants/globalStyles";
+
+// hooks
+import { resetDb } from "@/hooks/useQueries";
+import { useThemeColorWithName } from "@/hooks/useThemeColor";
+
+// icons
 import {
   ResetIcon,
   DeleteIcon,
   LeftRightArrowIcon,
   OnlineIcon,
 } from "@/assets/icons/SVG/RandomIcons";
-import { ThemedText } from "@/components/ThemedText";
-import { ThemedView } from "@/components/ThemedView";
-import { globalStyles } from "@/constants/globalStyles";
+import { useRouter } from "expo-router";
+import { showToast } from "@/hooks/useFunc";
 import { useExpense } from "@/context/ExpanseContext";
-
-import { useThemeColorWithName } from "@/hooks/useThemeColor";
-import { View, StyleSheet, TouchableOpacity } from "react-native";
 
 const setting = () => {
   // Colors
   const iconColor = useThemeColorWithName("icon");
   const bg = useThemeColorWithName("blurBg");
 
-  const { reset } = useExpense();
+  const sqlDb = useSQLiteContext();
+  const router = useRouter();
+  const { onRefresh } = useExpense();
 
+  const reset = async () => {
+    try {
+      await resetDb(sqlDb);
+      onRefresh();
+      router.push("/(tabs)");
+      showToast("CLEAR");
+    } catch (error) {
+      showToast("ERROR");
+      console.log("Error Resetting Data", error);
+    }
+  };
   return (
     <ThemedView style={[globalStyles.mainContainer, { gap: 15 }]}>
       <ThemedText style={{ paddingLeft: 10 }} type="title">
@@ -53,12 +75,7 @@ const setting = () => {
           great! 😎
         </ThemedText>
 
-        <TouchableOpacity
-          style={[styles.btn, { backgroundColor: bg }]}
-          onPress={() => {
-            reset();
-          }}
-        >
+        <TouchableOpacity style={[styles.btn, { backgroundColor: bg }]} onPress={reset}>
           <ResetIcon color={iconColor} />
           <ThemedText>Reset</ThemedText>
         </TouchableOpacity>

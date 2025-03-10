@@ -7,8 +7,7 @@ import {
   Image,
   TextInput,
 } from "react-native";
-import { useEffect, useState } from "react";
-import { useSQLiteContext } from "expo-sqlite";
+import { useState } from "react";
 
 import { ThemedText } from "../ThemedText";
 import SubmitButton from "../inputs/SubmitButton";
@@ -112,7 +111,7 @@ function GroupInput({
         <TouchableOpacity
           onPress={() => {
             // Remove the member from the list
-            setMembers(members.filter((existingMember) => existingMember.userId !== member.userId));
+            setMembers(members.filter((existingMember) => existingMember._id !== member._id));
           }}
         >
           <View style={[styles.deleteBtn, { backgroundColor: buttonBg }]}>

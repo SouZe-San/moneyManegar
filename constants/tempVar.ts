@@ -187,22 +187,14 @@ const aggregatedData = allTransactions.reduce(
 );
 export const totalBudget = [
   {
-    text: "Income",
+    label: "Income",
     value: aggregatedData.income,
-    color: "#b3df43",
+    frontColor: "#b3df43",
   },
   {
-    text: "Expense",
+    label: "Expense",
     value: aggregatedData.expense,
-    color: "#f33933",
-  },
-  {
-    text: "Savings",
-    value:
-      aggregatedData.income - aggregatedData.expense < 0
-        ? 0
-        : aggregatedData.income - aggregatedData.expense,
-    color: "#f3a333",
+    frontColor: "#f33933",
   },
 ];
 
@@ -227,7 +219,7 @@ const colorMapping = {
   Bill: "#6366F1", // Soft Indigo - Bill
 };
 const vibrantLightColorMapping = {
-  Food: "#D32F2F", // Dark Red - Food category
+  Food: "#D94F4F", // Dark Red - Food category
   Fuel: "#1976D2", // Dark Blue - Fuel
   Shopping: "#FBC02D", // Bright Yellow - Shopping
   Recharge: "#388E3C", // Dark Green - Recharge

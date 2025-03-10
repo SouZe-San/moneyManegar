@@ -1,9 +1,17 @@
 import { createContext, useState, useContext, useCallback, useEffect } from "react";
-import { ITransaction, Members, Groups, IGroup, IMember } from "@/types/expanse";
+import { Members, IGroup, IUdahar, expenseType } from "@/types/expanse";
 
-import { allTransactions } from "@/constants/tempVar";
 import { useSQLiteContext } from "expo-sqlite";
-import { fetchAllGroup, fetchAllMember } from "@/hooks/useQueries";
+import {
+  fetchAllGroup,
+  fetchAllMember,
+  fetchAllUnPaidTransaction,
+  fetchTotalExpenseAccordingExpanse,
+  getTotalExpense,
+  getTotalIncome,
+} from "@/hooks/useQueries";
+import { useThemeColorMapping } from "@/hooks/useThemeColor";
+import { useColorScheme } from "react-native";
 
 export interface ExpenseContextType {
   totalIncome: number;
@@ -11,11 +19,16 @@ export interface ExpenseContextType {
   leftBalance: number;
   groups: IGroup[];
   members: Members[];
-  allTransaction: ITransaction[];
+  allTransaction: IUdahar[];
   onRefresh: () => void;
   refresh: boolean;
-  addTransaction: (transaction: ITransaction) => void;
   removeTransaction: (transactionId: string) => void;
+  totalBudget: {
+    label: string;
+    value: number;
+    frontColor: string;
+  }[];
+  expenseTypeData: { text: expenseType; value: number; color: string }[];
 }
 
 const ExpenseContext = createContext<ExpenseContextType | undefined>(undefined);
@@ -23,21 +36,33 @@ const ExpenseContext = createContext<ExpenseContextType | undefined>(undefined);
 export const ExpenseProvider: React.FC<{ children: React.ReactNode }> = ({ children }) => {
   const [totalIncome, setTotalIncome] = useState<number>(0);
   const [totalExpense, setTotalExpense] = useState<number>(0);
-  const [allTransaction, setAllTransaction] = useState<ITransaction[]>(allTransactions);
+  const [allTransaction, setAllTransaction] = useState<IUdahar[]>([]);
   const [groups, setGroups] = useState<IGroup[]>([]);
   const [members, setMember] = useState<Members[]>([]);
+  const [expenseTypeData, setExpenseTypeData] = useState<
+    { text: expenseType; value: number; color: string }[]
+  >([]);
 
   const [refresh, setRefresh] = useState<boolean>(false);
   const leftBalance: number = totalIncome - totalExpense;
   const db = useSQLiteContext();
 
+  const theme = useColorScheme() ?? "light";
+
   const fetchData = async () => {
     console.log("Fetching data... {from Context Provider}");
     try {
-      const groups = await fetchAllGroup(db);
       const members = await fetchAllMember(db);
-      setGroups(groups);
       setMember(members);
+      const groups = await fetchAllGroup(db);
+      setGroups(groups);
+      const income = await getTotalIncome(db);
+      setTotalIncome(income ?? 0);
+      const expense = await getTotalExpense(db);
+      setTotalExpense(expense ?? 0);
+
+      const data = await aggregateExpenses();
+      setExpenseTypeData(data);
     } catch (error) {
       console.error("Error fetching data: ", error);
       // Handle error state if needed
@@ -46,8 +71,29 @@ export const ExpenseProvider: React.FC<{ children: React.ReactNode }> = ({ child
     }
   };
   useEffect(() => {
+    (async () => {
+      try {
+        // const allUdhar = await fetchAllUnPaidTransaction(db);
+        // setAllTransaction(allUdhar);
+      } catch (error) {
+        console.log("Error in ExpenseProvider: ", error);
+      }
+    })();
     fetchData();
   }, []);
+
+  const aggregateExpenses = async () => {
+    const data: {
+      expenseType: expenseType;
+      total_expense: number;
+    }[] = await fetchTotalExpenseAccordingExpanse(db);
+
+    return data.map(({ total_expense, expenseType }) => ({
+      text: expenseType,
+      value: total_expense,
+      color: useThemeColorMapping(theme, expenseType),
+    }));
+  };
 
   const onRefresh = useCallback(() => {
     setRefresh(true);
@@ -56,16 +102,25 @@ export const ExpenseProvider: React.FC<{ children: React.ReactNode }> = ({ child
     fetchData();
   }, []);
 
-  const addTransaction = (transaction: ITransaction) => {
-    setAllTransaction((prev) => [...prev, transaction]);
-  };
-
   const removeTransaction = useCallback((transactionId: string) => {
     console.log("Transaction ID: ", transactionId);
     setAllTransaction((prev) =>
       prev.filter((transaction) => transaction._id?.toString() !== transactionId)
     );
   }, []);
+
+  const totalBudget = [
+    {
+      label: "Income",
+      value: totalIncome,
+      frontColor: "#b3df43",
+    },
+    {
+      label: "Expense",
+      value: totalExpense,
+      frontColor: "#f33933",
+    },
+  ];
 
   return (
     <ExpenseContext.Provider
@@ -74,12 +129,13 @@ export const ExpenseProvider: React.FC<{ children: React.ReactNode }> = ({ child
         totalExpense,
         leftBalance,
         allTransaction,
-        addTransaction,
         removeTransaction,
         refresh,
         onRefresh,
         groups,
         members,
+        totalBudget,
+        expenseTypeData,
       }}
     >
       {children}

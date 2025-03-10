@@ -1,20 +1,27 @@
 import { ThemedText } from "@/components/ThemedText";
 
-import { useLocalSearchParams } from "expo-router";
+import { useLocalSearchParams, useRouter } from "expo-router";
 import { Alert, View, TouchableOpacity, Image } from "react-native";
-
 import { ThemedView } from "@/components/ThemedView";
 import { globalStyles } from "@/constants/globalStyles";
 import { useEffect, useState } from "react";
 import GroupInput from "@/components/comp/GroupInput";
 import { Members } from "@/types/expanse";
-import { groupData } from "@/constants/tempVar";
-import { IGroup } from "@/types/expanse";
 import { useThemeColorWithName } from "@/hooks/useThemeColor";
 import * as ImagePicker from "expo-image-picker";
-import { ProCamIcon } from "@/assets/icons/SVG/RandomIcons";
+import { DeleteIcon, ProCamIcon } from "@/assets/icons/SVG/RandomIcons";
 import { useSQLiteContext } from "expo-sqlite";
-import { fetchAllMember_of_Group, fetchGroupBy_id, fetchMemberBy_id } from "@/hooks/useQueries";
+import {
+  deleteGroup,
+  fetchAllMember_of_Group,
+  fetchGroupBy_id,
+  fetchMemberBy_id,
+  updateGroup,
+  updateGroupMember3,
+} from "@/hooks/useQueries";
+import { showToast, showToastWithMsg } from "@/hooks/useFunc";
+
+import EasyAlert from "@/components/comp/EasyAlert";
 
 const GroupDetails = () => {
   const { groupId } = useLocalSearchParams();
@@ -22,12 +29,16 @@ const GroupDetails = () => {
   const [groupName, setGroupName] = useState("");
   const [groupLogo, setGroupLogo] = useState("");
   const [selectedImage, setSelectedImage] = useState<string | null>(null);
-
+  const [existMembers, setExistMembers] = useState<
+    {
+      memberId: number;
+    }[]
+  >([]);
   const bg = useThemeColorWithName("blurBg");
   const iconColor = useThemeColorWithName("icon");
 
   const db = useSQLiteContext();
-
+  const router = useRouter();
   // Run one UseEffect and get the members from the group
 
   useEffect(() => {
@@ -43,7 +54,7 @@ const GroupDetails = () => {
       setSelectedImage(grp.imgUrl);
       // get all members
       const memberIds = await fetchAllMember_of_Group(db, Number(groupId));
-
+      setExistMembers(memberIds);
       // Find members
       const members: Members[] = [];
       const promises = memberIds.map(async (member) => {
@@ -75,7 +86,83 @@ const GroupDetails = () => {
     setSelectedImage(null);
   };
 
-  function onSubmit() {}
+  async function onSubmit() {
+    if (!groupName) {
+      EasyAlert("Invalid Input", "Group Name is Required");
+      return;
+    }
+
+    if (members.length === 0) {
+      EasyAlert("Invalid Input", "Add Members to the Group");
+      return;
+    }
+
+    const haveToDelete = existMembers.filter(
+      (member) => !members.some((m) => m._id === member.memberId)
+    );
+
+    // Find elements present in array1 but not in array2
+    const haveToADD = members.filter(
+      (member) => !existMembers.some((m) => m.memberId === member._id)
+    );
+
+    try {
+      await updateGroup(db, {
+        _id: Number(groupId as string),
+        name: groupName,
+        logo: groupLogo,
+        imgUrl: selectedImage,
+      });
+
+      for (const member of haveToDelete) {
+        await updateGroupMember3(db, {
+          groupId: Number(groupId as string),
+          memberId: member.memberId,
+          action: "remove",
+        });
+      }
+      for (const member of haveToADD) {
+        await updateGroupMember3(db, {
+          groupId: Number(groupId as string),
+          memberId: member._id!,
+          action: "add",
+        });
+      }
+
+      showToast("DETAILS_UPDATE");
+      router.push("/(tabs)");
+    } catch (error) {
+      console.error("Error : ", error);
+      showToastWithMsg("Error: Some problem occurred");
+    }
+  }
+
+  const deleteGroupHandler = async () => {
+    try {
+      await deleteGroup(db, Number(groupId));
+      showToast("GROUP_DELETE");
+      router.push("/(tabs)");
+    } catch (error) {
+      console.error("Error : ", error);
+      showToastWithMsg("Error: Some problem occurred");
+    }
+  };
+
+  const deleteHandler = () => {
+    Alert.alert("Delete Group", "Are you sure you want to delete the group?", [
+      {
+        text: "Yes",
+        onPress: async () => {
+          await deleteGroupHandler();
+        },
+      },
+      {
+        text: "No",
+        onPress: () => {},
+      },
+    ]);
+  };
+
   return (
     <ThemedView style={[globalStyles.mainContainer]}>
       <View
@@ -87,7 +174,28 @@ const GroupDetails = () => {
           marginTop: 20,
         }}
       >
-        <ThemedText type="title">{groupName}</ThemedText>
+        <View style={{ flexDirection: "row", alignItems: "center", gap: 10 }}>
+          <ThemedText type="title">{groupName}</ThemedText>
+
+          <View
+            style={{
+              height: 40,
+              width: 3,
+              backgroundColor: bg,
+              marginLeft: 10,
+              borderRadius: 10,
+            }}
+          ></View>
+
+          <TouchableOpacity
+            style={{
+              padding: 10,
+            }}
+            onPress={deleteHandler}
+          >
+            <DeleteIcon color="#de0000ce" />
+          </TouchableOpacity>
+        </View>
         <TouchableOpacity
           style={{
             borderColor: bg,

@@ -17,7 +17,7 @@ import { ThemedView } from "@/components/ThemedView";
 import { ThemedText } from "@/components/ThemedText";
 
 // hooks
-import { add_udhar } from "@/hooks/useQueries";
+import { add_udhar, updateDueAmount_of_Member } from "@/hooks/useQueries";
 import { useThemeColorWithName } from "@/hooks/useThemeColor";
 
 // icons
@@ -26,7 +26,7 @@ import { MoneyBagIcon, UserIcon, BagIcon } from "@/assets/icons/SVG/InputIcons";
 import { expenseType, IUdahar, Members } from "@/types/expanse";
 import SearchProfileSection from "@/components/comp/SearchProfileSection";
 import { getInfoAsync } from "expo-file-system";
-import { showToast } from "@/hooks/useFunc";
+import { showToast, showToastWithMsg } from "@/hooks/useFunc";
 
 //! TO whom I have to pay
 export function payble() {
@@ -110,30 +110,20 @@ export function payble() {
       type: "debt",
       memberId: member?.userId!,
     };
-
-    console.log("====================================");
-    console.log(" Data", data);
-    console.log("====================================");
-
     try {
+      if (!member?.userName) {
+        showToastWithMsg("User Not Found, Try Again");
+        return;
+      }
       await add_udhar(sqlDb, data);
+      await updateDueAmount_of_Member(sqlDb, {
+        amount: parseInt(amount),
+        userName: member?.userName,
+      });
       router.push("/(tabs)");
       showToast("DEBT");
-      // Alert.alert(
-      //   "Success",
-      //   "Your Udhary Successfully Added",
-      //   [
-      //     {
-      //       text: "OK",
-      //       onPress: () => router.push("/(tabs)"),
-      //     },
-      //   ],
-      //   {
-      //     cancelable: false,
-      //   }
-      // );
     } catch (error) {
-      EasyAlert("Failed", "Some Error Occurred, Tyr Again");
+      showToastWithMsg("Failed: Some Error Occurred, Tyr Again");
       console.log("Error form DEBT insert : ", error);
     }
   }

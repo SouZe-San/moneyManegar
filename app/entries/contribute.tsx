@@ -23,7 +23,13 @@ import { ThemedView } from "@/components/ThemedView";
 import { MoneyBagIcon, UserIcon, BagIcon } from "@/assets/icons/SVG/InputIcons";
 import { useThemeColorWithName } from "@/hooks/useThemeColor";
 import { expenseType, Groups, IGroup, IUdahar, Members } from "@/types/expanse";
-import { add_udhar, fetchAllMember_of_Group } from "@/hooks/useQueries";
+import {
+  add_udhar,
+  fetchAllMember_of_Group,
+  fetchMemberBy_id,
+  updateOweAmount_of_Member,
+} from "@/hooks/useQueries";
+import { showToast } from "@/hooks/useFunc";
 
 // ! who are you to ask for money &&& { can take full expense and divide in in some numbers}
 export function contribute() {
@@ -141,41 +147,42 @@ export function contribute() {
       // Submit the data for group
       if (selectedGroup === null || selectedGroup._id === undefined) return;
       // ! Have to call Function for get all members of this group
-      // @ Need - member's Id
-      const members = await fetchAllMember_of_Group(sqlDb, selectedGroup._id);
-      const memberCount = members.length;
-      const eachContri = Number(amount) / (memberCount + 1);
-      const allList: IUdahar[] = [];
-
-      members.forEach((member) => {
-        // allList.push({
-        //   amount: eachContri,
-        //   date: date.format("DD/MM/YY"),
-        //   expanseDesc: expanseReason,
-        //   expenseType: expenseType as expenseType,
-        //   toWhom: member.userName,
-        //   type: "debt",
-        //   memberId: member.userId,
-        // });
-      });
-
-      console.log("Multi Insert");
 
       try {
+        // @ Need - member's Id
+        const memberIds = await fetchAllMember_of_Group(sqlDb, selectedGroup._id);
+        const memberCount = memberIds.length;
+        const eachContri = Number(amount) / (memberCount + 1);
+        const allList: IUdahar[] = [];
+        // const memberIds = await fetchAllMember_of_Group(sqlDb, selectedGroup._id);
+        const members: Members[] = [];
+        const promises = memberIds.map(async (member) => {
+          const mem = await fetchMemberBy_id(sqlDb, member.memberId);
+          if (!mem) return;
+          members.push(mem);
+        });
+        await Promise.all(promises);
+
+        members.forEach((member) => {
+          allList.push({
+            amount: eachContri,
+            date: date.format("DD/MM/YY"),
+            expanseDesc: expanseReason,
+            expenseType: expenseType as expenseType,
+            toWhom: member.userName,
+            type: "debt",
+            memberId: member.userId,
+          });
+        });
         await Promise.all(allList.map((item) => add_udhar(sqlDb, item)));
-        Alert.alert(
-          "Success",
-          "Contri Successfully Added",
-          [
-            {
-              text: "OK",
-              onPress: () => router.push("/(tabs)"),
-            },
-          ],
-          {
-            cancelable: false,
-          }
+        await Promise.all(
+          members.map(async (item) => {
+            await updateOweAmount_of_Member(sqlDb, { amount: eachContri, userName: item.userName });
+          })
         );
+
+        showToast("CONTRI");
+        router.push("/(tabs)");
       } catch (error) {
         EasyAlert("Failed", "Some Error Occurred, Tyr Again");
         console.log("Error From Multi insert Contri: ", error);

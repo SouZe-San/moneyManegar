@@ -1,21 +1,5 @@
 import { type SQLiteDatabase } from "expo-sqlite";
 
-// const transactionStatement = db.prepareSync(
-//   "INSERT INTO AllTransactions ( amount,type,expanseType,date,expanseDesc,memberId,toWhom) VALUES ($amount, $type, $expanseType, $date, $expanseDesc, $memberId, $toWhom)"
-// );
-// export const UdharTransactions = db.prepareSync(
-//   "INSERT INTO UdharTransactions (amount,type ,expenseType ,date ,toWhom ,expanseDesc ,memberId ) VALUES ($amount,$type ,$expenseType ,$date ,$toWhom ,$expanseDesc ,$memberId )"
-// );
-
-// export const memberStatement = db.prepareSync("INSERT INTO MemberTable (name) VALUES ($name)");
-
-// export const groupStatement = db.prepareSync(
-//   "INSERT INTO GroupTable (name,logo) VALUES ($name, $logo)"
-// );
-// export const groupMemberStatement = db.prepareSync(
-//   "INSERT INTO Group_Member (groupId, memberId) VALUES ($groupId, $memberId)"
-// );
-
 export const migrateDbIfNeeded = async (db: SQLiteDatabase) => {
   await db.execAsync(`
         PRAGMA journal_mode = WAL;

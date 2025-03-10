@@ -11,7 +11,7 @@ import {
 } from "react-native";
 import { useRouter } from "expo-router";
 import { useState, useRef, useCallback, useEffect } from "react";
-import { PieChartPro } from "react-native-gifted-charts";
+import { BarChart, PieChartPro } from "react-native-gifted-charts";
 import { useSQLiteContext } from "expo-sqlite";
 import { useDrizzleStudio } from "expo-drizzle-studio-plugin";
 
@@ -25,11 +25,10 @@ import { globalStyles } from "@/constants/globalStyles";
 import RedirectButton from "@/components/comp/RedirectButton";
 import ColorLabeling from "@/components/comp/ColorLabeling";
 
-import { totalBudget, expenseTypeData, groupData } from "@/constants/tempVar";
+// import { expenseTypeData } from "@/constants/tempVar";
 // Hooks
 import { useThemeColorWithName } from "@/hooks/useThemeColor";
 import { useExpense } from "@/context/ExpanseContext";
-import { clearGroup_MemberTable, clearMemberTable, fetchAllGroup } from "@/hooks/useQueries";
 
 // Icons
 import { DbIcon, StatsIcon } from "@/assets/icons/SVG/RandomIcons";
@@ -62,8 +61,17 @@ export default function HomeScreen() {
   const db = useSQLiteContext();
   useDrizzleStudio(db);
 
-  const { totalIncome, totalExpense, leftBalance, members, groups, refresh, onRefresh } =
-    useExpense();
+  const {
+    expenseTypeData,
+    groups,
+    onRefresh,
+    leftBalance,
+    members,
+    totalBudget,
+    totalIncome,
+    totalExpense,
+    refresh,
+  } = useExpense();
 
   const viewableItems1 = useSharedValue<ViewToken[]>([]);
   const viewableItems2 = useSharedValue<ViewToken[]>([]);
@@ -133,7 +141,7 @@ export default function HomeScreen() {
                   type="default"
                   style={[styles.shortTag, { fontSize: 14, color: darkTextColor }]}
                 >
-                  You Brock &#59;&#40;ಥ⁠╭⁠╮⁠ಥ┐
+                  Me Brock ಥ⁠╭⁠╮⁠ಥ┐
                 </ThemedText>
               )}
 
@@ -321,6 +329,7 @@ export default function HomeScreen() {
             marginVertical: 10,
             marginTop: 40,
             paddingHorizontal: 20,
+            display: totalBudget[0].value + totalBudget[1].value === 0 ? "none" : "flex",
           }}
         >
           <View style={{ alignItems: "center" }}>
@@ -352,11 +361,30 @@ export default function HomeScreen() {
             </View>
           </View>
 
-          <View style={{ alignItems: "center" }}>
+          <View
+            style={{
+              alignItems: "center",
+            }}
+          >
             <ThemedText type="subtitle" style={{ marginBottom: 10 }}>
               {new Date().toLocaleString("default", { month: "long" })}
             </ThemedText>
-            <PieChartPro textSize={0} radius={50} innerRadius={35} donut data={totalBudget} />
+            {/* <PieChartPro textSize={0} radius={50} innerRadius={35} donut data={totalBudget} /> */}
+            <BarChart
+              data={totalBudget}
+              barWidth={12}
+              // hideAxesAndRules
+              maxValue={Math.max(totalBudget[0].value, totalBudget[1].value) + 100}
+              yAxisTextStyle={{ color: "gray" }}
+              noOfSections={3}
+              frontColor="lightgray"
+              yAxisThickness={0}
+              xAxisThickness={0}
+              spacing={25}
+              roundedTop
+              roundedBottom
+              hideRules
+            />
             {/* Color Labeling */}
             <View
               style={{
@@ -366,9 +394,9 @@ export default function HomeScreen() {
               {totalBudget.map((item, index) => {
                 return (
                   <ColorLabeling
-                    color={item.color}
+                    color={item.frontColor}
                     key={index.toString()}
-                    label={item.text}
+                    label={item.label}
                     amount={item.value}
                     totalAmt={totalBudget.reduce((sum, item) => sum + item.value, 0)}
                   />
