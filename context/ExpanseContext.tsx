@@ -1,11 +1,10 @@
 import { createContext, useState, useContext, useCallback, useEffect } from "react";
 import { Members, IGroup, IUdahar, expenseType } from "@/types/expanse";
-
+import * as SecureStore from "expo-secure-store";
 import { useSQLiteContext } from "expo-sqlite";
 import {
   fetchAllGroup,
   fetchAllMember,
-  fetchAllUnPaidTransaction,
   fetchTotalExpenseAccordingExpanse,
   getTotalExpense,
   getTotalIncome,
@@ -17,6 +16,8 @@ export interface ExpenseContextType {
   totalIncome: number;
   totalExpense: number;
   leftBalance: number;
+  userName: string | null;
+  email: string | null;
   groups: IGroup[];
   members: Members[];
   allTransaction: IUdahar[];
@@ -38,6 +39,8 @@ export const ExpenseProvider: React.FC<{ children: React.ReactNode }> = ({ child
   const [totalExpense, setTotalExpense] = useState<number>(0);
   const [allTransaction, setAllTransaction] = useState<IUdahar[]>([]);
   const [groups, setGroups] = useState<IGroup[]>([]);
+  const [userName, setUseName] = useState<string | null>(null);
+  const [email, setEmail] = useState<string | null>(null);
   const [members, setMember] = useState<Members[]>([]);
   const [expenseTypeData, setExpenseTypeData] = useState<
     { text: expenseType; value: number; color: string }[]
@@ -73,8 +76,10 @@ export const ExpenseProvider: React.FC<{ children: React.ReactNode }> = ({ child
   useEffect(() => {
     (async () => {
       try {
-        // const allUdhar = await fetchAllUnPaidTransaction(db);
-        // setAllTransaction(allUdhar);
+        const useName = await SecureStore.getItemAsync("user");
+        setUseName(useName);
+        const resE = await SecureStore.getItemAsync("email");
+        setEmail(resE);
       } catch (error) {
         console.log("Error in ExpenseProvider: ", error);
       }
@@ -127,6 +132,8 @@ export const ExpenseProvider: React.FC<{ children: React.ReactNode }> = ({ child
       value={{
         totalIncome,
         totalExpense,
+        userName,
+        email,
         leftBalance,
         allTransaction,
         removeTransaction,
