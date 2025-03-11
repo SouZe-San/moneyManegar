@@ -5,7 +5,7 @@ import { globalStyles } from "@/constants/globalStyles";
 export default function notification() {
   return (
     <ThemedView style={globalStyles.mainContainer}>
-      <ThemedText type="title">NOTificatioN</ThemedText>
+      <ThemedText type="title">NOTificatioN - Coming Back</ThemedText>
     </ThemedView>
   );
 }

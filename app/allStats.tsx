@@ -1,9 +1,9 @@
-import { ThemedView } from "@/components/ThemedView";
-import { globalStyles } from "@/constants/globalStyles";
-import React, { Component } from "react";
 import { ScrollView, View } from "react-native";
+
+import { ThemedView } from "@/components/ThemedView";
 import ImageHeader from "@/components/animation/ImageHeader";
 import { LineChart } from "react-native-gifted-charts";
+import { globalStyles } from "@/constants/globalStyles";
 import { useCallback, useState } from "react";
 import { useFocusEffect } from "expo-router";
 import { fetchOnlyExpense, fetchOnlyIncome } from "@/hooks/useQueries";

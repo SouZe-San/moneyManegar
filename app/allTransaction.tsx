@@ -1,22 +1,21 @@
-import ImageHeader from "@/components/animation/ImageHeader";
-
-import { ThemedText } from "@/components/ThemedText";
-import { ThemedView } from "@/components/ThemedView";
-import TransactionItem from "@/components/transaction/TransactionItem";
-import { globalStyles } from "@/constants/globalStyles";
-// import { allTransactions } from "@/constants/tempVar";
-import { FlatList, Dimensions, View, ScrollView, ViewToken, RefreshControl } from "react-native";
-import AnimatedListItem from "@/components/animation/AnimatedListItem";
+import { FlatList, Dimensions, View, ViewToken } from "react-native";
 import { useSharedValue } from "react-native-reanimated";
-import { useCallback, useState } from "react";
-import { useFocusEffect } from "expo-router";
-import { ITransaction } from "@/types/expanse";
-import { fetchAllTransaction } from "@/hooks/useQueries";
 import { useSQLiteContext } from "expo-sqlite";
+import { useFocusEffect } from "expo-router";
+import { useCallback, useState } from "react";
+
+import AnimatedListItem from "@/components/animation/AnimatedListItem";
+import { globalStyles } from "@/constants/globalStyles";
+import ImageHeader from "@/components/animation/ImageHeader";
+import { ThemedView } from "@/components/ThemedView";
+import { ThemedText } from "@/components/ThemedText";
+import TransactionItem from "@/components/transaction/TransactionItem";
+
+import { fetchAllTransaction } from "@/hooks/useQueries";
+import { ITransaction } from "@/types/expanse";
 
 const { width: SCREEN_Width, height: SCREEN_HEIGHT } = Dimensions.get("screen");
 
-// ! In Future Make it normal if Any problem occurs (remove the scroll view)
 const allTransaction = () => {
   const imgUrl = require("@/assets/images/temp/green.jpg");
   const headerTitle = "All Wastes ಠ⁠_⁠ಠ";
@@ -27,6 +26,7 @@ const allTransaction = () => {
   const [allTransactions, setAllTransaction] = useState<ITransaction[]>([]);
 
   const sqlDb = useSQLiteContext();
+
   const fetch = async () => {
     if (!refresh)
       try {
@@ -46,7 +46,6 @@ const allTransaction = () => {
   );
 
   return (
-    // <ScrollView showsVerticalScrollIndicator={false}>
     <ThemedView style={globalStyles.stack_container}>
       <ImageHeader imgUrl={imgUrl} title={headerTitle} />
       <View style={[globalStyles.container, { width: SCREEN_Width, paddingBottom: 0 }]}>
@@ -81,7 +80,6 @@ const allTransaction = () => {
         />
       </View>
     </ThemedView>
-    // </ScrollView>
   );
 };
 
