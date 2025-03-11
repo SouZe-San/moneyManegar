@@ -19,6 +19,7 @@ import { useThemeColorWithName } from "@/hooks/useThemeColor";
 // icons
 import { SettingIcon } from "@/assets/icons/SVG/RandomIcons";
 import { UserIcon, GroupsIcon } from "@/assets/icons/SVG/InputIcons";
+import { useExpense } from "@/context/ExpanseContext";
 
 export default function TabTwoScreen() {
   // colors
@@ -30,6 +31,8 @@ export default function TabTwoScreen() {
 
   // modal Reference
   const ref = useRef<BottomSheetRefProps>(null);
+
+  const { email } = useExpense();
 
   const router = useRouter();
 
@@ -52,7 +55,7 @@ export default function TabTwoScreen() {
             <ThemedText style={{ fontSize: 15 }} type="smallText">
               E-mail :{" "}
             </ThemedText>
-            No Mail
+            {email ?? "No Mail"}
           </ThemedText>
           <ThemedText>
             <ThemedText style={{ fontSize: 15 }} type="smallText">

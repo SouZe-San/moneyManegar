@@ -16,7 +16,7 @@ import { useSQLiteContext } from "expo-sqlite";
 import { useDrizzleStudio } from "expo-drizzle-studio-plugin";
 
 // Components
-import SingleBox from "@/components/SingleBox";
+
 import { ThemedText } from "@/components/ThemedText";
 import MemberDetails from "@/components/details/MemberDetails";
 import { HelloWave } from "@/components/animation/HelloWave";
@@ -69,6 +69,7 @@ export default function HomeScreen() {
     totalIncome,
     totalExpense,
     refresh,
+    userName,
   } = useExpense();
 
   const viewableItems1 = useSharedValue<ViewToken[]>([]);
@@ -102,7 +103,7 @@ export default function HomeScreen() {
             paddingHorizontal: "4%",
           }}
         >
-          Hi,<Text style={{ fontSize: 28 }}>Souze</Text>
+          Hi,<Text style={{ fontSize: 28 }}>{userName}</Text>
           <HelloWave />
         </ThemedText>
         {/* Cost View Section */}

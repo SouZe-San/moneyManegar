@@ -6,9 +6,8 @@ import * as ImagePicker from "expo-image-picker";
 import { useThemeColorWithName } from "@/hooks/useThemeColor";
 import { ThemedView } from "../ThemedView";
 import { BellIcon, RingBellIcon, ProCamIcon } from "@/assets/icons/SVG/RandomIcons";
+import { useExpense } from "@/context/ExpanseContext";
 
-// userName
-import { USERNAME } from "@/constants/tempVar";
 const NOTIFICATION_COUNT = 0;
 
 export default function ProfileModal({
@@ -38,6 +37,7 @@ export default function ProfileModal({
   };
 
   const router = useRouter();
+  const { userName } = useExpense();
 
   // Colors
   const iconColor = useThemeColorWithName("icon");
@@ -50,7 +50,7 @@ export default function ProfileModal({
     <ThemedView>
       {/* Ist ROw */}
       <View style={{ flexDirection: "row", alignItems: "center", justifyContent: "space-between" }}>
-        <View>{USERNAME && <Profile userName={USERNAME} selectedImage={selectedImage} />}</View>
+        <View>{userName && <Profile userName={userName} selectedImage={selectedImage} />}</View>
 
         <Pressable
           style={[styles.iconView, { borderColor }]}

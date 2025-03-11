@@ -4,6 +4,7 @@ import { useState, useCallback, useRef } from "react";
 import BottomSheetModal from "@/components/BottomSheetModal";
 import { BottomSheetRefProps } from "@/components/BottomSheetView";
 import ProfileModal from "./ProfileModal";
+import { useExpense } from "@/context/ExpanseContext";
 
 const defaultProfile: ImageSourcePropType = require("@/assets/images/temp/myprofile.jpg");
 
@@ -11,7 +12,7 @@ const ImageAndName = () => {
   const [openedItem, setOpenedItem] = useState<boolean>(false);
   const [image, setImage] = useState<string | null>(null);
   const ref = useRef<BottomSheetRefProps>(null);
-
+  const { userName } = useExpense();
   const onPress = useCallback(() => {
     setOpenedItem(true);
     const isActive = ref?.current?.isActive();
@@ -44,7 +45,7 @@ const ImageAndName = () => {
         </View>
       </TouchableOpacity>
       <ThemedText type="title" style={{ backdropFilter: "invert(1)" }}>
-        Souze
+        {userName}
       </ThemedText>
 
       <BottomSheetModal isOpen={openedItem} setIsOpen={setOpenedItem} ref={ref}>
