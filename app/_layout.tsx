@@ -16,6 +16,7 @@ import { StatusBar } from "expo-status-bar";
 import { migrateDbIfNeeded } from "@/hooks/useStorage";
 import { ThemedView } from "@/components/ThemedView";
 import { ThemedText } from "@/components/ThemedText";
+import { ActivityIndicator } from "react-native";
 
 // This is the default configuration
 configureReanimatedLogger({
@@ -25,7 +26,7 @@ configureReanimatedLogger({
 
 export default function RootLayout() {
   const colorScheme = useColorScheme();
-  const headerColor = useThemeColorWithName("background");
+  const high = useThemeColorWithName("highLightBackground");
   const headerTextColor = useThemeColorWithName("text");
   const [loaded] = useFonts({
     SpaceMono: require("../assets/fonts/SpaceMono-Regular.ttf"),
@@ -46,7 +47,7 @@ export default function RootLayout() {
       <Suspense
         fallback={
           <ThemedView style={{ flex: 1, justifyContent: "center", alignItems: "center" }}>
-            <ThemedText>Loading... </ThemedText>
+            <ActivityIndicator size="large" color={high} />
           </ThemedView>
         }
       >
