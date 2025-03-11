@@ -9,6 +9,13 @@ import { useEffect, useRef } from "react";
 import ReanimatedSwipeable, {
   SwipeableMethods,
 } from "react-native-gesture-handler/ReanimatedSwipeable";
+import {
+  add_Transaction_In_AllTransaction,
+  addData_in_AllTransaction,
+  removeDueAmount_of_Member,
+  removeOweAmount_of_Member,
+} from "@/hooks/useQueries";
+import { useSQLiteContext } from "expo-sqlite";
 
 type TransactionProps = {
   transactionId: number;
@@ -20,6 +27,7 @@ type TransactionProps = {
   toWhom?: string;
   onSwipeableWillOpen: (id: string) => void;
   onSwipeableWillClose: (id: string) => void;
+  removeTransaction: (transactionId: string) => void;
   openedItem: null | string;
 };
 
@@ -33,23 +41,57 @@ const TransactionRow = ({
   toWhom = "Own",
   onSwipeableWillOpen,
   onSwipeableWillClose,
+  removeTransaction,
   openedItem,
 }: TransactionProps) => {
   const payIconColor = useThemeColorWithName("highLightBackground");
   const backgroundColor = useThemeColorWithName("background");
   const blurBackgroundColor = useThemeColorWithName("blurBg");
 
-  const { removeTransaction, addExpense, addIncome } = useExpense();
-
   const swipeableRef = useRef<SwipeableMethods | null>(null);
+  const sqlite = useSQLiteContext();
 
-  const addTransactionAmount = (amount: number, type: "debt" | "owned", transactionId: number) => {
+  const getToday = () => {
+    // Get current date
+    const today = new Date();
+
+    // Extract day, month, and year
+    let day = today.getDate();
+    let month = today.getMonth() + 1;
+    let year = today.getFullYear();
+
+    // Add leading zero to day and month if needed
+    const Nday = day < 10 ? "0" + day : day;
+    const Nmonth = month < 10 ? "0" + month : month;
+
+    // Format the date as dd/mm/yyyy
+    return `${Nday}/${Nmonth}/${year.toString().slice(-2)}`;
+  };
+
+  const removeData = async (amount: number, type: "debt" | "owned", transactionId: number) => {
     if (type === "debt") {
-      addExpense(amount);
+      await removeDueAmount_of_Member(sqlite, { amount, userName: toWhom });
     } else {
-      addIncome(amount);
+      await removeOweAmount_of_Member(sqlite, { amount, userName: toWhom });
     }
-    // removeTransaction(transactionId);
+    removeTransaction(transactionId.toString());
+  };
+  const addTransactionAmount = async (
+    amount: number,
+    type: "debt" | "owned",
+    transactionId: number
+  ) => {
+    // addExpense(amount);
+    await add_Transaction_In_AllTransaction(sqlite, {
+      amount: amount,
+      type: type === "debt" ? "expense" : "income",
+      date: getToday(),
+      expanseDesc: expanseDescription,
+      expenseType: expanseType,
+      toWhom,
+    });
+
+    removeData(amount, type, transactionId);
   };
 
   useEffect(() => {
@@ -93,9 +135,13 @@ const TransactionRow = ({
   };
 
   //^ Delete tab
-  const LeftActions = (transactionId: number): React.JSX.Element => {
+  const LeftActions = (
+    amount: number,
+    type: "debt" | "owned",
+    transactionId: number
+  ): React.JSX.Element => {
     return (
-      <TouchableOpacity onPress={() => removeTransaction(transactionId.toString())}>
+      <TouchableOpacity onPress={() => removeData(amount, type, transactionId)}>
         <View
           style={{
             alignItems: "center",
@@ -126,7 +172,7 @@ const TransactionRow = ({
 
   return (
     <ReanimatedSwipeable
-      renderLeftActions={() => LeftActions(transactionId)}
+      renderLeftActions={() => LeftActions(expanseAmount, transactionType, transactionId)}
       renderRightActions={() => RightActions(expanseAmount, transactionType, transactionId)}
       onSwipeableClose={() => onSwipeableWillClose(transactionId.toString())}
       onSwipeableOpen={() => onSwipeableWillOpen(transactionId.toString())}

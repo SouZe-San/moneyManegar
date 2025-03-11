@@ -46,10 +46,8 @@ export default function HomeScreen() {
   const borderColor = useThemeColorWithName("borderColor");
   const expanseBg = useThemeColorWithName("expanseBg");
   const shadowColor = useThemeColorWithName("background");
-  const bg = useThemeColorWithName("blurBg");
   const darkTextColor = "#030f0e";
   const balanceBg = useThemeColorWithName("highLightBackground");
-  const text = useThemeColorWithName("text");
 
   // States
   const [modalVisible, setModalVisible] = useState(false);
@@ -81,7 +79,6 @@ export default function HomeScreen() {
   // Open Modal
   const onPress = useCallback((id: string) => {
     setModalVisible(true);
-    console.log(id);
     setMemberId(id);
     const isActive = ref?.current?.isActive();
     if (isActive) {
@@ -90,22 +87,6 @@ export default function HomeScreen() {
       ref?.current?.scrollTo(-200);
     }
   }, []);
-
-  // useEffect(() => {
-  //   const fetchData = async () => {
-  //     console.log("Fetching data... {from index.tsx}");
-  //     try {
-  //       await clearGroup_MemberTable(db);
-  //       await clearMemberTable(db);
-  //       console.log("DONE ✅");
-  //     } catch (error) {
-  //       console.error("Error fetching data: ", error);
-  //       // Handle error state if needed
-  //     }
-  //   };
-
-  //   fetchData();
-  // }, []);
 
   return (
     <AnimateTabView style={[globalStyles.container, { paddingBottom: 100, paddingHorizontal: 0 }]}>

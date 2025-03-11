@@ -1,5 +1,5 @@
 import dayjs from "dayjs";
-import { ScrollView, View, Switch, useColorScheme, FlatList, Alert } from "react-native";
+import { ScrollView, View, Switch, useColorScheme, FlatList, Alert, ViewToken } from "react-native";
 import { useRouter } from "expo-router";
 import { useSQLiteContext } from "expo-sqlite";
 import { useState } from "react";
@@ -10,7 +10,6 @@ import DateView from "@/components/inputs/DateView";
 import EasyAlert from "@/components/comp/EasyAlert";
 import ExpanseType from "@/components/inputs/ExpanseType";
 import { globalStyles } from "@/constants/globalStyles";
-import { groupData } from "@/constants/tempVar";
 import ImageHeader from "@/components/comp/ImageHeader";
 import { InputWithIcon } from "@/components/inputs/InputBox";
 import SearchProfileSection from "@/components/comp/SearchProfileSection";
@@ -20,16 +19,19 @@ import { ThemedText } from "@/components/ThemedText";
 import { ThemedView } from "@/components/ThemedView";
 
 // icons
-import { MoneyBagIcon, UserIcon, BagIcon } from "@/assets/icons/SVG/InputIcons";
+import { MoneyBagIcon, BagIcon } from "@/assets/icons/SVG/InputIcons";
 import { useThemeColorWithName } from "@/hooks/useThemeColor";
-import { expenseType, Groups, IGroup, IUdahar, Members } from "@/types/expanse";
+import { expenseType, IGroup, IUdahar, Members } from "@/types/expanse";
 import {
   add_udhar,
   fetchAllMember_of_Group,
   fetchMemberBy_id,
-  updateOweAmount_of_Member,
+  addOweAmount_of_Member,
 } from "@/hooks/useQueries";
 import { showToast } from "@/hooks/useFunc";
+import { useExpense } from "@/context/ExpanseContext";
+import GrpSelector from "@/components/comp/GrpSelector";
+import { useSharedValue } from "react-native-reanimated";
 
 // ! who are you to ask for money &&& { can take full expense and divide in in some numbers}
 export function contribute() {
@@ -51,8 +53,12 @@ export function contribute() {
   const selectedThumbColor = useColorScheme() === "light" ? "#dff169" : "#030f0e";
   const backgroundColor = useThemeColorWithName("background");
 
+  const viewableItems = useSharedValue<ViewToken[]>([]);
+
   const router = useRouter();
   const sqlDb = useSQLiteContext();
+
+  const { groups } = useExpense();
 
   // Add Group
   const groupSelection = (item: IGroup) => {
@@ -170,14 +176,14 @@ export function contribute() {
             expanseDesc: expanseReason,
             expenseType: expenseType as expenseType,
             toWhom: member.userName,
-            type: "debt",
+            type: "owned",
             memberId: member.userId,
           });
         });
         await Promise.all(allList.map((item) => add_udhar(sqlDb, item)));
         await Promise.all(
           members.map(async (item) => {
-            await updateOweAmount_of_Member(sqlDb, { amount: eachContri, userName: item.userName });
+            await addOweAmount_of_Member(sqlDb, { amount: eachContri, userName: item.userName });
           })
         );
 
@@ -299,12 +305,19 @@ export function contribute() {
               <View>
                 {
                   <FlatList
-                    data={groupData}
+                    data={groups}
                     horizontal
+                    showsHorizontalScrollIndicator={false}
+                    onViewableItemsChanged={({ viewableItems: vItems }) => {
+                      viewableItems.value = vItems;
+                    }}
                     renderItem={({ item }) => (
-                      <SingleBox
+                      <GrpSelector
                         label={item.name}
                         icon={item.logo}
+                        imgUrl={item.imgUrl}
+                        item={item}
+                        viewableItems={viewableItems}
                         isSelected={selectedGroup?._id === item._id}
                         onPress={() => groupSelection(item)}
                       />

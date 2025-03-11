@@ -38,7 +38,7 @@ export const migrateDbIfNeeded = async (db: SQLiteDatabase) => {
         CREATE TABLE IF NOT EXISTS MemberTable (
             _id INTEGER PRIMARY KEY AUTOINCREMENT,
             userName TEXT NOT NULL UNIQUE,
-            ownedAmount REAL DEFAULT 0 CHECK (ownedAmount >= 0), 
+            owedAmount REAL DEFAULT 0 CHECK (ownedAmount >= 0), 
             dueAmount REAL DEFAULT 0 CHECK (dueAmount >= 0), 
             userId TEXT,
             imgUrl TEXT

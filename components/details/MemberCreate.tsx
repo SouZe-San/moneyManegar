@@ -11,7 +11,7 @@ import EasyAlert from "../comp/EasyAlert";
 import { useThemeColorWithName } from "@/hooks/useThemeColor";
 import * as ImagePicker from "expo-image-picker";
 import { ProCamIcon } from "@/assets/icons/SVG/RandomIcons";
-import { showToast } from "@/hooks/useFunc";
+import { showToast, showToastWithMsg } from "@/hooks/useFunc";
 
 const MemberCreate = ({ setModalVisibility }: { setModalVisibility: (value: boolean) => void }) => {
   const [member, setMember] = useState<Members | null>(null);
@@ -23,6 +23,7 @@ const MemberCreate = ({ setModalVisibility }: { setModalVisibility: (value: bool
   const memberSubmit = async () => {
     if (!member) {
       console.log("No Member Selected");
+      showToastWithMsg("Please Select a Member");
       return;
     }
 

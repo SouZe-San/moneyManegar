@@ -17,7 +17,7 @@ import { ThemedView } from "@/components/ThemedView";
 import { ThemedText } from "@/components/ThemedText";
 
 // hooks
-import { add_udhar, updateDueAmount_of_Member } from "@/hooks/useQueries";
+import { add_udhar, addDueAmount_of_Member } from "@/hooks/useQueries";
 import { useThemeColorWithName } from "@/hooks/useThemeColor";
 
 // icons
@@ -116,7 +116,7 @@ export function payble() {
         return;
       }
       await add_udhar(sqlDb, data);
-      await updateDueAmount_of_Member(sqlDb, {
+      await addDueAmount_of_Member(sqlDb, {
         amount: parseInt(amount),
         userName: member?.userName,
       });

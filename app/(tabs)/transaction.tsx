@@ -1,5 +1,5 @@
 import Animated, { useSharedValue } from "react-native-reanimated";
-import { FlatList, ViewToken } from "react-native";
+import { FlatList, ViewToken, RefreshControl } from "react-native";
 import { GestureHandlerRootView } from "react-native-gesture-handler";
 
 import { ThemedText } from "@/components/ThemedText";
@@ -13,6 +13,8 @@ import { useEffect, useState, useCallback } from "react";
 import { useSQLiteContext } from "expo-sqlite";
 import { udharArray } from "@/constants/tempVar";
 import { IUdahar } from "@/types/expanse";
+import { add_Transaction_In_AllTransaction, fetchAllUnPaidTransaction } from "@/hooks/useQueries";
+import { showToast } from "@/hooks/useFunc";
 
 export default function Transaction() {
   const { allTransaction } = useExpense();
@@ -21,7 +23,7 @@ export default function Transaction() {
   const [openedItem, setOpenedItem] = useState<null | string>(null);
   const viewableItems = useSharedValue<ViewToken[]>([]);
   const [allRows, setAllRows] = useState<IUdahar[]>([]);
-  const [loading, setLoading] = useState(true);
+  const [loading, setLoading] = useState(false);
 
   const handleSwipeableWillOpen = (id: string) => {
     if (openedItem !== id) {
@@ -35,37 +37,29 @@ export default function Transaction() {
     }
   };
 
+  const fetchData = async () => {
+    setLoading(true);
+    try {
+      const rows: IUdahar[] = await fetchAllUnPaidTransaction(db);
+      setAllRows(rows);
+    } catch (error) {
+      showToast("ERROR");
+      console.error("Error fetching data: ", error);
+      // Handle error state if needed
+    } finally {
+      setLoading(false); // Set loading to false after fetching
+    }
+  };
   useEffect(() => {
-    const fetchData = async () => {
-      console.log("Fetching data... {from Transaction.tsx}");
-      try {
-        const rows: IUdahar[] = await db.getAllAsync("SELECT * FROM UdharTransactions");
-
-        setAllRows(rows);
-      } catch (error) {
-        console.error("Error fetching data: ", error);
-        // Handle error state if needed
-      } finally {
-        setLoading(false); // Set loading to false after fetching
-      }
-    };
-
     fetchData();
   }, []);
 
-  // useEffect(() => {
-  //   const initializeDb = async () => {
-  //     // await insertDummyData(); // Insert the dummy data
-  //     const query = 'DELETE FROM UdharTransactions WHERE type = "credit"';
-  //     try {
-  //       await db.runAsync(query);
-  //     } catch (error) {
-  //       console.error("Error deleting transactions:", error);
-  //     }
-  //   };
-
-  //   initializeDb();
-  // }, []);
+  const removeTransaction = useCallback((transactionId: string) => {
+    console.log("Transaction ID: ", transactionId);
+    setAllRows((prev) =>
+      prev.filter((transaction) => transaction._id?.toString() !== transactionId)
+    );
+  }, []);
 
   if (loading) {
     return (
@@ -108,6 +102,7 @@ export default function Transaction() {
           onViewableItemsChanged={({ viewableItems: vItems }) => {
             viewableItems.value = vItems;
           }}
+          refreshControl={<RefreshControl refreshing={loading} onRefresh={fetchData} />}
           renderItem={({ item }) => (
             <Animated.View>
               <AnimatedListItem item={item} viewableItems={viewableItems}>
@@ -122,6 +117,7 @@ export default function Transaction() {
                   onSwipeableWillOpen={handleSwipeableWillOpen}
                   onSwipeableWillClose={handleSwipeableWillClose}
                   openedItem={openedItem}
+                  removeTransaction={removeTransaction}
                 />
               </AnimatedListItem>
             </Animated.View>

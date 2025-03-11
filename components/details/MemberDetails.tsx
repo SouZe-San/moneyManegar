@@ -38,7 +38,6 @@ const MemberDetails = ({ id }: { id: string | null }) => {
     try {
       const member = await fetchMemberBy_id(sqlDb, Number(id));
       setMember(member);
-      console.log("Member", member);
       if (member && member.imgUrl) {
         try {
           getInfoAsync(member.imgUrl).then((res) => {

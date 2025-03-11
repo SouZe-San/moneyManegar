@@ -17,6 +17,19 @@ const addData_in_AllTransaction = async (db: SQLiteDatabase, data: ITransaction)
   });
 };
 
+const add_Transaction_In_AllTransaction = async (db: SQLiteDatabase, data: ITransaction) => {
+  db.withTransactionAsync(async () => {
+    try {
+      await db.runAsync(
+        "INSERT INTO AllTransactions (amount, type, expenseType, date, expanseDesc,toWhom) VALUES (?, ?, ?, ?, ?,?)",
+        [data.amount, data.type, data.expenseType, data.date, data.expanseDesc, data.toWhom!]
+      );
+    } catch (error) {
+      console.error("From useQueries \n Error inserting transaction:", error);
+    }
+  });
+};
+
 // data insert im UdharTransactions Table
 const add_udhar = async (db: SQLiteDatabase, data: IUdahar) => {
   try {
@@ -101,9 +114,7 @@ const fetchAllTransaction = async (db: SQLiteDatabase) => {
 
 const fetchAllUnPaidTransaction = async (db: SQLiteDatabase) => {
   try {
-    const rows: IUdahar[] = await db.getAllAsync(
-      "SELECT * FROM UdharTransactions WHERE type = 'debt'"
-    );
+    const rows: IUdahar[] = await db.getAllAsync("SELECT * FROM UdharTransactions");
     return rows;
   } catch (error) {
     console.error("Error fetching Udhari Data: ", error);
@@ -258,7 +269,7 @@ const fetchTotalExpenseAccordingExpanse = async (db: SQLiteDatabase) => {
 //member
 
 // update any member's due amount
-const updateDueAmount_of_Member = async (
+const addDueAmount_of_Member = async (
   db: SQLiteDatabase,
   data: { userName: string; amount: number }
 ) => {
@@ -271,14 +282,40 @@ const updateDueAmount_of_Member = async (
     console.error("Error updating dueAmount in MemberTable: ", error);
   }
 };
-
-// update any member's owned amount
-const updateOweAmount_of_Member = async (
+const removeDueAmount_of_Member = async (
   db: SQLiteDatabase,
   data: { userName: string; amount: number }
 ) => {
   try {
-    await db.runAsync("UPDATE MemberTable SET ownedAmount = ownedAmount + ? WHERE userName = ?", [
+    await db.runAsync("UPDATE MemberTable SET dueAmount = dueAmount - ? WHERE userName = ?", [
+      data.amount,
+      data.userName,
+    ]);
+  } catch (error) {
+    console.error("Error updating dueAmount in MemberTable: ", error);
+  }
+};
+
+// update any member's owned amount
+const addOweAmount_of_Member = async (
+  db: SQLiteDatabase,
+  data: { userName: string; amount: number }
+) => {
+  try {
+    await db.runAsync("UPDATE MemberTable SET owedAmount = owedAmount + ? WHERE userName = ?", [
+      data.amount,
+      data.userName,
+    ]);
+  } catch (error) {
+    console.error("Error updating dueAmount in MemberTable: ", error);
+  }
+};
+const removeOweAmount_of_Member = async (
+  db: SQLiteDatabase,
+  data: { userName: string; amount: number }
+) => {
+  try {
+    await db.runAsync("UPDATE MemberTable SET owedAmount = owedAmount - ? WHERE userName = ?", [
       data.amount,
       data.userName,
     ]);
@@ -372,6 +409,7 @@ const updateGroupMember3 = async (
 };
 
 // ! DATA DELETING - DELETION ---->
+
 const clearGroup_MemberTable = async (db: SQLiteDatabase) => {
   try {
     await db.runAsync("DELETE FROM Group_Member;");
@@ -479,6 +517,7 @@ const resetDb = async (db: SQLiteDatabase) => {
 export {
   // Insert
   addData_in_AllTransaction,
+  add_Transaction_In_AllTransaction,
   add_udhar,
   memberCreate,
   groupCreate,
@@ -498,8 +537,10 @@ export {
   fetchOnlyIncome,
 
   // Update
-  updateDueAmount_of_Member,
-  updateOweAmount_of_Member,
+  addDueAmount_of_Member,
+  addOweAmount_of_Member,
+  removeDueAmount_of_Member,
+  removeOweAmount_of_Member,
   updateImage_of_Member,
   updateName_of_Member,
   updateMember,
