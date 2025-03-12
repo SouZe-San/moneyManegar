@@ -1,7 +1,7 @@
 {
   "expo": {
-    "name": "moneyManegar",
-    "slug": "moneyManegar",
+    "name": "moneyManager",
+    "slug": "moneyManager",
     "version": "1.0.0",
     "orientation": "portrait",
     "newArchEnabled": true,
@@ -22,7 +22,10 @@
         "foregroundImage": "./assets/images/adaptive-icon.png",
         "backgroundColor": "#030f0e"
       },
-      "package": "com.anonymous.moneyManegar"
+      "package": "com.anonymous.moneyManager",
+      "permissions": [
+        "android.permission.RECORD_AUDIO"
+      ]
     },
     "web": {
       "bundler": "metro",
@@ -49,7 +52,9 @@
             "useSQLCipher": false
           },
           "ios": {
-            "customBuildFlags": ["-DSQLITE_ENABLE_DBSTAT_VTAB=1 -DSQLITE_ENABLE_SNAPSHOT=1"]
+            "customBuildFlags": [
+              "-DSQLITE_ENABLE_DBSTAT_VTAB=1 -DSQLITE_ENABLE_SNAPSHOT=1"
+            ]
           }
         }
       ],
@@ -62,6 +67,14 @@
     ],
     "experiments": {
       "typedRoutes": true
+    },
+    "extra": {
+      "router": {
+        "origin": false
+      },
+      "eas": {
+        "projectId": "16ec3885-98e9-43c0-8eae-d617c763a5c8"
+      }
     }
   }
 }
