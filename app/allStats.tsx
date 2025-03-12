@@ -1,14 +1,16 @@
 import { ScrollView, View } from "react-native";
-
-import { ThemedView } from "@/components/ThemedView";
-import ImageHeader from "@/components/animation/ImageHeader";
 import { LineChart } from "react-native-gifted-charts";
-import { globalStyles } from "@/constants/globalStyles";
 import { useCallback, useState } from "react";
 import { useFocusEffect } from "expo-router";
-import { fetchOnlyExpense, fetchOnlyIncome } from "@/hooks/useQueries";
 import { useSQLiteContext } from "expo-sqlite";
+
+import { globalStyles } from "@/constants/globalStyles";
+import ImageHeader from "@/components/animation/ImageHeader";
+import { ThemedView } from "@/components/ThemedView";
 import { ThemedText } from "@/components/ThemedText";
+
+import { fetchOnlyExpense, fetchOnlyIncome } from "@/hooks/useQueries";
+
 export default function allStats() {
   const imageUrl = require("@/assets/images/temp/s1.jpg");
   const headerTitle = "Statistical Analysis";
@@ -17,6 +19,7 @@ export default function allStats() {
   const [onlyExpenseData, setOnlyExpenseData] = useState<{ value: number }[]>([]);
 
   const sqlDb = useSQLiteContext();
+
   const fetch = async () => {
     try {
       const data1 = await fetchOnlyExpense(sqlDb);

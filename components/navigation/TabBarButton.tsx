@@ -62,12 +62,6 @@ export default function TabBarButton({
       {/* Use Icons */}
 
       <Animated.View style={[animatedIconStyle, styles.tabIcon]}>
-        {/* {navIcons[routeName as keyof typeof navIcons] ? (
-          navIcons[routeName as keyof typeof navIcons](isFocused)
-        ) : (
-          <Ionicons name="home" size={24} color={"#00df81"} />
-        )} */}
-
         {navIcons(routeName, isFocused)}
       </Animated.View>
 

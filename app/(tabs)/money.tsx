@@ -35,8 +35,6 @@ const linkBtns: { linkLabel: string; link: Href }[] = [
 export default function MoneyManager() {
   const borderColor = useThemeColorWithName("borderColor");
   const bg = useThemeColorWithName("blurBg");
-  const headerBg = useThemeColorWithName("highLightBackground");
-  const backgroundColor = useThemeColorWithName("background");
 
   return (
     <AnimateTabView
@@ -44,13 +42,10 @@ export default function MoneyManager() {
         flex: 1,
         justifyContent: "flex-start",
         alignItems: "flex-start",
-
-        // paddingVertical: "15%",
         width: "100%",
       }}
     >
       <View style={[styles.headContainer, {}]}>
-        {/* <View style={[styles.headContainer, { backgroundColor: headerBg }]}> */}
         <ImageHeader
           imgUrl={require("@/assets/images/hero/bg.jpg")}
           title="Wallet Hub"
@@ -62,43 +57,33 @@ export default function MoneyManager() {
             transform: [{ scale: 1.5 }],
           }}
         />
-        {/* <ThemedText
-          type="tabTitle"
-          style={{
-            // color: "#030f0e",
-            marginTop: 40,
-
-            width: "100%",
-            textShadowColor: backgroundColor,
-            textShadowOffset: { width: 1.4, height: 1 },
-            textShadowRadius: 4,
-          }}
-        >
-          Wallet Hub
-        </ThemedText> */}
       </View>
-      <ScrollView>
+      <ScrollView
+        contentContainerStyle={{
+          justifyContent: "space-evenly",
+          alignItems: "center",
+          gap: 10,
+        }}
+        style={{
+          width: "100%",
+          paddingHorizontal: "5%",
+          marginTop: 30,
+        }}
+      >
+        {linkBtns.map((linkBtn, index) => {
+          return (
+            <Link href={linkBtn.link} key={index}>
+              <View style={[styles.linkButton, { borderColor, backgroundColor: bg }]}>
+                <ThemedText type="subtitle">{linkBtn.linkLabel}</ThemedText>
+              </View>
+            </Link>
+          );
+        })}
         <View
           style={{
-            width: "100%",
-            justifyContent: "space-evenly",
-            alignItems: "center",
-            paddingHorizontal: "5%",
-            // height: "50%",
-            marginTop: 30,
-            gap: 10,
+            paddingBottom: 40,
           }}
-        >
-          {linkBtns.map((linkBtn, index) => {
-            return (
-              <Link href={linkBtn.link} key={index}>
-                <View style={[styles.linkButton, { borderColor, backgroundColor: bg }]}>
-                  <ThemedText type="subtitle">{linkBtn.linkLabel}</ThemedText>
-                </View>
-              </Link>
-            );
-          })}
-        </View>
+        ></View>
       </ScrollView>
     </AnimateTabView>
   );

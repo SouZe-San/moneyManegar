@@ -1,12 +1,24 @@
-import { Tabs } from "expo-router";
-import React from "react";
-
+import { Tabs, useRouter } from "expo-router";
 import { Colors } from "@/constants/Colors";
 import { useColorScheme } from "@/hooks/useColorScheme";
 import { CustomTabBar } from "@/components/navigation/TabBar";
-
+import { useEffect } from "react";
+import * as SecureStore from "expo-secure-store";
+import { useExpense } from "@/context/ExpanseContext";
 export default function TabLayout() {
   const colorScheme = useColorScheme();
+  const router = useRouter();
+  const { firstRefresh } = useExpense();
+  useEffect(() => {
+    (async () => {
+      const result = await SecureStore.getItemAsync("onboarding");
+      if (result === null) {
+        router.push("/onboarding");
+      } else {
+        firstRefresh();
+      }
+    })();
+  }, []);
 
   return (
     <Tabs

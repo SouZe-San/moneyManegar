@@ -11,6 +11,7 @@ import {
 } from "@/hooks/useQueries";
 import { useThemeColorMapping } from "@/hooks/useThemeColor";
 import { useColorScheme } from "react-native";
+import { showToastWithMsg } from "@/hooks/useFunc";
 
 export interface ExpenseContextType {
   totalIncome: number;
@@ -18,6 +19,7 @@ export interface ExpenseContextType {
   leftBalance: number;
   userName: string | null;
   email: string | null;
+  firstRefresh: () => Promise<void>;
   groups: IGroup[];
   members: Members[];
   allTransaction: IUdahar[];
@@ -39,7 +41,7 @@ export const ExpenseProvider: React.FC<{ children: React.ReactNode }> = ({ child
   const [totalExpense, setTotalExpense] = useState<number>(0);
   const [allTransaction, setAllTransaction] = useState<IUdahar[]>([]);
   const [groups, setGroups] = useState<IGroup[]>([]);
-  const [userName, setUseName] = useState<string | null>(null);
+  const [userName, setUserName] = useState<string | null>(null);
   const [email, setEmail] = useState<string | null>(null);
   const [members, setMember] = useState<Members[]>([]);
   const [expenseTypeData, setExpenseTypeData] = useState<
@@ -53,7 +55,6 @@ export const ExpenseProvider: React.FC<{ children: React.ReactNode }> = ({ child
   const theme = useColorScheme() ?? "light";
 
   const fetchData = async () => {
-    console.log("Fetching data... {from Context Provider}");
     try {
       const members = await fetchAllMember(db);
       setMember(members);
@@ -67,23 +68,25 @@ export const ExpenseProvider: React.FC<{ children: React.ReactNode }> = ({ child
       const data = await aggregateExpenses();
       setExpenseTypeData(data);
     } catch (error) {
+      showToastWithMsg("Data fetching Failed !!");
       console.error("Error fetching data: ", error);
       // Handle error state if needed
     } finally {
       setRefresh(false);
     }
   };
+
+  const firstRefresh = async () => {
+    try {
+      const useName = await SecureStore.getItemAsync("user");
+      setUserName(useName);
+      const resE = await SecureStore.getItemAsync("email");
+      setEmail(resE);
+    } catch (error) {
+      console.log("Error in ExpenseProvider: ", error);
+    }
+  };
   useEffect(() => {
-    (async () => {
-      try {
-        const useName = await SecureStore.getItemAsync("user");
-        setUseName(useName);
-        const resE = await SecureStore.getItemAsync("email");
-        setEmail(resE);
-      } catch (error) {
-        console.log("Error in ExpenseProvider: ", error);
-      }
-    })();
     fetchData();
   }, []);
 
@@ -102,13 +105,11 @@ export const ExpenseProvider: React.FC<{ children: React.ReactNode }> = ({ child
 
   const onRefresh = useCallback(() => {
     setRefresh(true);
-    console.log("Refreshing !! ");
 
     fetchData();
   }, []);
 
   const removeTransaction = useCallback((transactionId: string) => {
-    console.log("Transaction ID: ", transactionId);
     setAllTransaction((prev) =>
       prev.filter((transaction) => transaction._id?.toString() !== transactionId)
     );
@@ -134,6 +135,7 @@ export const ExpenseProvider: React.FC<{ children: React.ReactNode }> = ({ child
         totalExpense,
         userName,
         email,
+        firstRefresh,
         leftBalance,
         allTransaction,
         removeTransaction,

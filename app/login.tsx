@@ -4,17 +4,19 @@ import { MailIcon } from "@/assets/icons/SVG/RandomIcons";
 import * as SecureStore from "expo-secure-store";
 import { showToastWithMsg } from "@/hooks/useFunc";
 import { globalStyles } from "@/constants/globalStyles";
-import { useState } from "react";
+import { useCallback, useEffect, useState } from "react";
 import { ThemedView } from "@/components/ThemedView";
 import { InputWithIcon } from "@/components/inputs/InputBox";
 import { ThemedText } from "@/components/ThemedText";
 import { TouchableOpacity, View } from "react-native";
+import { useFocusEffect, useRouter } from "expo-router";
 const login = () => {
   const iconColor = useThemeColorWithName("tabIconSelected");
   const bg = useThemeColorWithName("highLightBackground");
   const [username, setUsername] = useState<string | undefined>(undefined);
   const [email, setEmail] = useState<string | undefined>(undefined);
 
+  const router = useRouter();
   const handleLog = async () => {
     if (!username || username?.trim() === "") {
       showToastWithMsg("Username Must given");
@@ -27,7 +29,19 @@ const login = () => {
     }
 
     await SecureStore.setItemAsync("onboarding", "True");
+    router.navigate("/(tabs)");
   };
+
+  useFocusEffect(
+    useCallback(() => {
+      (async () => {
+        const result = await SecureStore.getItemAsync("onboarding");
+        if (result) {
+          router.push("/(tabs)");
+        }
+      })();
+    }, [])
+  );
 
   return (
     <ThemedView style={globalStyles.animated_stackContainer}>
@@ -65,9 +79,8 @@ const login = () => {
           onPress={handleLog}
         >
           <ThemedText
-            style={{ fontSize: 16, letterSpacing: 1.6 }}
-            colorName="background"
-            type="defaultSemiBold"
+            style={{ fontSize: 16, letterSpacing: 1.6, color: "#030f0e" }}
+            colorName="button"
           >
             Chakke De
           </ThemedText>

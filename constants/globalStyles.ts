@@ -1,4 +1,4 @@
-import { StyleSheet, StatusBar } from "react-native";
+import { StyleSheet } from "react-native";
 
 export const globalStyles = StyleSheet.create({
   mainContainer: {
@@ -49,10 +49,12 @@ export const globalStyles = StyleSheet.create({
     alignItems: "center",
   },
   submit_btn_container: {
-    marginBottom: 55,
+    marginBottom: 40,
     width: "100%",
     justifyContent: "center",
     alignItems: "center",
+    position: "absolute",
+    bottom: 5,
   },
   iconInputBox: {
     flexDirection: "row",
@@ -70,12 +72,3 @@ export const globalStyles = StyleSheet.create({
     width: "80%",
   },
 });
-
-// {
-//     position: "absolute",
-//     bottom: 30,
-//     width: "100%",
-//     left: 10,
-//     justifyContent: "center",
-//     alignItems: "center",
-//   }

@@ -1,17 +1,14 @@
 import { View, StyleSheet, Text, TouchableOpacity } from "react-native";
-// import { Swipeable } from "react-native-gesture-handler";
 import { ThemedText } from "../ThemedText";
 import { useThemeColorWithName } from "@/hooks/useThemeColor";
 import { DeleteIcon, PayIcon, DownIcon, UpIcon } from "@/assets/icons/SVG/RandomIcons";
 import { iconReturn } from "@/constants/expanseIcon";
-import { useExpense } from "@/context/ExpanseContext";
 import { useEffect, useRef } from "react";
 import ReanimatedSwipeable, {
   SwipeableMethods,
 } from "react-native-gesture-handler/ReanimatedSwipeable";
 import {
   add_Transaction_In_AllTransaction,
-  addData_in_AllTransaction,
   removeDueAmount_of_Member,
   removeOweAmount_of_Member,
 } from "@/hooks/useQueries";
@@ -81,7 +78,6 @@ const TransactionRow = ({
     type: "debt" | "owned",
     transactionId: number
   ) => {
-    // addExpense(amount);
     await add_Transaction_In_AllTransaction(sqlite, {
       amount: amount,
       type: type === "debt" ? "expense" : "income",
@@ -192,9 +188,6 @@ const TransactionRow = ({
             },
           ]}
         >
-          {/*  transactionType === "debit" || transactionType === "expense"
-                  ? "#f7323227"
-                  : "#35f73227", */}
           <View style={styles.details}>
             {/* Expanse Icon  */}
             <View>
@@ -212,7 +205,7 @@ const TransactionRow = ({
           <View style={styles.expanseAmount}>
             <ThemedText type="defaultSemiBold">₹{expanseAmount}</ThemedText>
             <Text style={{ fontSize: 10 }}>
-              {transactionType === "debt" ? <UpIcon color="red" /> : <DownIcon color="green" />}
+              {transactionType === "debt" ? <DownIcon color="red" /> : <UpIcon color="green" />}
             </Text>
           </View>
         </View>

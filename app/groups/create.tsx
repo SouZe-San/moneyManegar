@@ -1,4 +1,4 @@
-import { Alert, View, TouchableOpacity, Image } from "react-native";
+import { View, TouchableOpacity, Image } from "react-native";
 import * as ImagePicker from "expo-image-picker";
 import { useRouter } from "expo-router";
 import { useState } from "react";
@@ -49,7 +49,7 @@ export default function create() {
     try {
       // Create Group
       await groupCreate(sqlDb, group);
-      // // Find the id of the group in table
+      // Find the id of the group in table
       const groupId: {
         _id: number;
       } | null = await fetchGroupId(sqlDb, groupName);
@@ -60,8 +60,6 @@ export default function create() {
         return;
       }
       for (const member of members) {
-        console.log("Adding Member: ", member);
-
         await addMember_in_Group(sqlDb, {
           groupId: groupId._id,
           memberId: member._id!,
@@ -89,9 +87,6 @@ export default function create() {
       aspect: [1, 1],
       quality: 1,
     });
-
-    console.log("====================================");
-    console.log("Image Picked : ", result);
 
     if (!result.canceled) {
       setSelectedImage(result.assets[0].uri);

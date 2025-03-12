@@ -23,7 +23,7 @@ import { useThemeColorWithName } from "@/hooks/useThemeColor";
 // icons
 import { BagIcon, MoneyBagIcon } from "@/assets/icons/SVG/InputIcons";
 import { expenseType, ITransaction } from "@/types/expanse";
-import { showToast } from "@/hooks/useFunc";
+import { showToast, showToastWithMsg } from "@/hooks/useFunc";
 
 export function expense() {
   // States
@@ -35,7 +35,6 @@ export function expense() {
   // Colors
   const iconColor = useThemeColorWithName("inputIcon");
   const backgroundColor = useThemeColorWithName("background");
-  // const shadowColor = useThemeColorWithName("antiFlash");
 
   // Routers
   const router = useRouter();
@@ -64,25 +63,12 @@ export function expense() {
       await addData_in_AllTransaction(sqlDb, newData);
       router.push("/(tabs)");
       showToast("EXPENSE");
-      // Alert.alert(
-      //   "Success",
-      //   "Your income has been added successfully",
-      //   [
-      //     {
-      //       text: "OK",
-      //       onPress: () => ,
-      //     },
-      //   ],
-      //   {
-      //     cancelable: false,
-      //   }
-      // );
       setExpense("");
       setExpenseType(undefined);
       setDescription("");
       setDate(dayjs());
     } catch (error) {
-      EasyAlert("Failed", "Some Error Occurred, Tyr Again");
+      showToastWithMsg("Expense Adding Failed");
       console.log("Error form Insert : ", error);
     }
   };
@@ -108,7 +94,6 @@ export function expense() {
           <View
             style={{
               flex: 1,
-              // marginTop: 50,
               width: "100%",
               gap: 10,
             }}
@@ -135,7 +120,6 @@ export function expense() {
             </View>
 
             <View>
-              {/* <ThemedText>Expanse Type</ThemedText> */}
               <ExpanseType setValue={setExpenseType} value={expenseType} />
             </View>
           </View>

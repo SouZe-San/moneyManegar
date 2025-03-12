@@ -1,8 +1,13 @@
 import { View, StyleSheet, Text } from "react-native";
+
 import { ThemedText } from "../ThemedText";
+
 import { useThemeColorWithName } from "@/hooks/useThemeColor";
+
 import { DownIcon, UpIcon } from "@/assets/icons/SVG/RandomIcons";
+
 import { iconReturn } from "@/constants/expanseIcon";
+
 import { ITransaction } from "@/types/expanse";
 
 const TransactionItem = (data: ITransaction) => {

@@ -1,13 +1,12 @@
-import { useThemeColorWithName } from "@/hooks/useThemeColor";
-import { ThemedView } from "../ThemedView";
-import DateTimePicker from "react-native-ui-datepicker";
-
 import dayjs, { Dayjs } from "dayjs";
-import { CalenderIcon } from "@/assets/icons/SVG/InputIcons";
+import DateTimePicker from "react-native-ui-datepicker";
+import { View, StyleSheet, Pressable, Modal } from "react-native";
+import { useState } from "react";
 
 import { ThemedText } from "../ThemedText";
-import { useState } from "react";
-import { View, StyleSheet, Pressable, Modal } from "react-native";
+import { useThemeColorWithName } from "@/hooks/useThemeColor";
+import { CalenderIcon } from "@/assets/icons/SVG/InputIcons";
+
 const DateView = ({
   date,
   setDate,
@@ -31,8 +30,6 @@ const DateView = ({
         <CalenderIcon color={iconColor} />
         <ThemedText style={{ fontSize: 15 }}>{date.format("DD/MM/YYYY")}</ThemedText>
       </View>
-
-      {/* {pickerVisible && ( */}
       <Modal
         visible={pickerVisible}
         animationType="fade"
@@ -80,7 +77,6 @@ const DateView = ({
           </View>
         </View>
       </Modal>
-      {/* )} */}
     </Pressable>
   );
 };
@@ -107,10 +103,7 @@ const styles = StyleSheet.create({
   },
   datePicker: {
     width: "80%",
-    // position: "absolute",
-    // top: "190%",
     backfaceVisibility: "hidden",
-    // right: 0,
     shadowOffset: { width: 0, height: 2 },
     shadowOpacity: 0.25,
     shadowRadius: 4,

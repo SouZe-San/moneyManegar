@@ -1,12 +1,15 @@
-import React, { useState } from "react";
-import { View, Text, StyleSheet, Dimensions, TouchableOpacity } from "react-native";
-import { useSafeAreaInsets } from "react-native-safe-area-context";
 import Animated, { FadeInRight, FadeOutLeft } from "react-native-reanimated";
-import { MaterialCommunityIcons, Ionicons, FontAwesome5 } from "@expo/vector-icons";
-import { useThemeColorWithName } from "@/hooks/useThemeColor";
-import { ThemedView } from "./ThemedView";
-import { ThemedText } from "./ThemedText";
+import { useSafeAreaInsets } from "react-native-safe-area-context";
 import { useNavigation, useRouter } from "expo-router";
+import { View, Text, StyleSheet, Dimensions, TouchableOpacity } from "react-native";
+import { useEffect, useState } from "react";
+
+import { MaterialCommunityIcons, Ionicons, FontAwesome5 } from "@expo/vector-icons";
+
+import { ThemedText } from "@/components/ThemedText";
+import { ThemedView } from "@/components/ThemedView";
+
+import { useThemeColorWithName } from "@/hooks/useThemeColor";
 
 const ONBOARDING_DATA = [
   {
@@ -30,9 +33,8 @@ const ONBOARDING_DATA = [
 
 export default function OnboardingScreen() {
   const [currentIndex, setCurrentIndex] = useState(0);
-  const [isCom, setCom] = useState(false);
   const insets = useSafeAreaInsets();
-  const navigation = useNavigation();
+
   const router = useRouter();
 
   const iconColor = useThemeColorWithName("tabIconSelected");
@@ -47,6 +49,16 @@ export default function OnboardingScreen() {
     }
   };
 
+  // Navigation
+  const navigation = useNavigation();
+
+  // Effect
+  useEffect(() => {
+    navigation.addListener("beforeRemove", (e) => {
+      e.preventDefault();
+    });
+  }, []);
+
   const currentItem = ONBOARDING_DATA[currentIndex];
 
   return (
@@ -54,7 +66,7 @@ export default function OnboardingScreen() {
       <View style={{ flex: 1 }}>
         <View style={styles.header}>
           <ThemedText
-            colorName="highLightBackground"
+            colorName="button"
             type="defaultSemiBold"
             style={{ letterSpacing: 1.6 }}
             onPress={() => setCurrentIndex(2)}
@@ -93,7 +105,7 @@ export default function OnboardingScreen() {
             style={[styles.nextButton, { backgroundColor: bg }]}
             onPress={handleNext}
           >
-            <ThemedText style={styles.nextButtonText} colorName="background" type="defaultSemiBold">
+            <ThemedText style={styles.nextButtonText} type="defaultSemiBold">
               {currentIndex === ONBOARDING_DATA.length - 1 ? "Get Started" : "NEXT"}
             </ThemedText>
           </TouchableOpacity>
@@ -140,7 +152,7 @@ const styles = StyleSheet.create({
   },
   footer: {
     padding: 24,
-    paddingBottom: 32,
+    paddingBottom: 50,
   },
   pagination: {
     flexDirection: "row",
@@ -161,6 +173,7 @@ const styles = StyleSheet.create({
   },
   nextButtonText: {
     fontSize: 16,
+    color: "#030f0e",
     letterSpacing: 1.6,
   },
 });

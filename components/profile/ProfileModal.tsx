@@ -92,26 +92,14 @@ export default function ProfileModal({
         Log In / Sign In
       </ThemedText>
       <View style={{ flexDirection: "row", justifyContent: "space-between", alignItems: "center" }}>
-        <Pressable
-          style={[styles.button, { borderColor: bg }]}
-          onPress={() => {
-            // setOpenedItem(false);
-            // router.push("/login");
-          }}
-        >
+        <Pressable style={[styles.button, { borderColor: bg }]}>
           <ThemedText type="defaultSemiBold" style={{ textAlign: "center" }}>
             Log In
           </ThemedText>
         </Pressable>
-        <Pressable
-          style={[styles.button, { borderColor: bg }]}
-          onPress={() => {
-            // setOpenedItem(false);
-            // router.push("/login");
-          }}
-        >
+        <Pressable style={[styles.button, { borderColor: bg }]}>
           <ThemedText type="defaultSemiBold" style={{ textAlign: "center" }}>
-            Log In
+            sign In
           </ThemedText>
         </Pressable>
       </View>

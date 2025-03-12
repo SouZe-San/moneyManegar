@@ -1,9 +1,11 @@
 import { View, Image, StyleSheet, TouchableOpacity, type ImageSourcePropType } from "react-native";
-import { ThemedText } from "../ThemedText";
 import { useState, useCallback, useRef } from "react";
+
+import { ThemedText } from "../ThemedText";
 import BottomSheetModal from "@/components/BottomSheetModal";
 import { BottomSheetRefProps } from "@/components/BottomSheetView";
 import ProfileModal from "./ProfileModal";
+
 import { useExpense } from "@/context/ExpanseContext";
 
 const defaultProfile: ImageSourcePropType = require("@/assets/images/temp/myprofile.jpg");

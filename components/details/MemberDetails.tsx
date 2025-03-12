@@ -135,7 +135,6 @@ const MemberDetails = ({ id }: { id: string | null }) => {
           style={{
             borderRadius: "50%",
             padding: 0,
-            borderWidth: 1,
             width: 80,
             aspectRatio: 1,
             overflow: "hidden",

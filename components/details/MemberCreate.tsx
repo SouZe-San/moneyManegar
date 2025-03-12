@@ -1,17 +1,19 @@
 import { Members } from "@/types/expanse";
-import SearchProfileSection from "../comp/SearchProfileSection";
-import { ThemedView } from "../ThemedView";
-import { useState } from "react";
-import { ThemedText } from "../ThemedText";
-import SubmitButton from "../inputs/SubmitButton";
 import { View, Alert, TouchableOpacity, Image } from "react-native";
-import { memberCreate } from "@/hooks/useQueries";
 import { useSQLiteContext } from "expo-sqlite";
-import EasyAlert from "../comp/EasyAlert";
-import { useThemeColorWithName } from "@/hooks/useThemeColor";
 import * as ImagePicker from "expo-image-picker";
-import { ProCamIcon } from "@/assets/icons/SVG/RandomIcons";
+import { useState } from "react";
+
+import { memberCreate } from "@/hooks/useQueries";
+import { ThemedView } from "../ThemedView";
+import { ThemedText } from "../ThemedText";
+import SearchProfileSection from "../comp/SearchProfileSection";
+import SubmitButton from "../inputs/SubmitButton";
+
+import { useThemeColorWithName } from "@/hooks/useThemeColor";
 import { showToast, showToastWithMsg } from "@/hooks/useFunc";
+
+import { ProCamIcon } from "@/assets/icons/SVG/RandomIcons";
 
 const MemberCreate = ({ setModalVisibility }: { setModalVisibility: (value: boolean) => void }) => {
   const [member, setMember] = useState<Members | null>(null);
@@ -22,7 +24,6 @@ const MemberCreate = ({ setModalVisibility }: { setModalVisibility: (value: bool
 
   const memberSubmit = async () => {
     if (!member) {
-      console.log("No Member Selected");
       showToastWithMsg("Please Select a Member");
       return;
     }
@@ -58,6 +59,7 @@ const MemberCreate = ({ setModalVisibility }: { setModalVisibility: (value: bool
         showToast("USER");
       }
     } catch (error) {
+      showToast("ERROR");
       console.log("Error From Member Create :", error);
     } finally {
       setModalVisibility(false);

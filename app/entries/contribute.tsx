@@ -128,7 +128,6 @@ export function contribute() {
         type: "owned",
         memberId: null,
       };
-      console.log("Single Insert", data);
 
       try {
         await add_udhar(sqlDb, data);
@@ -160,7 +159,6 @@ export function contribute() {
         const memberCount = memberIds.length;
         const eachContri = Number(amount) / (memberCount + 1);
         const allList: IUdahar[] = [];
-        // const memberIds = await fetchAllMember_of_Group(sqlDb, selectedGroup._id);
         const members: Members[] = [];
         const promises = memberIds.map(async (member) => {
           const mem = await fetchMemberBy_id(sqlDb, member.memberId);
@@ -222,7 +220,7 @@ export function contribute() {
             style={{
               display: "flex",
               flexGrow: 0,
-              // marginTop: 50,
+
               width: "100%",
               gap: 10,
             }}
@@ -292,13 +290,6 @@ export function contribute() {
             </View>
             {!splitInGroups ? (
               <View>
-                {/* <InputWithIcon
-                  icon={<UserIcon color={iconColor} />}
-                  placeholder="Solo Name ?"
-                  value={singlePersonName}
-                  setValue={setSinglePersonName}
-                  keyboardType="default"
-                /> */}
                 <SearchProfileSection member={singlePersonName} setMember={setSinglePersonName} />
               </View>
             ) : (
@@ -340,6 +331,9 @@ export function contribute() {
             }}
           ></View>
           {/* List of transaction where user will get money */}
+          <ThemedText type="subtitle" style={{ marginTop: 10 }}>
+            Coming Paisa @_@
+          </ThemedText>
           <ScrollView
             style={{
               marginTop: 10,
@@ -355,9 +349,7 @@ export function contribute() {
                 justifyContent: "center",
                 alignItems: "center",
               }}
-            >
-              <ThemedText type="subtitle">Coming Paisa @_@</ThemedText>
-            </View>
+            ></View>
           </ScrollView>
 
           {/* Submit Button */}

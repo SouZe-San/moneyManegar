@@ -1,5 +1,4 @@
 import { View, StyleSheet, Platform, useWindowDimensions, Dimensions } from "react-native";
-// import { BottomTabBarProps } from "@react-navigation/bottom-tabs";
 
 import TabBarButton from "./TabBarButton";
 import { useThemeColorWithName } from "@/hooks/useThemeColor";

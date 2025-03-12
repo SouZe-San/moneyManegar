@@ -52,8 +52,6 @@ export function payble() {
   // FUNCTIONS
   useEffect(() => {
     if (member?._id) {
-      console.log("set Member");
-
       setToWhom(member.userName);
       if (member.imgUrl) {
         try {
@@ -191,13 +189,6 @@ export function payble() {
                   </ThemedText>
                 </View>
               </View>
-
-              {/* <InputWithIcon
-                placeholder="To Whom"
-                value={toWhom}
-                setValue={setToWhom}
-                keyboardType="default"
-              /> */}
             </View>
             <View>
               <InputWithIcon
@@ -232,9 +223,11 @@ export function payble() {
             }}
           ></View>
           {/* All Debt */}
+          <ThemedText type="subtitle" style={{ marginTop: 20 }}>
+            Debt Listed {".⁠·⁠´⁠¯⁠⁠(⁠>⁠▂⁠<⁠)⁠´⁠¯⁠⁠·⁠."}
+          </ThemedText>
           <ScrollView
             style={{
-              marginTop: 10,
               paddingVertical: 10,
               flex: 1,
 
@@ -247,9 +240,7 @@ export function payble() {
                 justifyContent: "center",
                 alignItems: "center",
               }}
-            >
-              <ThemedText type="subtitle">Debt Listed {".⁠·⁠´⁠¯⁠⁠(⁠>⁠▂⁠<⁠)⁠´⁠¯⁠⁠·⁠."}</ThemedText>
-            </View>
+            ></View>
           </ScrollView>
 
           {/* Submit Button */}

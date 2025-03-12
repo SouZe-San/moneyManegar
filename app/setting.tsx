@@ -1,6 +1,6 @@
 import { View, StyleSheet, TouchableOpacity } from "react-native";
 import { useSQLiteContext } from "expo-sqlite";
-
+import * as SecureStore from "expo-secure-store";
 // components
 import { ThemedText } from "@/components/ThemedText";
 import { ThemedView } from "@/components/ThemedView";
@@ -18,7 +18,7 @@ import {
   OnlineIcon,
 } from "@/assets/icons/SVG/RandomIcons";
 import { useRouter } from "expo-router";
-import { showToast } from "@/hooks/useFunc";
+import { showToast, showToastWithMsg } from "@/hooks/useFunc";
 import { useExpense } from "@/context/ExpanseContext";
 
 const setting = () => {
@@ -34,11 +34,28 @@ const setting = () => {
     try {
       await resetDb(sqlDb);
       onRefresh();
-      router.push("/(tabs)");
       showToast("CLEAR");
     } catch (error) {
       showToast("ERROR");
       console.log("Error Resetting Data", error);
+    }
+  };
+
+  const cleanHandler = async () => {
+    await reset();
+    router.push("/(tabs)");
+  };
+
+  const deleteAccount = async () => {
+    try {
+      await reset();
+      await SecureStore.deleteItemAsync("onboarding");
+      await SecureStore.deleteItemAsync("user");
+      await SecureStore.deleteItemAsync("email");
+      router.navigate("/onboarding");
+    } catch (error) {
+      showToastWithMsg("😹 Failed !! ");
+      console.log("Error Deleting Account", error);
     }
   };
   return (
@@ -75,7 +92,7 @@ const setting = () => {
           great! 😎
         </ThemedText>
 
-        <TouchableOpacity style={[styles.btn, { backgroundColor: bg }]} onPress={reset}>
+        <TouchableOpacity style={[styles.btn, { backgroundColor: bg }]} onPress={cleanHandler}>
           <ResetIcon color={iconColor} />
           <ThemedText>Reset</ThemedText>
         </TouchableOpacity>
@@ -93,7 +110,7 @@ const setting = () => {
           <ThemedText style={{ color: "#bababad3" }}>Log Out</ThemedText>
         </TouchableOpacity>
         {/* Account Delete */}
-        <TouchableOpacity style={[styles.btn, styles.deleteButton]}>
+        <TouchableOpacity style={[styles.btn, styles.deleteButton]} onPress={deleteAccount}>
           <DeleteIcon color="#de0000ce" />
           <ThemedText style={{ color: "gray" }}>Delete Account</ThemedText>
         </TouchableOpacity>

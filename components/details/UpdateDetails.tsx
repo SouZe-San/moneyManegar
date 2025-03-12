@@ -30,7 +30,6 @@ const UpdateDetails = ({
   const update = async () => {
     try {
       if (!name && !selectedImage) {
-        console.log("No Member Selected");
         showToastWithMsg("No Input Is Not GIven");
         return;
       } else if (name && !selectedImage) {
@@ -89,10 +88,8 @@ const UpdateDetails = ({
           flexDirection: "row",
           alignItems: "center",
           gap: 10,
-          // paddingHorizontal: 10,
           marginTop: 10,
           marginBottom: 15,
-          // paddingVertical: 15,
         }}
       >
         <TouchableOpacity

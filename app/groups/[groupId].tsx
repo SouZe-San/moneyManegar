@@ -1,16 +1,20 @@
-import { ThemedText } from "@/components/ThemedText";
-
-import { useLocalSearchParams, useRouter } from "expo-router";
 import { Alert, View, TouchableOpacity, Image } from "react-native";
-import { ThemedView } from "@/components/ThemedView";
-import { globalStyles } from "@/constants/globalStyles";
-import { useEffect, useState } from "react";
-import GroupInput from "@/components/comp/GroupInput";
-import { Members } from "@/types/expanse";
-import { useThemeColorWithName } from "@/hooks/useThemeColor";
+import { ThemedText } from "@/components/ThemedText";
 import * as ImagePicker from "expo-image-picker";
-import { DeleteIcon, ProCamIcon } from "@/assets/icons/SVG/RandomIcons";
+import { useEffect, useState } from "react";
+import { useLocalSearchParams, useRouter } from "expo-router";
 import { useSQLiteContext } from "expo-sqlite";
+
+// components
+import EasyAlert from "@/components/comp/EasyAlert";
+import { globalStyles } from "@/constants/globalStyles";
+import GroupInput from "@/components/comp/GroupInput";
+import { ThemedView } from "@/components/ThemedView";
+
+// icons
+import { DeleteIcon, ProCamIcon } from "@/assets/icons/SVG/RandomIcons";
+
+// hooks
 import {
   deleteGroup,
   fetchAllMember_of_Group,
@@ -20,8 +24,9 @@ import {
   updateGroupMember3,
 } from "@/hooks/useQueries";
 import { showToast, showToastWithMsg } from "@/hooks/useFunc";
+import { useThemeColorWithName } from "@/hooks/useThemeColor";
 
-import EasyAlert from "@/components/comp/EasyAlert";
+import { Members } from "@/types/expanse";
 
 const GroupDetails = () => {
   const { groupId } = useLocalSearchParams();
@@ -43,7 +48,6 @@ const GroupDetails = () => {
 
   useEffect(() => {
     async function fetchData() {
-      console.log("from Group Details");
       const grp = await fetchGroupBy_id(db, groupId as string);
 
       if (!grp) {

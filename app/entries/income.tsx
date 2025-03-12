@@ -23,7 +23,7 @@ import { useThemeColorWithName } from "@/hooks/useThemeColor";
 
 // icons
 import { MoneyBagIcon, BagIcon } from "@/assets/icons/SVG/InputIcons";
-import { showToast } from "@/hooks/useFunc";
+import { showToast, showToastWithMsg } from "@/hooks/useFunc";
 
 const incomeExpanseType = ["Salary", "Business", "Gift", "Others"];
 
@@ -64,10 +64,8 @@ export function income() {
       setDescription("");
       setDate(dayjs());
       showToast("INCOME");
-      // Alert.alert("Income Added", "Your income has been added successfully", [{ text: "OK" }], {
-      //   cancelable: false,
-      // });
     } catch (error) {
+      showToastWithMsg("Income Adding Failed");
       console.log("Error form Insert : ", error);
     }
   };
@@ -106,7 +104,6 @@ export function income() {
           <View
             style={{
               flex: 1,
-              // marginTop: 50,
               width: "100%",
               gap: 10,
             }}
