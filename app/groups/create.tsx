@@ -20,7 +20,7 @@ import { useThemeColorWithName } from "@/hooks/useThemeColor";
 import { IGroup, Members } from "@/types/expanse";
 // icons
 import { ProCamIcon } from "@/assets/icons/SVG/RandomIcons";
-import { showToast } from "@/hooks/useFunc";
+import { photoUpload, showToast } from "@/hooks/useFunc";
 
 export default function create() {
   // States
@@ -89,7 +89,8 @@ export default function create() {
     });
 
     if (!result.canceled) {
-      setSelectedImage(result.assets[0].uri);
+      const url = await photoUpload(result.assets[0].uri, result.assets[0].fileName);
+      setSelectedImage(url);
       return;
     }
     setSelectedImage(null);

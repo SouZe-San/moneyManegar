@@ -11,7 +11,7 @@ import SearchProfileSection from "../comp/SearchProfileSection";
 import SubmitButton from "../inputs/SubmitButton";
 
 import { useThemeColorWithName } from "@/hooks/useThemeColor";
-import { showToast, showToastWithMsg } from "@/hooks/useFunc";
+import { photoUpload, showToast, showToastWithMsg } from "@/hooks/useFunc";
 
 import { ProCamIcon } from "@/assets/icons/SVG/RandomIcons";
 
@@ -76,7 +76,8 @@ const MemberCreate = ({ setModalVisibility }: { setModalVisibility: (value: bool
       quality: 1,
     });
     if (!result.canceled) {
-      setSelectedImage(result.assets[0].uri);
+      const url = await photoUpload(result.assets[0].uri, result.assets[0].fileName);
+      setSelectedImage(url);
       return;
     }
     setSelectedImage(null);

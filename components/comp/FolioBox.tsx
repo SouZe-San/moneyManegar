@@ -49,7 +49,7 @@ const FolioBox = ({
         console.log("Error Reading File", error);
       }
     }
-  }, []);
+  }, [imgUrl]);
 
   const rStyle = useAnimatedStyle(() => {
     const isVisible = Boolean(

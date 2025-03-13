@@ -9,7 +9,7 @@ import { useSQLiteContext } from "expo-sqlite";
 import { useThemeColorWithName } from "@/hooks/useThemeColor";
 import * as ImagePicker from "expo-image-picker";
 import { ProCamIcon } from "@/assets/icons/SVG/RandomIcons";
-import { showToastWithMsg, showToast } from "@/hooks/useFunc";
+import { showToastWithMsg, showToast, photoUpload } from "@/hooks/useFunc";
 import { InputWithIcon } from "../inputs/InputBox";
 import { UserIcon } from "@/assets/icons/SVG/InputIcons";
 
@@ -73,7 +73,9 @@ const UpdateDetails = ({
       quality: 1,
     });
     if (!result.canceled) {
-      setSelectedImage(result.assets[0].uri);
+      const url = await photoUpload(result.assets[0].uri, result.assets[0].fileName);
+      setSelectedImage(url);
+
       return;
     }
     setSelectedImage(null);

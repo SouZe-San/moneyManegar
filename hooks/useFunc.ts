@@ -1,3 +1,5 @@
+import * as FileSystem from "expo-file-system";
+import * as SecureStore from "expo-secure-store";
 import { BottomSheetRefProps } from "@/components/BottomSheetView";
 export const openBottomSheetModal = (
   ref: React.RefObject<BottomSheetRefProps>,
@@ -60,3 +62,10 @@ const arrayOfFaces = [
   "👾",
 ];
 export const getRandomFaces = () => arrayOfFaces[Math.floor(Math.random() * arrayOfFaces.length)];
+
+export const photoUpload = async (URL: string, fileName: string | null | undefined) => {
+  const filename = fileName ?? URL.split("/").pop()!;
+  const docuDir = FileSystem.documentDirectory + filename;
+  await FileSystem.copyAsync({ from: URL, to: docuDir });
+  return docuDir;
+};

@@ -52,6 +52,8 @@ const setting = () => {
       await SecureStore.deleteItemAsync("onboarding");
       await SecureStore.deleteItemAsync("user");
       await SecureStore.deleteItemAsync("email");
+      await SecureStore.deleteItemAsync("dir");
+      await SecureStore.deleteItemAsync("profile");
       router.navigate("/onboarding");
     } catch (error) {
       showToastWithMsg("😹 Failed !! ");

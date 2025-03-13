@@ -23,7 +23,7 @@ import {
   updateGroup,
   updateGroupMember3,
 } from "@/hooks/useQueries";
-import { showToast, showToastWithMsg } from "@/hooks/useFunc";
+import { photoUpload, showToast, showToastWithMsg } from "@/hooks/useFunc";
 import { useThemeColorWithName } from "@/hooks/useThemeColor";
 
 import { Members } from "@/types/expanse";
@@ -84,7 +84,8 @@ const GroupDetails = () => {
     });
 
     if (!result.canceled) {
-      setSelectedImage(result.assets[0].uri);
+      const url = await photoUpload(result.assets[0].uri, result.assets[0].fileName);
+      setSelectedImage(url);
       return;
     }
     setSelectedImage(null);
