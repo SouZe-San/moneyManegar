@@ -1,6 +1,6 @@
 import { View, Image, StyleSheet, TouchableOpacity, type ImageSourcePropType } from "react-native";
-import { useState, useCallback, useRef } from "react";
-
+import { useState, useCallback, useRef, useEffect } from "react";
+import * as SecureStore from "expo-secure-store";
 import { ThemedText } from "../ThemedText";
 import BottomSheetModal from "@/components/BottomSheetModal";
 import { BottomSheetRefProps } from "@/components/BottomSheetView";
@@ -15,6 +15,16 @@ const ImageAndName = () => {
   const [image, setImage] = useState<string | null>(null);
   const ref = useRef<BottomSheetRefProps>(null);
   const { userName } = useExpense();
+
+  useEffect(() => {
+    (async () => {
+      const url = await SecureStore.getItemAsync("profile");
+      console.log(url);
+
+      setImage(url);
+    })();
+  }, []);
+
   const onPress = useCallback(() => {
     setOpenedItem(true);
     const isActive = ref?.current?.isActive();

@@ -9,9 +9,16 @@
     "scheme": "myapp",
     "userInterfaceStyle": "automatic",
     "splash": {
-      "image": "./assets/images/splash.png",
-      "resizeMode": "contain",
-      "backgroundColor": "#030f0e"
+      "light": {
+        "image": "./assets/images/splash.png",
+        "resizeMode": "cover",
+        "backgroundColor": "#ffffff"
+      },
+      "dark": {
+        "image": "./assets/images/splash.png",
+        "resizeMode": "cover",
+        "backgroundColor": "#030f0e"
+      }
     },
     "ios": {
       "supportsTablet": true
@@ -23,9 +30,7 @@
         "backgroundColor": "#030f0e"
       },
       "package": "com.anonymous.moneyManager",
-      "permissions": [
-        "android.permission.RECORD_AUDIO"
-      ]
+      "permissions": ["android.permission.RECORD_AUDIO", "android.permission.SCHEDULE_EXACT_ALARM"]
     },
     "web": {
       "bundler": "metro",
@@ -52,9 +57,7 @@
             "useSQLCipher": false
           },
           "ios": {
-            "customBuildFlags": [
-              "-DSQLITE_ENABLE_DBSTAT_VTAB=1 -DSQLITE_ENABLE_SNAPSHOT=1"
-            ]
+            "customBuildFlags": ["-DSQLITE_ENABLE_DBSTAT_VTAB=1 -DSQLITE_ENABLE_SNAPSHOT=1"]
           }
         }
       ],

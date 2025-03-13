@@ -2,11 +2,13 @@ import { View, Image, StyleSheet, Pressable, TouchableOpacity } from "react-nati
 import { ThemedText } from "../ThemedText";
 import { useRouter } from "expo-router";
 import * as ImagePicker from "expo-image-picker";
-
+import * as FileSystem from "expo-file-system";
 import { useThemeColorWithName } from "@/hooks/useThemeColor";
 import { ThemedView } from "../ThemedView";
 import { BellIcon, RingBellIcon, ProCamIcon } from "@/assets/icons/SVG/RandomIcons";
 import { useExpense } from "@/context/ExpanseContext";
+import * as SecureStore from "expo-secure-store";
+// import { StorageAccessFramework } from "expo-file-system";
 
 const NOTIFICATION_COUNT = 0;
 
@@ -30,7 +32,45 @@ export default function ProfileModal({
     });
 
     if (!result.canceled) {
-      setSelectedImage(result.assets[0].uri);
+      // setSelectedImage(result.assets[0].uri);
+
+      let dir = await SecureStore.getItemAsync("dir");
+
+      if (dir === null) {
+        // Requests permissions for external directory
+        const permissions =
+          await FileSystem.StorageAccessFramework.requestDirectoryPermissionsAsync();
+        console.log("Permissions: ", permissions);
+
+        if (permissions.granted) {
+          // Gets SAF URI from response
+          const uri = permissions.directoryUri;
+          dir = uri;
+          console.log("URI: ", dir);
+          // Gets all files inside of selected directory
+          await SecureStore.setItemAsync("dir", uri);
+        }
+      }
+
+      console.log("I am Sur", dir);
+
+      // alert(`Files inside ${dir}:\n\n${JSON.stringify(files)}`);
+      const fileName = result.assets[0].uri.split("/")[-1];
+      // const cacheFile = FileSystem.cacheDirectory;
+      const docuDir = FileSystem.documentDirectory + fileName;
+      // console.log(cacheFile, docuDir);
+      console.log("Selected image ", docuDir);
+
+      await FileSystem.copyAsync({ from: result.assets[0].uri, to: docuDir });
+
+      const rrr = await FileSystem.getContentUriAsync(FileSystem.documentDirectory!);
+      const res = await FileSystem.getInfoAsync(docuDir);
+      console.log(res);
+      const files = await FileSystem.readDirectoryAsync(rrr);
+      console.log(files);
+
+      await SecureStore.setItemAsync("profile", docuDir);
+      setSelectedImage(docuDir);
       return;
     }
     setSelectedImage(null);
@@ -52,6 +92,7 @@ export default function ProfileModal({
       <View style={{ flexDirection: "row", alignItems: "center", justifyContent: "space-between" }}>
         <View>{userName && <Profile userName={userName} selectedImage={selectedImage} />}</View>
 
+        {/* <Link href="/notification" style={}}> */}
         <Pressable
           style={[styles.iconView, { borderColor }]}
           onPress={() => {
@@ -65,6 +106,7 @@ export default function ProfileModal({
             <BellIcon color={iconColor} />
           )}
         </Pressable>
+        {/* </Link> */}
       </View>
 
       {/*  //! Second Row || photo Selected*/}
