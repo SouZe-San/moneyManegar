@@ -93,10 +93,8 @@ const MemberCreate = ({ setModalVisibility }: { setModalVisibility: (value: bool
           flexDirection: "row",
           alignItems: "center",
           gap: 10,
-          // paddingHorizontal: 10,
           marginTop: 10,
           marginBottom: 5,
-          // paddingVertical: 15,
         }}
       >
         <TouchableOpacity

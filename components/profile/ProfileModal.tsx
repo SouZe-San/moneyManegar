@@ -1,15 +1,17 @@
 import { View, Image, StyleSheet, Pressable, TouchableOpacity } from "react-native";
-import { ThemedText } from "../ThemedText";
-import { useRouter } from "expo-router";
-import * as ImagePicker from "expo-image-picker";
 import * as FileSystem from "expo-file-system";
-import { useThemeColorWithName } from "@/hooks/useThemeColor";
-import { ThemedView } from "../ThemedView";
-import { BellIcon, RingBellIcon, ProCamIcon } from "@/assets/icons/SVG/RandomIcons";
-import { useExpense } from "@/context/ExpanseContext";
+import * as ImagePicker from "expo-image-picker";
 import * as SecureStore from "expo-secure-store";
+import { useExpense } from "@/context/ExpanseContext";
+import { useRouter } from "expo-router";
+
+import { ThemedView } from "../ThemedView";
+import { ThemedText } from "../ThemedText";
+
+import { BellIcon, RingBellIcon, ProCamIcon } from "@/assets/icons/SVG/RandomIcons";
+
 import { photoUpload } from "@/hooks/useFunc";
-// import { StorageAccessFramework } from "expo-file-system";
+import { useThemeColorWithName } from "@/hooks/useThemeColor";
 
 const NOTIFICATION_COUNT = 0;
 

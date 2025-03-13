@@ -1,7 +1,10 @@
 import { createContext, useState, useContext, useCallback, useEffect } from "react";
-import { Members, IGroup, IUdahar, expenseType } from "@/types/expanse";
 import * as SecureStore from "expo-secure-store";
+import { useColorScheme } from "react-native";
 import { useSQLiteContext } from "expo-sqlite";
+
+import { Members, IGroup, IUdahar, expenseType } from "@/types/expanse";
+
 import {
   fetchAllGroup,
   fetchAllMember,
@@ -10,7 +13,6 @@ import {
   getTotalIncome,
 } from "@/hooks/useQueries";
 import { useThemeColorMapping } from "@/hooks/useThemeColor";
-import { useColorScheme } from "react-native";
 import { showToastWithMsg } from "@/hooks/useFunc";
 
 export interface ExpenseContextType {
