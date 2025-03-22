@@ -171,7 +171,7 @@ const MemberDetails = ({ id }: { id: string | null }) => {
               Pending Payment
             </ThemedText>
             <ThemedText type="subtitle" style={{ fontSize: 26, color: darkTextColor }}>
-              {member?.ownedAmount?.toFixed(2) || 0} ₹
+              {member?.owedAmount?.toFixed(2) ?? 0} ₹
             </ThemedText>
           </View>
           <View style={[styles.costViewBox, { borderColor }]}>

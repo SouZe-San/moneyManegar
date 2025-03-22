@@ -1,6 +1,8 @@
 import Animated, { useSharedValue } from "react-native-reanimated";
-import { FlatList, ViewToken, RefreshControl } from "react-native";
 import { GestureHandlerRootView } from "react-native-gesture-handler";
+import { FlatList, ViewToken, RefreshControl } from "react-native";
+import { useEffect, useState, useCallback } from "react";
+import { useSQLiteContext } from "expo-sqlite";
 
 import { ThemedText } from "@/components/ThemedText";
 import TransactionRow from "@/components/transaction/TransactionRow";
@@ -8,16 +10,14 @@ import AnimateTabView from "@/components/animation/AnimateTabView";
 import AnimatedListItem from "@/components/animation/AnimatedListItem";
 
 import { globalStyles } from "@/constants/globalStyles";
-import { useExpense } from "@/context/ExpanseContext";
-import { useEffect, useState, useCallback } from "react";
-import { useSQLiteContext } from "expo-sqlite";
-import { udharArray } from "@/constants/tempVar";
+
 import { IUdahar } from "@/types/expanse";
-import { add_Transaction_In_AllTransaction, fetchAllUnPaidTransaction } from "@/hooks/useQueries";
+
+//hooks
+import { deleteSingleTransaction, fetchAllUnPaidTransaction } from "@/hooks/useQueries";
 import { showToast } from "@/hooks/useFunc";
 
 export default function Transaction() {
-  const { allTransaction } = useExpense();
   const db = useSQLiteContext();
 
   const [openedItem, setOpenedItem] = useState<null | string>(null);
@@ -41,6 +41,7 @@ export default function Transaction() {
     setLoading(true);
     try {
       const rows: IUdahar[] = await fetchAllUnPaidTransaction(db);
+      rows.sort((a, b) => b._id! - a._id!);
       setAllRows(rows);
     } catch (error) {
       showToast("ERROR");
@@ -54,8 +55,10 @@ export default function Transaction() {
     fetchData();
   }, []);
 
-  const removeTransaction = useCallback((transactionId: string) => {
-    console.log("Transaction ID: ", transactionId);
+  const removeTransaction = useCallback(async (transactionId: string) => {
+    try {
+      await deleteSingleTransaction(db, transactionId);
+    } catch (error) {}
     setAllRows((prev) =>
       prev.filter((transaction) => transaction._id?.toString() !== transactionId)
     );

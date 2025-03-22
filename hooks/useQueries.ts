@@ -413,7 +413,6 @@ const updateGroupMember3 = async (
 const clearGroup_MemberTable = async (db: SQLiteDatabase) => {
   try {
     await db.runAsync("DELETE FROM Group_Member;");
-    console.log("All records deleted from Group_Member table.");
   } catch (error) {
     console.error("Error clearing Group_Member table:", error);
   }
@@ -421,7 +420,6 @@ const clearGroup_MemberTable = async (db: SQLiteDatabase) => {
 const clearMemberTable = async (db: SQLiteDatabase) => {
   try {
     await db.runAsync("DELETE FROM MemberTable;");
-    console.log("All records deleted from MemberTable table.");
   } catch (error) {
     console.error("Error on clearing MemberTable table:", error);
   }
@@ -429,7 +427,6 @@ const clearMemberTable = async (db: SQLiteDatabase) => {
 const clearGroupTable = async (db: SQLiteDatabase) => {
   try {
     await db.runAsync("DELETE FROM GroupTable;");
-    console.log("All records deleted from GroupTable table.");
   } catch (error) {
     console.error("Error clearing GroupTable table:", error);
   }
@@ -437,7 +434,6 @@ const clearGroupTable = async (db: SQLiteDatabase) => {
 const clearAllTransactionTable = async (db: SQLiteDatabase) => {
   try {
     await db.runAsync("DELETE FROM AllTransactions;");
-    console.log("All records deleted from AllTransactions table.");
   } catch (error) {
     console.error("Error clearing AllTransactions table:", error);
   }
@@ -445,7 +441,6 @@ const clearAllTransactionTable = async (db: SQLiteDatabase) => {
 const clearUdharTransactionTable = async (db: SQLiteDatabase) => {
   try {
     await db.runAsync("DELETE FROM UdharTransactions;");
-    console.log("All records deleted from UdharTransactions table.");
   } catch (error) {
     console.error("Error clearing UdharTransactions table:", error);
   }
@@ -454,7 +449,6 @@ const clearUdharTransactionTable = async (db: SQLiteDatabase) => {
 const deleteMember = async (db: SQLiteDatabase, memberId: number) => {
   try {
     await db.runAsync("DELETE FROM MemberTable WHERE _id = ?", [memberId]);
-    console.log("Member deleted.");
   } catch (error) {
     console.error("Error deleting Member: ", error);
     throw new Error("Some Terrible Happens from Delete members ");
@@ -465,7 +459,6 @@ const deleteGroup = async (db: SQLiteDatabase, groupId: number) => {
   try {
     await db.runAsync("DELETE FROM Group_Member WHERE groupId = ? ", [groupId]);
     await db.runAsync("DELETE FROM GroupTable WHERE _id = ?", [groupId]);
-    console.log("Group deleted.");
   } catch (error) {
     console.error("Error deleting Group: ", error);
     throw new Error("Some Terrible Happens From Deleting Groups");
@@ -475,7 +468,6 @@ const deleteGroup = async (db: SQLiteDatabase, groupId: number) => {
 const deleteGroupMember_ON_grpDelete = async (db: SQLiteDatabase, groupId: number) => {
   try {
     await db.runAsync("DELETE FROM Group_Member WHERE groupId = ? ", [groupId]);
-    console.log("Group Member deleted.");
   } catch (error) {
     console.error("Error deleting Group Member on Group Delete: ", error);
     throw new Error("Some Terrible Happens On mem Delete for  Group");
@@ -484,7 +476,6 @@ const deleteGroupMember_ON_grpDelete = async (db: SQLiteDatabase, groupId: numbe
 const deleteGroupMember_ON_memDelete = async (db: SQLiteDatabase, memberId: number) => {
   try {
     await db.runAsync("DELETE FROM Group_Member WHERE memberId = ? ", [memberId]);
-    console.log("Group Member deleted.");
   } catch (error) {
     console.error("Error deleting Group-Member on MemberDelete: ", error);
   }
@@ -493,7 +484,6 @@ const deleteGroupMember_ON_memDelete = async (db: SQLiteDatabase, memberId: numb
 const deleteSingleTransaction = async (db: SQLiteDatabase, transactionId: string) => {
   try {
     await db.runAsync("DELETE FROM UdharTransactions WHERE _id = ?", [transactionId]);
-    console.log("Transaction deleted.");
   } catch (error) {
     console.error("Error deleting Transaction: ", error);
     throw new Error("Some Terrible Happens AT Transaction Delete");

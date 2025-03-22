@@ -19,7 +19,6 @@ const ImageAndName = () => {
   useEffect(() => {
     (async () => {
       const url = await SecureStore.getItemAsync("profile");
-      console.log(url);
 
       setImage(url);
     })();

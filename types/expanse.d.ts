@@ -44,7 +44,7 @@ export type Members = {
   _id?: number;
   userName: string;
   userId: string | null;
-  ownedAmount?: number;
+  owedAmount?: number;
   dueAmount?: number;
   imgUrl: string | null;
 };

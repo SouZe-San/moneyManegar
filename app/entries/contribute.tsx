@@ -1,8 +1,19 @@
 import dayjs from "dayjs";
-import { ScrollView, View, Switch, useColorScheme, FlatList, Alert, ViewToken } from "react-native";
+import { getInfoAsync } from "expo-file-system";
+import {
+  ScrollView,
+  View,
+  Switch,
+  useColorScheme,
+  FlatList,
+  Alert,
+  ViewToken,
+  Image,
+} from "react-native";
 import { useRouter } from "expo-router";
 import { useSQLiteContext } from "expo-sqlite";
-import { useState } from "react";
+import { useState, useEffect } from "react";
+import { useSharedValue } from "react-native-reanimated";
 
 // components
 import AnimatedStackView from "@/components/animation/AnimatedStackView";
@@ -10,18 +21,19 @@ import DateView from "@/components/inputs/DateView";
 import EasyAlert from "@/components/comp/EasyAlert";
 import ExpanseType from "@/components/inputs/ExpanseType";
 import { globalStyles } from "@/constants/globalStyles";
+import GrpSelector from "@/components/comp/GrpSelector";
 import ImageHeader from "@/components/comp/ImageHeader";
 import { InputWithIcon } from "@/components/inputs/InputBox";
 import SearchProfileSection from "@/components/comp/SearchProfileSection";
-import SingleBox from "@/components/SingleBox";
 import SubmitButton from "@/components/inputs/SubmitButton";
 import { ThemedText } from "@/components/ThemedText";
 import { ThemedView } from "@/components/ThemedView";
 
 // icons
-import { MoneyBagIcon, BagIcon } from "@/assets/icons/SVG/InputIcons";
-import { useThemeColorWithName } from "@/hooks/useThemeColor";
+import { MoneyBagIcon, BagIcon, UserIcon } from "@/assets/icons/SVG/InputIcons";
 import { expenseType, IGroup, IUdahar, Members } from "@/types/expanse";
+
+// hooks
 import {
   add_udhar,
   fetchAllMember_of_Group,
@@ -29,9 +41,9 @@ import {
   addOweAmount_of_Member,
 } from "@/hooks/useQueries";
 import { showToast } from "@/hooks/useFunc";
+import { useThemeColorWithName } from "@/hooks/useThemeColor";
+
 import { useExpense } from "@/context/ExpanseContext";
-import GrpSelector from "@/components/comp/GrpSelector";
-import { useSharedValue } from "react-native-reanimated";
 
 // ! who are you to ask for money &&& { can take full expense and divide in in some numbers}
 export function contribute() {
@@ -43,6 +55,8 @@ export function contribute() {
   const [selectedGroup, setGroup] = useState<IGroup | null>(null);
   const [splitInGroups, setInGroups] = useState(false);
   const [date, setDate] = useState(dayjs());
+  const [toWhom, setToWhom] = useState<string | null>(null);
+  const [isImgFile, setIsImgPresent] = useState(false);
 
   // Colors
   const iconColor = useThemeColorWithName("inputIcon");
@@ -52,6 +66,7 @@ export function contribute() {
   const thumbColor = useColorScheme() === "light" ? "#8c8c8c" : "#ECEDEE";
   const selectedThumbColor = useColorScheme() === "light" ? "#dff169" : "#030f0e";
   const backgroundColor = useThemeColorWithName("background");
+  const borderColor = useThemeColorWithName("borderColor");
 
   const viewableItems = useSharedValue<ViewToken[]>([]);
 
@@ -59,6 +74,21 @@ export function contribute() {
   const sqlDb = useSQLiteContext();
 
   const { groups } = useExpense();
+
+  useEffect(() => {
+    if (singlePersonName?._id) {
+      setToWhom(singlePersonName.userName);
+      if (singlePersonName.imgUrl) {
+        try {
+          getInfoAsync(singlePersonName.imgUrl).then((res) => {
+            setIsImgPresent(res.exists);
+          });
+        } catch (error) {
+          console.log("Error Reading File", error);
+        }
+      }
+    }
+  }, [singlePersonName]);
 
   // Add Group
   const groupSelection = (item: IGroup) => {
@@ -78,30 +108,30 @@ export function contribute() {
 
     if (amount.trim() === "" || amount === "0") {
       // Show an alert or feedback to the user
-      console.log("Amount is empty");
+      console.warn("Amount is empty");
       EasyAlert("Amount is empty", "Please enter the amount to continue");
       return;
     }
     // Check if the expanseReason is empty
     if (expanseReason.trim() === "") {
       // Show an alert or feedback to the user
-      console.log("Expanse Reason is empty");
+      console.warn("Expanse Reason is empty");
       EasyAlert("Why is empty", "Please enter the Reason to continue");
       return;
     }
     // Check if the expenseType is empty
     if (expenseType.trim() === "") {
       // Show an alert or feedback to the user
-      console.log("Expense Type is empty");
+      console.warn("Expense Type is empty");
       EasyAlert("Type is Not Selected", "Type should be selected to continue");
       return;
     }
     // Check if the splitInGroups is false
     if (!splitInGroups) {
       // Check if the singlePersonName is empty
-      if (singlePersonName) {
+      if (!singlePersonName) {
         // Show an alert or feedback to the user
-        console.log("Single Person Name is empty");
+        console.warn("Single Person Name is empty");
         EasyAlert("Person's Name is empty", "Please enter the Reason to continue");
         return;
       }
@@ -109,7 +139,7 @@ export function contribute() {
       // Check if the selectedGroup is null
       if (selectedGroup === null) {
         // Show an alert or feedback to the user
-        console.log("Group is not selected");
+        console.warn("Group is not selected");
         EasyAlert("Group is Not Selected", "Type should be selected to continue");
         return;
       }
@@ -126,11 +156,12 @@ export function contribute() {
         expenseType: expenseType as expenseType,
         toWhom: singlePersonName?.userName!,
         type: "owned",
-        memberId: null,
+        memberId: singlePersonName?.userId!,
       };
 
       try {
         await add_udhar(sqlDb, data);
+        await addOweAmount_of_Member(sqlDb, { amount: data.amount, userName: data.toWhom });
         Alert.alert(
           "Success",
           "Contri Successfully Added",
@@ -243,6 +274,33 @@ export function contribute() {
                 setValue={setExpanseReason}
                 keyboardType="default"
               />
+            </View>
+
+            <View>
+              <View style={[globalStyles.iconInputBox, { borderColor, borderWidth: 0.4 }]}>
+                {isImgFile && singlePersonName?.imgUrl ? (
+                  <View
+                    style={{
+                      width: 50,
+                      aspectRatio: 1,
+                      borderRadius: "50%",
+                      overflow: "hidden",
+                    }}
+                  >
+                    <Image
+                      source={{ uri: singlePersonName.imgUrl }}
+                      style={{ objectFit: "cover", width: "100%", height: "100%" }}
+                    />
+                  </View>
+                ) : (
+                  <UserIcon color={iconColor} />
+                )}
+                <View style={[globalStyles.input, { justifyContent: "center" }]}>
+                  <ThemedText colorName="tabIconDefault" style={{ fontSize: 17 }}>
+                    {toWhom ?? "To whom"}
+                  </ThemedText>
+                </View>
+              </View>
             </View>
 
             {/* Data  */}

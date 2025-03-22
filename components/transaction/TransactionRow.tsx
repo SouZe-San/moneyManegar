@@ -13,6 +13,7 @@ import {
   removeOweAmount_of_Member,
 } from "@/hooks/useQueries";
 import { useSQLiteContext } from "expo-sqlite";
+import EasyAlert from "../comp/EasyAlert";
 
 type TransactionProps = {
   transactionId: number;
@@ -78,16 +79,20 @@ const TransactionRow = ({
     type: "debt" | "owned",
     transactionId: number
   ) => {
-    await add_Transaction_In_AllTransaction(sqlite, {
-      amount: amount,
-      type: type === "debt" ? "expense" : "income",
-      date: getToday(),
-      expanseDesc: expanseDescription,
-      expenseType: expanseType,
-      toWhom,
-    });
+    try {
+      await add_Transaction_In_AllTransaction(sqlite, {
+        amount: amount,
+        type: type === "debt" ? "expense" : "income",
+        date: getToday(),
+        expanseDesc: expanseDescription,
+        expenseType: expanseType,
+        toWhom,
+      });
 
-    removeData(amount, type, transactionId);
+      removeData(amount, type, transactionId);
+    } catch (error) {
+      EasyAlert("Error", "Some Error Occurred, Try Again");
+    }
   };
 
   useEffect(() => {
