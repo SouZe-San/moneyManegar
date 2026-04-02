@@ -127,6 +127,17 @@ export default function RootLayout() {
                 }}
               />
               <Stack.Screen
+                name="allBudgets"
+                options={{
+                  title: "",
+                  headerShadowVisible: false,
+                  headerLargeTitle: true,
+                  headerTransparent: true,
+                  headerBackVisible: false,
+                  headerTintColor: headerTextColor,
+                }}
+              />
+              <Stack.Screen
                 name="allStats"
                 options={{
                   title: "",

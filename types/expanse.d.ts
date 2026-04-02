@@ -13,10 +13,19 @@ export interface IExpanse {
   expanseDescription: string;
   expanseData: string;
   expanseAmount: number;
-  expanseType: "Food" | "Fuel" | "Shopping" | "Recharge" | "Travels" | "Others" | "Rent" | "Bill";
+  expanseType:
+    | "Food"
+    | "Fuel"
+    | "Shopping"
+    | "Recharge"
+    | "Travels"
+    | "Others"
+    | "Rent"
+    | "Bill";
   type: "debit" | "expense" | "income" | "credit" | "debt" | "owned";
   toWhom?: string;
 }
+
 export interface IUdahar {
   _id?: number;
   amount: number;
@@ -27,6 +36,7 @@ export interface IUdahar {
   expanseDesc: string;
   memberId: string | null;
 }
+
 export type mainTransactionType = "income" | "expense";
 
 export interface ITransaction {
@@ -63,14 +73,24 @@ export interface IGroup {
   logo: string;
   imgUrl: string | null;
 }
+
 export interface IGroupMember {
   _id?: number;
   groupId: number;
   memberId: number;
 }
+
 export interface IMember {
   _id?: number;
   name: string;
   imgUrl: string;
   userId: string | null;
 }
+
+export type Budget = {
+   _id?: number;
+  year: string;
+  month: string;
+  budget_amount: number;
+  total_expense: number;
+};

@@ -1,4 +1,10 @@
-import { createContext, useState, useContext, useCallback, useEffect } from "react";
+import {
+  createContext,
+  useState,
+  useContext,
+  useCallback,
+  useEffect,
+} from "react";
 import * as SecureStore from "expo-secure-store";
 import { useColorScheme } from "react-native";
 import { useSQLiteContext } from "expo-sqlite";
@@ -11,6 +17,8 @@ import {
   fetchTotalExpenseAccordingExpanse,
   getTotalExpense,
   getTotalIncome,
+  getTotalExpenseMonthWise,
+  getTotalIncomeMonthWise,
 } from "@/hooks/useQueries";
 import { useThemeColorMapping } from "@/hooks/useThemeColor";
 import { showToastWithMsg } from "@/hooks/useFunc";
@@ -18,6 +26,8 @@ import { showToastWithMsg } from "@/hooks/useFunc";
 export interface ExpenseContextType {
   totalIncome: number;
   totalExpense: number;
+  totalExpenseMonthWise: number;
+  totalIncomeMonthWise: number;
   leftBalance: number;
   userName: string | null;
   email: string | null;
@@ -34,13 +44,19 @@ export interface ExpenseContextType {
     frontColor: string;
   }[];
   expenseTypeData: { text: expenseType; value: number; color: string }[];
+  expenseInMonth: boolean;
+  setExpenseInMonth: React.Dispatch<React.SetStateAction<boolean>>;
 }
 
 const ExpenseContext = createContext<ExpenseContextType | undefined>(undefined);
 
-export const ExpenseProvider: React.FC<{ children: React.ReactNode }> = ({ children }) => {
+export const ExpenseProvider: React.FC<{ children: React.ReactNode }> = ({
+  children,
+}) => {
   const [totalIncome, setTotalIncome] = useState<number>(0);
   const [totalExpense, setTotalExpense] = useState<number>(0);
+  const [totalIncomeMonthWise, setTotalIncomeMonthWise] = useState<number>(0);
+  const [totalExpenseMonthWise, setTotalExpenseMonthWise] = useState<number>(0);
   const [allTransaction, setAllTransaction] = useState<IUdahar[]>([]);
   const [groups, setGroups] = useState<IGroup[]>([]);
   const [userName, setUserName] = useState<string | null>(null);
@@ -49,9 +65,9 @@ export const ExpenseProvider: React.FC<{ children: React.ReactNode }> = ({ child
   const [expenseTypeData, setExpenseTypeData] = useState<
     { text: expenseType; value: number; color: string }[]
   >([]);
-
+  const [expenseInMonth, setExpenseInMonth] = useState<boolean>(false);
   const [refresh, setRefresh] = useState<boolean>(false);
-  const leftBalance: number = totalIncome - totalExpense;
+  let leftBalance: number = totalIncome - totalExpense;
   const db = useSQLiteContext();
 
   const theme = useColorScheme() ?? "light";
@@ -63,8 +79,14 @@ export const ExpenseProvider: React.FC<{ children: React.ReactNode }> = ({ child
       const groups = await fetchAllGroup(db);
       setGroups(groups);
       const income = await getTotalIncome(db);
-      setTotalIncome(income ?? 0);
+      const incomeThisMonth = await getTotalIncomeMonthWise(db);
       const expense = await getTotalExpense(db);
+      const expenseThisMonth = await getTotalExpenseMonthWise(db);
+
+      setTotalIncomeMonthWise(incomeThisMonth ?? 0);
+      setTotalExpenseMonthWise(expenseThisMonth ?? 0);
+
+      setTotalIncome(income ?? 0);
       setTotalExpense(expense ?? 0);
 
       const data = await aggregateExpenses();
@@ -84,6 +106,9 @@ export const ExpenseProvider: React.FC<{ children: React.ReactNode }> = ({ child
       setUserName(useName);
       const resE = await SecureStore.getItemAsync("email");
       setEmail(resE);
+      const resExpeTy = await SecureStore.getItemAsync("durationType");
+      const isMonth = resExpeTy === "true";
+      setExpenseInMonth(isMonth);
     } catch (error) {
       console.log("Error in ExpenseProvider: ", error);
     }
@@ -113,7 +138,9 @@ export const ExpenseProvider: React.FC<{ children: React.ReactNode }> = ({ child
 
   const removeTransaction = useCallback((transactionId: string) => {
     setAllTransaction((prev) =>
-      prev.filter((transaction) => transaction._id?.toString() !== transactionId)
+      prev.filter(
+        (transaction) => transaction._id?.toString() !== transactionId,
+      ),
     );
   }, []);
 
@@ -134,7 +161,9 @@ export const ExpenseProvider: React.FC<{ children: React.ReactNode }> = ({ child
     <ExpenseContext.Provider
       value={{
         totalIncome,
+        totalIncomeMonthWise,
         totalExpense,
+        totalExpenseMonthWise,
         userName,
         email,
         firstRefresh,
@@ -147,6 +176,8 @@ export const ExpenseProvider: React.FC<{ children: React.ReactNode }> = ({ child
         members,
         totalBudget,
         expenseTypeData,
+        expenseInMonth,
+        setExpenseInMonth,
       }}
     >
       {children}

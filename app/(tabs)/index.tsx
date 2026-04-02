@@ -10,10 +10,10 @@ import {
   RefreshControl,
 } from "react-native";
 import { useRouter } from "expo-router";
-import { useState, useRef, useCallback, useEffect } from "react";
+import { useState, useRef, useCallback} from "react";
 import { BarChart, PieChartPro } from "react-native-gifted-charts";
-// import { useSQLiteContext } from "expo-sqlite";
-// import { useDrizzleStudio } from "expo-drizzle-studio-plugin";
+import { useSQLiteContext } from "expo-sqlite";
+import { useDrizzleStudio } from "expo-drizzle-studio-plugin";
 
 // Components
 
@@ -57,8 +57,8 @@ export default function HomeScreen() {
   const ref = useRef<BottomSheetRefProps>(null);
 
   // ** Using To visualize the db
-  // const db = useSQLiteContext();
-  // useDrizzleStudio(db);
+  const db = useSQLiteContext();
+  useDrizzleStudio(db);
 
   const {
     expenseTypeData,
@@ -71,6 +71,9 @@ export default function HomeScreen() {
     totalExpense,
     refresh,
     userName,
+    expenseInMonth,
+    totalExpenseMonthWise,
+    totalIncomeMonthWise,
   } = useExpense();
 
   const viewableItems1 = useSharedValue<ViewToken[]>([]);
@@ -91,10 +94,17 @@ export default function HomeScreen() {
   }, []);
 
   return (
-    <AnimateTabView style={[globalStyles.container, { paddingBottom: 100, paddingHorizontal: 0 }]}>
+    <AnimateTabView
+      style={[
+        globalStyles.container,
+        { paddingBottom: 100, paddingHorizontal: 0 },
+      ]}
+    >
       <ScrollView
         showsVerticalScrollIndicator={false}
-        refreshControl={<RefreshControl refreshing={refresh} onRefresh={onRefresh} />}
+        refreshControl={
+          <RefreshControl refreshing={refresh} onRefresh={onRefresh} />
+        }
       >
         <ThemedText
           type="title"
@@ -113,23 +123,36 @@ export default function HomeScreen() {
             <View
               style={[
                 styles.costViewBox,
-                { backgroundColor: balanceBg, borderColor: balanceBg, position: "relative" },
+                {
+                  backgroundColor: balanceBg,
+                  borderColor: balanceBg,
+                  position: "relative",
+                },
               ]}
             >
-              <ThemedText type="defaultSemiBold" style={{ fontSize: 14, color: darkTextColor }}>
+              <ThemedText
+                type="defaultSemiBold"
+                style={{ fontSize: 14, color: darkTextColor }}
+              >
                 Left Over
               </ThemedText>
               {leftBalance < 0 && (
                 <ThemedText
                   type="default"
-                  style={[styles.shortTag, { fontSize: 14, color: darkTextColor }]}
+                  style={[
+                    styles.shortTag,
+                    { fontSize: 14, color: darkTextColor },
+                  ]}
                 >
                   Me Brock ಥ⁠╭⁠╮⁠ಥ┐
                 </ThemedText>
               )}
 
               {/* Balance */}
-              <ThemedText type="subtitle" style={{ fontSize: 26, color: darkTextColor }}>
+              <ThemedText
+                type="subtitle"
+                style={{ fontSize: 26, color: darkTextColor }}
+              >
                 {leftBalance.toFixed(2)} ₹
               </ThemedText>
             </View>
@@ -141,12 +164,20 @@ export default function HomeScreen() {
               justifyContent: "space-between",
             }}
           >
-            <View style={[styles.costViewBox, { width: "49%", backgroundColor: expanseBg }]}>
+            <View
+              style={[
+                styles.costViewBox,
+                { width: "49%", backgroundColor: expanseBg },
+              ]}
+            >
               <ThemedText type="default" style={{ fontSize: 14 }}>
                 Expanse
               </ThemedText>
               <ThemedText type="subtitle" style={{ fontSize: 26 }}>
-                {totalExpense.toFixed(2)} ₹
+                {expenseInMonth
+                  ? totalExpenseMonthWise.toFixed(2)
+                  : totalExpense.toFixed(2)}{" "}
+                ₹
               </ThemedText>
             </View>
             <View style={[styles.costViewBox, { width: "49%", borderColor }]}>
@@ -154,7 +185,10 @@ export default function HomeScreen() {
                 Income
               </ThemedText>
               <ThemedText type="subtitle" style={{ fontSize: 26 }}>
-                {totalIncome.toFixed(2)} ₹
+                {expenseInMonth
+                  ? totalIncomeMonthWise.toFixed(2)
+                  : totalIncome.toFixed(2)}{" "}
+                ₹
               </ThemedText>
             </View>
           </View>
@@ -162,7 +196,13 @@ export default function HomeScreen() {
 
         {/* New User Image */}
         {members.length === 0 && (
-          <View style={{ justifyContent: "center", alignItems: "center", padding: 20 }}>
+          <View
+            style={{
+              justifyContent: "center",
+              alignItems: "center",
+              padding: 20,
+            }}
+          >
             <Image
               source={require("@/assets/images/hero/heroImg.png")}
               style={{
@@ -184,7 +224,10 @@ export default function HomeScreen() {
             { marginTop: 20, display: members.length === 0 ? "none" : "flex" },
           ]}
         >
-          <ThemedText type="title" style={{ fontSize: 20, paddingHorizontal: "4%" }}>
+          <ThemedText
+            type="title"
+            style={{ fontSize: 20, paddingHorizontal: "4%" }}
+          >
             Pals & Partners
           </ThemedText>
           <View
@@ -251,8 +294,16 @@ export default function HomeScreen() {
           </View>
         </View>
         {/* Groups */}
-        <View style={[styles.groupContainer, { display: groups.length === 0 ? "none" : "flex" }]}>
-          <ThemedText type="title" style={{ fontSize: 20, paddingHorizontal: "4%" }}>
+        <View
+          style={[
+            styles.groupContainer,
+            { display: groups.length === 0 ? "none" : "flex" },
+          ]}
+        >
+          <ThemedText
+            type="title"
+            style={{ fontSize: 20, paddingHorizontal: "4%" }}
+          >
             My Circles
           </ThemedText>
           <View
@@ -299,7 +350,11 @@ export default function HomeScreen() {
           />
         </View>
         <View style={{ position: "relative" }}>
-          <BottomSheetModal isOpen={modalVisible} setIsOpen={setModalVisible} ref={ref}>
+          <BottomSheetModal
+            isOpen={modalVisible}
+            setIsOpen={setModalVisible}
+            ref={ref}
+          >
             <MemberDetails id={memberId} />
           </BottomSheetModal>
         </View>
@@ -312,7 +367,10 @@ export default function HomeScreen() {
             marginVertical: 10,
             marginTop: 40,
             paddingHorizontal: 20,
-            display: totalBudget[0].value + totalBudget[1].value === 0 ? "none" : "flex",
+            display:
+              totalBudget[0].value + totalBudget[1].value === 0
+                ? "none"
+                : "flex",
           }}
         >
           <View style={{ alignItems: "center" }}>
@@ -337,7 +395,10 @@ export default function HomeScreen() {
                     key={index.toString()}
                     label={item.text}
                     amount={item.value}
-                    totalAmt={expenseTypeData.reduce((sum, item) => sum + item.value, 0)}
+                    totalAmt={expenseTypeData.reduce(
+                      (sum, item) => sum + item.value,
+                      0,
+                    )}
                   />
                 );
               })}
@@ -357,7 +418,9 @@ export default function HomeScreen() {
               data={totalBudget}
               barWidth={12}
               // hideAxesAndRules
-              maxValue={Math.max(totalBudget[0].value, totalBudget[1].value) + 100}
+              maxValue={
+                Math.max(totalBudget[0].value, totalBudget[1].value) + 100
+              }
               yAxisTextStyle={{ color: "gray" }}
               noOfSections={3}
               frontColor="lightgray"
@@ -381,7 +444,10 @@ export default function HomeScreen() {
                     key={index.toString()}
                     label={item.label}
                     amount={item.value}
-                    totalAmt={totalBudget.reduce((sum, item) => sum + item.value, 0)}
+                    totalAmt={totalBudget.reduce(
+                      (sum, item) => sum + item.value,
+                      0,
+                    )}
                   />
                 );
               })}

@@ -73,7 +73,7 @@ export default function MoneyManager() {
         {linkBtns.map((linkBtn, index) => {
           return (
             <Link href={linkBtn.link} key={index}>
-              <View style={[styles.linkButton, { borderColor, backgroundColor: bg }]}>
+              <View style={[styles.linkButton, { borderColor: bg, backgroundColor: bg }]}>
                 <ThemedText type="subtitle">{linkBtn.linkLabel}</ThemedText>
               </View>
             </Link>
@@ -105,5 +105,6 @@ const styles = StyleSheet.create({
     flex: 1,
     justifyContent: "center",
     width: "100%",
+    borderWidth:1,
   },
 });

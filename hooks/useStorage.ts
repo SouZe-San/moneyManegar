@@ -1,7 +1,7 @@
 import { type SQLiteDatabase } from "expo-sqlite";
 
 export const migrateDbIfNeeded = async (db: SQLiteDatabase) => {
-  await db.execAsync(`
+    await db.execAsync(`
         PRAGMA journal_mode = WAL;
         PRAGMA foreign_keys = ON;
         
@@ -32,6 +32,13 @@ export const migrateDbIfNeeded = async (db: SQLiteDatabase) => {
             name TEXT NOT NULL UNIQUE,
             logo TEXT NOT NULL,
             imgUrl TEXT
+        );
+
+
+        CREATE TABLE IF NOT EXISTS BudgetTable (
+            _id INTEGER PRIMARY KEY AUTOINCREMENT,
+            amount REAL NOT NULL CHECK (amount >= 0),
+            date TEXT
         );
 
 

@@ -127,7 +127,7 @@ const MemberCreate = ({ setModalVisibility }: { setModalVisibility: (value: bool
       <View
         style={{
           width: "100%",
-          left: 10,
+          // left: 10,
           justifyContent: "center",
           alignItems: "center",
           alignSelf: "center",

@@ -1,4 +1,10 @@
-import { StyleSheet, View, TouchableOpacity } from "react-native";
+import {
+  StyleSheet,
+  View,
+  TouchableOpacity,
+  Switch,
+  useColorScheme,
+} from "react-native";
 import { useState, useRef, useCallback } from "react";
 import { useRouter } from "expo-router";
 
@@ -20,19 +26,24 @@ import { useThemeColorWithName } from "@/hooks/useThemeColor";
 import { SettingIcon } from "@/assets/icons/SVG/RandomIcons";
 import { UserIcon, GroupsIcon } from "@/assets/icons/SVG/InputIcons";
 import { useExpense } from "@/context/ExpanseContext";
+import * as SecureStore from "expo-secure-store";
 
 export default function TabTwoScreen() {
   // colors
   const iconColor = useThemeColorWithName("icon");
   const bg = useThemeColorWithName("blurBg");
-
+  const toggleButton = useThemeColorWithName("button");
+  const unSelectedToggleButton = useThemeColorWithName("toggleButton");
+  const thumbColor = useColorScheme() === "light" ? "#8c8c8c" : "#ECEDEE";
+  const selectedThumbColor =
+    useColorScheme() === "light" ? "#dff169" : "#030f0e";
   // States
   const [modalVisible, setModalVisible] = useState(false);
 
   // modal Reference
   const ref = useRef<BottomSheetRefProps>(null);
 
-  const { email } = useExpense();
+  const { email, setExpenseInMonth, expenseInMonth } = useExpense();
 
   const router = useRouter();
 
@@ -70,6 +81,47 @@ export default function TabTwoScreen() {
             </ThemedText>
             Broke
           </ThemedText>
+          <View
+            style={{
+              marginTop: 10,
+              display: "flex",
+              flexDirection: "row",
+              justifyContent: "space-between",
+              alignItems: "center",
+            }}
+          >
+            <ThemedText type="defaultSemiBold">
+              View Expanse in Month Wise ?
+            </ThemedText>
+            <View
+              style={{
+                borderWidth: 1,
+                borderRadius: 20,
+                overflow: "hidden",
+                borderBlockColor: "transparent",
+              }}
+            >
+              <Switch
+                value={expenseInMonth}
+                style={{
+                  padding: 0,
+                  margin: 0,
+                  height: 28,
+                  width: "100%",
+                  backgroundColor: expenseInMonth
+                    ? toggleButton
+                    : unSelectedToggleButton,
+                }}
+                thumbColor={expenseInMonth ? selectedThumbColor : thumbColor}
+                trackColor={{ false: "transparent", true: "transparent" }}
+                onValueChange={async () => {
+                  await SecureStore.setItemAsync("durationType", !expenseInMonth ? 'true' : 'false');
+                 
+                  setExpenseInMonth((previousState) => !previousState);
+                }}
+              />
+            </View>
+          </View>
 
           <ThemedText type="defaultSemiBold" style={{ marginTop: 10 }}>
             Add New
@@ -94,7 +146,11 @@ export default function TabTwoScreen() {
               onPress={() => router.push("/groups/create")}
             />
 
-            <BottomSheetModal isOpen={modalVisible} setIsOpen={setModalVisible} ref={ref}>
+            <BottomSheetModal
+              isOpen={modalVisible}
+              setIsOpen={setModalVisible}
+              ref={ref}
+            >
               <MemberCreate setModalVisibility={setModalVisible} />
             </BottomSheetModal>
           </View>
@@ -116,62 +172,77 @@ export default function TabTwoScreen() {
       <ThemedText type="subtitle">Support</ThemedText>
       <Collapsible title="How This Works" iconName="serviceIcon">
         <ThemedText style={{ marginBottom: 10 }}>
-          Welcome to MoneyManager! This app is designed to help you track your expenses, manage your
-          budget, and split costs with friends or family effortlessly.
+          Welcome to MoneyManager! This app is designed to help you track your
+          expenses, manage your budget, and split costs with friends or family
+          effortlessly.
         </ThemedText>
         <ThemedText type="smallText" style={{ marginBottom: 10 }}>
-          <ThemedText type="defaultSemiBold"> {"\u2022"} Add Expenses:</ThemedText> Simply tap on
-          the "Add Expense" button to input your spending. You can categorize your expenses for
-          better tracking.
+          <ThemedText type="defaultSemiBold">
+            {" "}
+            {"\u2022"} Add Expenses:
+          </ThemedText>{" "}
+          Simply tap on the "Add Expense" button to input your spending. You can
+          categorize your expenses for better tracking.
         </ThemedText>
         <ThemedText type="smallText" style={{ marginBottom: 10 }}>
-          <ThemedText type="defaultSemiBold">{"\u2022"} Split Amounts:</ThemedText> When you want to
-          share costs, select the "Split" option. Enter the total amount and choose the
-          participants. The app will automatically calculate each person's share.
+          <ThemedText type="defaultSemiBold">
+            {"\u2022"} Split Amounts:
+          </ThemedText>{" "}
+          When you want to share costs, select the "Split" option. Enter the
+          total amount and choose the participants. The app will automatically
+          calculate each person's share.
         </ThemedText>
         <ThemedText type="smallText" style={{ marginBottom: 10 }}>
-          <ThemedText type="defaultSemiBold">{"\u2022"} Analysis:</ThemedText> Check the "Stats"
-          section to see your spending patterns over time. This will help you make informed
-          financial decisions.
+          <ThemedText type="defaultSemiBold">{"\u2022"} Analysis:</ThemedText>{" "}
+          Check the "Stats" section to see your spending patterns over time.
+          This will help you make informed financial decisions.
         </ThemedText>
       </Collapsible>
       <Collapsible title="Something To Say ?" iconName="mailIcon">
         <ThemedText>
-          We value your feedback! If you have any questions, suggestions, or need assistance, please
-          reach out to us. You can contact our support team through the email us at{" "}
-          <ThemedText type="link">soumyajit.codemail@gmail.com</ThemedText> . We&#39;re here to
-          help!
+          We value your feedback! If you have any questions, suggestions, or
+          need assistance, please reach out to us. You can contact our support
+          team through the email us at{" "}
+          <ThemedText type="link">soumyajit.codemail@gmail.com</ThemedText> .
+          We&#39;re here to help!
         </ThemedText>
       </Collapsible>
       <Collapsible title="Help" iconName="helpIcon">
-        <ThemedText>Need help using the app? Sorry Bro/Sis Not thi Time.</ThemedText>
+        <ThemedText>
+          Need help using the app? Sorry Bro/Sis Not thi Time.
+        </ThemedText>
       </Collapsible>
 
       {/* // Legal info - Add Some web page link and details */}
       <ThemedText type="subtitle">Legal Information</ThemedText>
       <Collapsible title="Privacy And Policy" iconName="privacyIcon">
         <ThemedText>
-          Your privacy is important to us. This Privacy Policy explains how we collect, use, and
-          protect your information when you use the Expense Manager app.
+          Your privacy is important to us. This Privacy Policy explains how we
+          collect, use, and protect your information when you use the Expense
+          Manager app.
         </ThemedText>
         <ThemedText type="defaultSemiBold" style={{ marginTop: 10 }}>
-          {"\u2022"} This is a Offline App, So All data will be stored in ur Device, SO we Are not
-          seeing or collecting ur any data.
+          {"\u2022"} This is a Offline App, So All data will be stored in ur
+          Device, SO we Are not seeing or collecting ur any data.
         </ThemedText>
       </Collapsible>
 
       <Collapsible title="Terms & Conditions" iconName="termsIcon">
         <ThemedText>
-          Welcome to the MoneyManager app! By using our app, you agree to comply with and be bound
-          by the following terms and conditions. Please read them carefully.
+          Welcome to the MoneyManager app! By using our app, you agree to comply
+          with and be bound by the following terms and conditions. Please read
+          them carefully.
         </ThemedText>
         <ThemedText style={{ marginTop: 10 }}>
           {"\u2022"} No Need To Worry Their Nothing Serious.
         </ThemedText>
         <ThemedText type="defaultSemiBold" style={{ marginTop: 10 }}>
-          <ThemedText type="defaultSemiBold">{"\u2022"} Changes to Terms:</ThemedText> We reserve
-          the right to modify these Terms & Conditions at any time. Your continued use of the app
-          after any changes constitutes your acceptance of the new Terms.
+          <ThemedText type="defaultSemiBold">
+            {"\u2022"} Changes to Terms:
+          </ThemedText>{" "}
+          We reserve the right to modify these Terms & Conditions at any time.
+          Your continued use of the app after any changes constitutes your
+          acceptance of the new Terms.
         </ThemedText>
       </Collapsible>
     </ParallaxScrollView>

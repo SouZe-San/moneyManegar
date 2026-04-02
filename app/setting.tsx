@@ -18,13 +18,20 @@ import {
   OnlineIcon,
 } from "@/assets/icons/SVG/RandomIcons";
 import { useRouter } from "expo-router";
-import { showToast, showToastWithMsg } from "@/hooks/useFunc";
+import { exportExpensesToCSV, showToast, showToastWithMsg } from "@/hooks/useFunc";
 import { useExpense } from "@/context/ExpanseContext";
+import { WarBonnetIcon } from "@/assets/icons/SVG/ExpanseIcons";
+import { useState } from "react";
+import AnimateTabView from "@/components/animation/AnimateTabView";
 
 const setting = () => {
   // Colors
   const iconColor = useThemeColorWithName("icon");
   const bg = useThemeColorWithName("blurBg");
+
+
+  const [loading, setLoader] = useState(false)
+  const [progress, setProgress] = useState(0)
 
   const sqlDb = useSQLiteContext();
   const router = useRouter();
@@ -54,12 +61,44 @@ const setting = () => {
       await SecureStore.deleteItemAsync("email");
       await SecureStore.deleteItemAsync("dir");
       await SecureStore.deleteItemAsync("profile");
+      await SecureStore.deleteItemAsync("durationType");
       router.navigate("/onboarding");
     } catch (error) {
       showToastWithMsg("😹 Failed !! ");
       console.log("Error Deleting Account", error);
     }
   };
+
+  const exportDb = async () =>{
+    setLoader(true)
+    try {
+      await exportExpensesToCSV(sqlDb,setProgress);
+      showToastWithMsg("Sucessfuly Export ❇️");
+    } catch (error) {
+      showToastWithMsg("😹 Failed !! ");
+      console.log("Error Deleting Account", error);
+    }finally{
+      setLoader(false)
+    }
+  }
+
+    if (loading) {
+    return (
+      <AnimateTabView
+        style={[
+          globalStyles.container,
+          {
+            paddingBottom: "20%",
+            justifyContent: "center",
+            alignItems: "center",
+
+          },
+        ]}
+      >
+        <ThemedText type="title">Progress... {progress}% </ThemedText>
+      </AnimateTabView>
+    );
+  }
   return (
     <ThemedView style={[globalStyles.mainContainer, { gap: 15 }]}>
       <ThemedText style={{ paddingLeft: 10 }} type="title">
@@ -83,6 +122,7 @@ const setting = () => {
           <LeftRightArrowIcon color={iconColor} />
           <ThemedText>Unification</ThemedText>
         </TouchableOpacity>
+
       </View>
       <View>
         <ThemedText type="subtitle" colorName="mountainMeadow">
@@ -97,6 +137,12 @@ const setting = () => {
         <TouchableOpacity style={[styles.btn, { backgroundColor: bg }]} onPress={cleanHandler}>
           <ResetIcon color={iconColor} />
           <ThemedText>Reset</ThemedText>
+        </TouchableOpacity>
+                    {/* Import */}
+
+        <TouchableOpacity style={[styles.btn, { backgroundColor: bg, marginTop:5 }]} onPress={exportDb}>
+          <WarBonnetIcon color={iconColor}/>
+          <ThemedText style={{ fontSize:14}}>Export</ThemedText>
         </TouchableOpacity>
       </View>
       <View>
@@ -133,7 +179,7 @@ const styles = StyleSheet.create({
     paddingHorizontal: 25,
     flexDirection: "row",
     alignItems: "center",
-    gap: 5,
+    gap: 8,
     width: "60%",
 
     marginVertical: 10,
