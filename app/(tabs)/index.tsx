@@ -12,8 +12,8 @@ import {
 import { useRouter } from "expo-router";
 import { useState, useRef, useCallback} from "react";
 import { BarChart, PieChartPro } from "react-native-gifted-charts";
-import { useSQLiteContext } from "expo-sqlite";
-import { useDrizzleStudio } from "expo-drizzle-studio-plugin";
+// import { useSQLiteContext } from "expo-sqlite";
+// import { useDrizzleStudio } from "expo-drizzle-studio-plugin";
 
 // Components
 
@@ -57,8 +57,8 @@ export default function HomeScreen() {
   const ref = useRef<BottomSheetRefProps>(null);
 
   // ** Using To visualize the db
-  const db = useSQLiteContext();
-  useDrizzleStudio(db);
+  // const db = useSQLiteContext();
+  // useDrizzleStudio(db);
 
   const {
     expenseTypeData,

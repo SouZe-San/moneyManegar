@@ -1,5 +1,4 @@
-import { View, Text, StyleSheet } from 'react-native'
-import {useState} from 'react'
+import { View, StyleSheet } from 'react-native'
 import { useThemeColorWithName } from '@/hooks/useThemeColor';
 import { ThemedText } from '../ThemedText';
 import { Budget } from '@/types/expanse';
