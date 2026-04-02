@@ -39,6 +39,7 @@ import {
   fetchAllMember_of_Group,
   fetchMemberBy_id,
   addOweAmount_of_Member,
+  addData_in_AllTransaction,
 } from "@/hooks/useQueries";
 import { showToast } from "@/hooks/useFunc";
 import { useThemeColorWithName } from "@/hooks/useThemeColor";
@@ -147,6 +148,17 @@ export function contribute() {
 
     // All Checks Pass
     // Submit the data to the server
+
+
+    // It out from wallet so money reduce
+         await addData_in_AllTransaction(sqlDb, {
+      amount: parseInt(amount),
+      type: "expense",
+      expenseType: expenseType as expenseType | "Salary" | "Gift" | "Business",
+      date: date.format("DD/MM/YY"),
+      expanseDesc: expanseReason,
+        });
+
     if (!splitInGroups) {
       // Submit the data for single person
       const data: IUdahar = {
@@ -161,7 +173,7 @@ export function contribute() {
 
       try {
         await add_udhar(sqlDb, data);
-        await addOweAmount_of_Member(sqlDb, { amount: data.amount, userName: data.toWhom });
+      await addOweAmount_of_Member(sqlDb, { amount: data.amount, userName: data.toWhom });
         Alert.alert(
           "Success",
           "Contri Successfully Added",
