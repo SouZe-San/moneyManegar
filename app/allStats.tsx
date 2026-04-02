@@ -146,6 +146,8 @@ export default function allStats() {
         )}
       </View>
 
+{
+  onlyIncomeData.length > 0  &&
       <View
         style={{
           margin: 20,
@@ -153,6 +155,7 @@ export default function allStats() {
           borderRadius: 12,
           backgroundColor: blurBackgoundColor,
           flex: 1,
+          marginBottom: 40
         }}
       >
         <ThemedText style={{ fontWeight: "bold" }} type="subtitle">
@@ -189,6 +192,8 @@ export default function allStats() {
           </ScrollView>
         </View>
       </View>
+}
+  
     </ThemedView>
   );
 }

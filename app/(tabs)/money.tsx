@@ -69,6 +69,7 @@ export default function MoneyManager() {
           paddingHorizontal: "5%",
           marginTop: 30,
         }}
+        
       >
         {linkBtns.map((linkBtn, index) => {
           return (
@@ -81,7 +82,7 @@ export default function MoneyManager() {
         })}
         <View
           style={{
-            paddingBottom: 40,
+            paddingBottom: 130,
           }}
         ></View>
       </ScrollView>

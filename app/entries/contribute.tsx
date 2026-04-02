@@ -63,7 +63,7 @@ export function contribute() {
   const iconColor = useThemeColorWithName("inputIcon");
   const horain = useThemeColorWithName("navBg");
   const toggleButton = useThemeColorWithName("button");
-  const unSelectedToggleButton = useThemeColorWithName("toggleButton");
+  const unSelectedToggleButton = useColorScheme() === "light" ? useThemeColorWithName("blurBg") : useThemeColorWithName("toggleButton");
   const thumbColor = useColorScheme() === "light" ? "#8c8c8c" : "#ECEDEE";
   const selectedThumbColor = useColorScheme() === "light" ? "#dff169" : "#030f0e";
   const backgroundColor = useThemeColorWithName("background");

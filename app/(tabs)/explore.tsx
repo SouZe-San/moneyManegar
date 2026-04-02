@@ -33,7 +33,7 @@ export default function TabTwoScreen() {
   const iconColor = useThemeColorWithName("icon");
   const bg = useThemeColorWithName("blurBg");
   const toggleButton = useThemeColorWithName("button");
-  const unSelectedToggleButton = useThemeColorWithName("toggleButton");
+  const unSelectedToggleButton = useColorScheme() === "light" ? bg: useThemeColorWithName("toggleButton");
   const thumbColor = useColorScheme() === "light" ? "#8c8c8c" : "#ECEDEE";
   const selectedThumbColor =
     useColorScheme() === "light" ? "#dff169" : "#030f0e";

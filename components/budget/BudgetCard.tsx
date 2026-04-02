@@ -48,7 +48,7 @@ export default function BudgetCard({budget}:{budget:Budget}) {
                 <ThemedText style={{textAlign:"right", fontSize: 12}} type='smallText'>
                 Expese
             </ThemedText>
-            <ThemedText colorName='antiFlashWhite'  style={{textAlign:"right", fontSize:24, lineHeight:28, fontWeight:700}}>
+            <ThemedText  style={{textAlign:"right", fontSize:24, lineHeight:28, fontWeight:700}}>
                 {total_expense}
             </ThemedText>
           </View>
