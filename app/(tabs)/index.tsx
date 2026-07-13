@@ -31,23 +31,27 @@ import { useThemeColorWithName } from "@/hooks/useThemeColor";
 import { useExpense } from "@/context/ExpanseContext";
 
 // Icons
-import { DbIcon, StatsIcon } from "@/assets/icons/SVG/RandomIcons";
+import { DbIcon, ExpanseDownIcon, StatsIcon } from "@/assets/icons/SVG/RandomIcons";
 
 // Modal
 import BottomSheetModal from "@/components/BottomSheetModal";
 import { BottomSheetRefProps } from "@/components/BottomSheetView";
 import FolioBox from "@/components/comp/FolioBox";
 import { useSharedValue } from "react-native-reanimated";
+import MoneyText from "@/components/comp/MoneyText";
 
 const { height: SCREEN_HEIGHT } = Dimensions.get("window");
 
 export default function HomeScreen() {
   // Colors
-  const borderColor = useThemeColorWithName("borderColor");
   const expanseBg = useThemeColorWithName("expanseBg");
   const shadowColor = useThemeColorWithName("background");
   const darkTextColor = "#030f0e";
   const balanceBg = useThemeColorWithName("highLightBackground");
+  const surface = useThemeColorWithName("surface");
+  const cardBorder = useThemeColorWithName("cardBorder");
+  const expenseColor = useThemeColorWithName("expense");
+  const incomeColor = useThemeColorWithName("income");  
 
   // States
   const [modalVisible, setModalVisible] = useState(false);
@@ -149,12 +153,14 @@ export default function HomeScreen() {
               )}
 
               {/* Balance */}
-              <ThemedText
-                type="subtitle"
-                style={{ fontSize: 26, color: darkTextColor }}
-              >
-                {leftBalance.toFixed(2)} ₹
-              </ThemedText>
+
+              <MoneyText
+                value={leftBalance}
+                size={28}
+                color={darkTextColor}
+                decimalColor="#030f0ec2"
+                prefix="₹"
+              />
             </View>
           </View>
           <View
@@ -170,26 +176,42 @@ export default function HomeScreen() {
                 { width: "49%", backgroundColor: expanseBg },
               ]}
             >
-              <ThemedText type="default" style={{ fontSize: 14 }}>
+              <ThemedText
+                type="default"
+                style={{
+                  fontSize: 12,
+                  color: "#c4cecb",
+                  flexDirection: "row",
+                  alignItems: "flex-end",
+                }}
+              >
                 Expanse
               </ThemedText>
-              <ThemedText type="subtitle" style={{ fontSize: 26 }}>
-                {expenseInMonth
-                  ? totalExpenseMonthWise.toFixed(2)
-                  : totalExpense.toFixed(2)}{" "}
-                ₹
-              </ThemedText>
+              <MoneyText
+                value={expenseInMonth ? totalExpenseMonthWise : totalExpense}
+                size={24}
+              />
             </View>
-            <View style={[styles.costViewBox, { width: "49%", borderColor }]}>
-              <ThemedText type="default" style={{ fontSize: 14 }}>
+            <View
+              style={[
+                styles.costViewBox,
+                {
+                  width: "49%",
+                  backgroundColor: surface,
+                  borderColor: cardBorder,
+                },
+              ]}
+            >
+              <ThemedText
+                type="default"
+                style={{ fontSize: 12, color: "#8A9B96" }}
+              >
                 Income
               </ThemedText>
-              <ThemedText type="subtitle" style={{ fontSize: 26 }}>
-                {expenseInMonth
-                  ? totalIncomeMonthWise.toFixed(2)
-                  : totalIncome.toFixed(2)}{" "}
-                ₹
-              </ThemedText>
+              <MoneyText
+                value={expenseInMonth ? totalIncomeMonthWise : totalIncome}
+                size={24}
+              />
             </View>
           </View>
         </View>
@@ -364,6 +386,7 @@ export default function HomeScreen() {
           style={{
             flexDirection: "row",
             justifyContent: "space-between",
+            alignItems:"flex-end",
             marginVertical: 10,
             marginTop: 40,
             paddingHorizontal: 20,
@@ -419,23 +442,22 @@ export default function HomeScreen() {
               barWidth={12}
               // hideAxesAndRules
               maxValue={
-                Math.max(totalBudget[0].value, totalBudget[1].value) + 100
+                Math.max(totalBudget[0].value, totalBudget[1].value) * 1.15
               }
-              yAxisTextStyle={{ color: "gray" }}
+              hideAxesAndRules
+              hideYAxisText
+              xAxisLabelTextStyle={{ height: 0 }}
               noOfSections={3}
               frontColor="lightgray"
-              yAxisThickness={0}
-              xAxisThickness={0}
               spacing={25}
+              // initialSpacing={40}
+              endSpacing={10}
               roundedTop
               roundedBottom
               hideRules
             />
             {/* Color Labeling */}
             <View
-              style={{
-                marginTop: 10,
-              }}
             >
               {totalBudget.map((item, index) => {
                 return (

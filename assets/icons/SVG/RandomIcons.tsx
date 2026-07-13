@@ -209,7 +209,45 @@ const DownArrowIcon = ({ color, ...props }: SvgPropWithColor) => (
     <Path d="M12 2V22" />
   </Svg>
 );
+
+const ExpanseDownIcon = ({ color, ...props }: SvgPropWithColor) => (
+  <Svg
+    width={14}
+    height={14}
+    viewBox="0 0 24 24"
+    fill="none"
+    stroke="currentColor"
+    strokeWidth={3}
+    strokeLinecap="round"
+    strokeLinejoin="round"
+    {...props}
+    color={color || "#f1f2f6"}
+  >
+    <Path d="m6 9 6 6 6-6" />
+  </Svg>
+);
+
+const IncomeUpIcon = ({ color, ...props }: SvgPropWithColor) => (
+  <Svg
+    width={18}
+    height={18}
+    viewBox="0 0 24 24"
+    fill="none"
+    stroke="currentColor"
+    strokeWidth={2}
+    strokeLinecap="round"
+    strokeLinejoin="round"
+    {...props}
+    color={color || "#f1f2f6"}
+  >
+    <Path d="M7 7h10v10M7 17 17 7" />
+  </Svg>
+);
+
+
+
 export {
+  ExpanseDownIcon,IncomeUpIcon,
   MailIcon,
   TermsIcon,
   PrivacyIcon,

@@ -8,7 +8,6 @@ import Animated, {
   withSpring,
 } from "react-native-reanimated";
 import { useEffect } from "react";
-import { Ionicons } from "@expo/vector-icons";
 import { useThemeColorWithName } from "@/hooks/useThemeColor";
 export default function TabBarButton({
   isFocused,
@@ -30,7 +29,7 @@ export default function TabBarButton({
     scale.value = withSpring(isFocused ? 1 : 0, {
       duration: 360,
     });
-  }, [scale.get(), isFocused]);
+  }, [isFocused]);
 
   const animatedIconStyle = useAnimatedStyle(() => {
     const scaleValue = interpolate(scale.get(), [0, 1], [1.1, 1.2]);
@@ -42,13 +41,10 @@ export default function TabBarButton({
     };
   });
   const animatedTextStyle = useAnimatedStyle(() => {
-    const opacityValue = interpolate(scale.get(), [0, 1], [0, 1]);
-
     return {
-      opacity: opacityValue,
+      opacity: interpolate(scale.get(), [0, 1], [0, 1]),
     };
   });
-
   const labelColor = useThemeColorWithName("tabIconSelected");
 
   return (
@@ -60,12 +56,12 @@ export default function TabBarButton({
       style={styles.tabItem}
     >
       {/* Use Icons */}
-
-      <Animated.View style={[animatedIconStyle, styles.tabIcon]}>
+      <Animated.View style={[styles.tabIcon, animatedIconStyle]}>
         {navIcons(routeName, isFocused)}
       </Animated.View>
-
-      <Animated.Text style={[{ color: labelColor }, animatedTextStyle, styles.tabLabel]}>
+      <Animated.Text
+        style={[{ color: labelColor }, animatedTextStyle, styles.tabLabel]}
+      >
         {label as string}
       </Animated.Text>
     </Pressable>
@@ -82,6 +78,7 @@ const styles = StyleSheet.create({
   tabLabel: {
     fontSize: 13,
     transform: [{ scale: 0.8 }],
+    marginTop:2,
     paddingVertical: 0,
   },
   tabIcon: {

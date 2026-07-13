@@ -4,9 +4,11 @@ import {
   TouchableOpacity,
   Switch,
   useColorScheme,
+  Pressable,
 } from "react-native";
 import { useState, useRef, useCallback } from "react";
 import { useRouter } from "expo-router";
+import Svg, { Path } from "react-native-svg";
 
 // components
 import BottomSheetModal from "@/components/BottomSheetModal";
@@ -30,10 +32,14 @@ import * as SecureStore from "expo-secure-store";
 
 export default function TabTwoScreen() {
   // colors
+  const surface = useThemeColorWithName("surface");
+  const cardBorder = useThemeColorWithName("cardBorder");
+  const textMuted = useThemeColorWithName("textMuted");
   const iconColor = useThemeColorWithName("icon");
   const bg = useThemeColorWithName("blurBg");
   const toggleButton = useThemeColorWithName("button");
-  const unSelectedToggleButton = useColorScheme() === "light" ? bg: useThemeColorWithName("toggleButton");
+  const unSelectedToggleButton =
+    useColorScheme() === "light" ? bg : useThemeColorWithName("toggleButton");
   const thumbColor = useColorScheme() === "light" ? "#8c8c8c" : "#ECEDEE";
   const selectedThumbColor =
     useColorScheme() === "light" ? "#dff169" : "#030f0e";
@@ -115,8 +121,11 @@ export default function TabTwoScreen() {
                 thumbColor={expenseInMonth ? selectedThumbColor : thumbColor}
                 trackColor={{ false: "transparent", true: "transparent" }}
                 onValueChange={async () => {
-                  await SecureStore.setItemAsync("durationType", !expenseInMonth ? 'true' : 'false');
-                 
+                  await SecureStore.setItemAsync(
+                    "durationType",
+                    !expenseInMonth ? "true" : "false",
+                  );
+
                   setExpenseInMonth((previousState) => !previousState);
                 }}
               />
@@ -157,16 +166,38 @@ export default function TabTwoScreen() {
         </View>
       </Collapsible>
 
-      <View style={[styles.titleBox, { borderColor: bg, backgroundColor: bg }]}>
-        <TouchableOpacity
-          style={styles.heading}
-          onPress={() => router.push("/setting")}
-          activeOpacity={0.8}
+      <Pressable
+        android_ripple={{ color: "#38BDF8" + "22" }}
+        style={({ pressed }) => [
+          styles.settingRow,
+          {
+            backgroundColor: surface,
+            borderColor: cardBorder,
+            opacity: pressed ? 0.94 : 1,
+          },
+        ]}
+        onPress={() => router.push("/setting")}
+      >
+        <View style={[styles.chip, { backgroundColor: "#38BDF822" }]}>
+          <SettingIcon color="#38BDF8" />
+        </View>
+        <ThemedText type="defaultSemiBold" style={{ flex: 1, fontSize: 15 }}>
+          Setting
+        </ThemedText>
+        <Svg
+          width={17}
+          height={17}
+          viewBox="0 0 24 24"
+          fill="none"
+          stroke={textMuted}
+          strokeWidth={2}
+          strokeLinecap="round"
+          strokeLinejoin="round"
         >
-          <SettingIcon color={iconColor} />
-          <ThemedText type="defaultSemiBold">Setting</ThemedText>
-        </TouchableOpacity>
-      </View>
+          <Path d="M9 6l6 6-6 6" />
+        </Svg>
+      </Pressable>
+
       {/* Support  - Add some instruction And button for instruction */}
 
       <ThemedText type="subtitle">Support</ThemedText>
@@ -245,6 +276,7 @@ export default function TabTwoScreen() {
           acceptance of the new Terms.
         </ThemedText>
       </Collapsible>
+      <View style={{ height: 50 }} />
     </ParallaxScrollView>
   );
 }
@@ -264,5 +296,21 @@ const styles = StyleSheet.create({
     flexDirection: "row",
     alignItems: "center",
     gap: 10,
+  },
+  settingRow: {
+    flexDirection: "row",
+    alignItems: "center",
+    gap: 13,
+    paddingHorizontal: 15,
+    paddingVertical: 12,
+    borderRadius: 15,
+    borderWidth: 1,
+  },
+  chip: {
+    width: 42,
+    height: 42,
+    borderRadius: 12,
+    justifyContent: "center",
+    alignItems: "center",
   },
 });

@@ -117,17 +117,50 @@ export const ExpenseProvider: React.FC<{ children: React.ReactNode }> = ({
     fetchData();
   }, []);
 
-  const aggregateExpenses = async () => {
-    const data: {
-      expenseType: expenseType;
-      total_expense: number;
-    }[] = await fetchTotalExpenseAccordingExpanse(db);
+  // const aggregateExpenses = async () => {
+  //   const data: {
+  //     expenseType: expenseType;
+  //     total_expense: number;
+  //   }[] = await fetchTotalExpenseAccordingExpanse(db);
 
-    return data.map(({ total_expense, expenseType }) => ({
-      text: expenseType,
-      value: total_expense,
-      color: useThemeColorMapping(theme, expenseType),
-    }));
+  //   return data.map(({ total_expense, expenseType }) => ({
+  //     text: expenseType,
+  //     value: total_expense,
+  //     color: useThemeColorMapping(theme, expenseType),
+  //   }));
+  // };
+
+  const aggregateExpenses = async () => {
+    const raw: { expenseType: expenseType; total_expense: number }[] =
+      await fetchTotalExpenseAccordingExpanse(db);
+
+    const mapped = raw
+      .filter((d) => d.total_expense > 0)
+      .sort((a, b) => b.total_expense - a.total_expense);
+
+    const TOP = 6;
+    const result = mapped
+      .slice(0, TOP)
+      .map(({ total_expense, expenseType }) => ({
+        text: expenseType,
+        value: total_expense,
+        color: useThemeColorMapping(theme, expenseType),
+      }));
+
+    const rest = mapped.slice(TOP);
+    if (rest.length) {
+      const othersTotal = rest.reduce((s, d) => s + d.total_expense, 0);
+      const existing = result.find((r) => r.text === "Others");
+      if (existing) existing.value += othersTotal;
+      else
+        result.push({
+          text: "Others" as expenseType,
+          value: othersTotal,
+          color: useThemeColorMapping(theme, "Others" as expenseType),
+        });
+    }
+
+    return result;
   };
 
   const onRefresh = useCallback(() => {

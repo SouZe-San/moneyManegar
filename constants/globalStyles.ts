@@ -60,8 +60,9 @@ export const globalStyles = StyleSheet.create({
     flexDirection: "row",
     alignItems: "center",
     justifyContent: "flex-start",
-    borderRadius: 10,
-    paddingHorizontal: 10,
+    borderRadius: 14,
+    paddingHorizontal: 14,
+    height: 52,
   },
   input: {
     height: 40,

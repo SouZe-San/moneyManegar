@@ -1,4 +1,4 @@
-import { TouchableOpacity, View } from "react-native";
+import { Pressable, View } from "react-native";
 import { RightArrowIcon } from "@/assets/icons/SVG/RandomIcons";
 import { useThemeColorWithName } from "@/hooks/useThemeColor";
 import { ThemedText } from "../ThemedText";
@@ -11,36 +11,39 @@ interface RedirectButtonProps {
 }
 
 const RedirectButton = ({ label, icon, redirectUrl = "/(tabs)" }: RedirectButtonProps) => {
-  const bg = useThemeColorWithName("blurBg");
+  const accent = useThemeColorWithName("button");
   const balanceBg = useThemeColorWithName("navBg");
+    const surface = useThemeColorWithName("surface");
+    const cardBorder = useThemeColorWithName("cardBorder");
   const text = useThemeColorWithName("text");
   const router = useRouter();
   return (
-    <View
-      style={{
-        paddingHorizontal: 10,
+    <Pressable
+      onPress={() => router.push(redirectUrl)}
+      android_ripple={{ color: accent + "22" }}
+      style={({ pressed }) => ({
+        flexDirection: "row",
+        alignItems: "center",
+        justifyContent: "space-between",
+        paddingHorizontal: 14,
         paddingVertical: 15,
-        borderRadius: 10,
+        borderRadius: 14,
         borderWidth: 1,
-        borderColor: bg,
-        backgroundColor: balanceBg,
+        borderColor: pressed ? accent + "25" : cardBorder,
+        backgroundColor: surface,
         marginVertical: 5,
-      }}
+        overflow: "hidden",
+        opacity: pressed ? 0.92 : 1,
+      })}
     >
-      <TouchableOpacity
-        style={{ flexDirection: "row", alignItems: "center", justifyContent: "space-between" }}
-        onPress={() => router.push(redirectUrl)}
-        activeOpacity={0.5}
-      >
-        <View style={{ flexDirection: "row", alignItems: "center", gap: 10 }}>
-          {icon}
-          <ThemedText type="defaultSemiBold" colorName="antiFlashWhite">
-            {label}
-          </ThemedText>
-        </View>
-        <RightArrowIcon color={text} />
-      </TouchableOpacity>
-    </View>
+      <View style={{ flexDirection: "row", alignItems: "center", gap: 10 }}>
+        {icon}
+        <ThemedText type="defaultSemiBold" colorName="antiFlashWhite">
+          {label}
+        </ThemedText>
+      </View>
+      <RightArrowIcon color={text} />
+    </Pressable>
   );
 };
 

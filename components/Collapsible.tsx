@@ -1,5 +1,11 @@
 import { PropsWithChildren, useState } from "react";
-import { StyleSheet, TouchableOpacity, View, useColorScheme } from "react-native";
+import { StyleSheet, TouchableOpacity, View } from "react-native";
+import Animated, {
+  useAnimatedStyle,
+  useSharedValue,
+  withTiming,
+} from "react-native-reanimated";
+import Svg, { Path } from "react-native-svg";
 
 import { ThemedText } from "@/components/ThemedText";
 import { ThemedView } from "@/components/ThemedView";
@@ -9,10 +15,17 @@ import {
   HelpIcon,
   PrivacyIcon,
   ServiceIcon,
-  SettingIcon,
   TermsIcon,
 } from "@/assets/icons/SVG/RandomIcons";
 import { UserIcon } from "@/assets/icons/SVG/NavIcon";
+const ICON_COLORS = {
+  userIcon: "#34D399",
+  serviceIcon: "#FBBF24",
+  mailIcon: "#A855F7",
+  helpIcon: "#FB7185",
+  privacyIcon: "#2DD4BF",
+  termsIcon: "#94A3B8",
+} as const;
 
 export function Collapsible({
   children,
@@ -20,56 +33,91 @@ export function Collapsible({
   iconName,
 }: PropsWithChildren & {
   title: string;
-  iconName: "mailIcon" | "helpIcon" | "privacyIcon" | "serviceIcon" | "termsIcon" | "userIcon";
+  iconName: keyof typeof ICON_COLORS;
 }) {
   const [isOpen, setIsOpen] = useState(false);
-  const iconColor = useThemeColorWithName("icon");
-  const darkSelectIconColor = useThemeColorWithName("tabIconSelected");
-  const lightSelectIconColor = useThemeColorWithName("navBg");
-  const bg = useThemeColorWithName("blurBg");
-  const theme = useColorScheme() ?? "light";
-  const selectIconColor = theme === "light" ? lightSelectIconColor : darkSelectIconColor;
+
+  const surface = useThemeColorWithName("surface");
+  const cardBorder = useThemeColorWithName("cardBorder");
+  const textMuted = useThemeColorWithName("textMuted");
+
+  const color = ICON_COLORS[iconName];
+
   const collapseIcons = {
-    mailIcon: <MailIcon color={isOpen ? selectIconColor : iconColor} isFocused={isOpen} />,
-    helpIcon: <HelpIcon color={isOpen ? selectIconColor : iconColor} isFocused={isOpen} />,
-    privacyIcon: <PrivacyIcon color={isOpen ? selectIconColor : iconColor} isFocused={isOpen} />,
-    serviceIcon: <ServiceIcon color={isOpen ? selectIconColor : iconColor} isFocused={isOpen} />,
-    termsIcon: <TermsIcon color={isOpen ? selectIconColor : iconColor} isFocused={isOpen} />,
-    userIcon: <UserIcon color={isOpen ? selectIconColor : iconColor} isFocused={isOpen} />,
+    mailIcon: <MailIcon color={color} isFocused={isOpen} />,
+    helpIcon: <HelpIcon color={color} isFocused={isOpen} />,
+    privacyIcon: <PrivacyIcon color={color} isFocused={isOpen} />,
+    serviceIcon: <ServiceIcon color={color} isFocused={isOpen} />,
+    termsIcon: <TermsIcon color={color} isFocused={isOpen} />,
+    userIcon: <UserIcon color={color} isFocused={isOpen} />,
   };
 
+  const rotation = useSharedValue(0);
+  const chevronStyle = useAnimatedStyle(() => ({
+    transform: [{ rotate: `${rotation.value}deg` }],
+  }));
+  const toggle = () => {
+    rotation.value = withTiming(isOpen ? 0 : 90, { duration: 200 });
+    setIsOpen((v) => !v);
+  };
   return (
     <ThemedView>
-      <View style={[styles.titleBox, { borderColor: bg, backgroundColor: bg }]}>
-        <TouchableOpacity
-          style={styles.heading}
-          onPress={() => setIsOpen((value) => !value)}
-          activeOpacity={0.8}
-        >
-          {collapseIcons[iconName as keyof typeof collapseIcons]}
-
-          <ThemedText type="defaultSemiBold">{title}</ThemedText>
-        </TouchableOpacity>
-      </View>
+      <TouchableOpacity
+        style={[
+          styles.row,
+          {
+            backgroundColor: surface,
+            borderColor: isOpen ? color + "25" : cardBorder,
+          },
+        ]}
+        onPress={toggle}
+        activeOpacity={0.8}
+      >
+        <View style={[styles.chip ,{ backgroundColor: color + "22" }]}>{collapseIcons[iconName]}</View>
+        <ThemedText type="defaultSemiBold" style={{ flex: 1, fontSize: 15 }}>
+          {title}
+        </ThemedText>
+        <Animated.View style={chevronStyle}>
+          <Svg
+            width={17}
+            height={17}
+            viewBox="0 0 24 24"
+            fill="none"
+            stroke={textMuted}
+            strokeWidth={2}
+            strokeLinecap="round"
+            strokeLinejoin="round"
+          >
+            <Path d="M9 6l6 6-6 6" />
+          </Svg>
+        </Animated.View>
+      </TouchableOpacity>
       {isOpen && <ThemedView style={styles.content}>{children}</ThemedView>}
     </ThemedView>
   );
 }
 
 const styles = StyleSheet.create({
-  titleBox: {
-    paddingHorizontal: 10,
-    paddingVertical: 15,
-    borderRadius: 10,
-    borderWidth: 1,
-  },
-  heading: {
+  row: {
     flexDirection: "row",
     alignItems: "center",
-    gap: 10,
+    gap: 13,
+    paddingHorizontal: 15,
+    paddingVertical: 12,
+    borderRadius: 15,
+    borderWidth: 1,
+  },
+  chip: {
+    width: 42,
+    height: 42,
+    borderRadius: 12,
+    justifyContent: "center",
+    alignItems: "center",
   },
   content: {
-    marginTop: 6,
-    marginLeft: 24,
+    marginTop: 8,
+    marginBottom: 4,
+    marginLeft: 12,
+    paddingHorizontal: 4,
   },
 });

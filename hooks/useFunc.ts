@@ -52,25 +52,25 @@ export const showToastWithMsg = (msg: string) => {
 };
 
 const arrayOfFaces = [
-  "🤡",
+  "🐻",
   "🐲",
-  "🤪",
-  "🙄",
-  "😎",
-  "🫠",
-  "🥸",
+  "🐱",
+  "🦊",
+  "🐶",
+  "🐞",
+  "🐬",
   "🤖",
   "💩",
   "🐺",
   "🐷",
-  "🥴",
+  "🐼",
   "🦄",
   "🐒",
   "🕷️",
-  "👶🏻",
-  "🧐",
-  "👩🏻‍💻",
-  "👾",
+  "🐯",
+  "🐮",
+  "🐸",
+  "🦢",
 ];
 export const getRandomFaces = () =>
   arrayOfFaces[Math.floor(Math.random() * arrayOfFaces.length)];

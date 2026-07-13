@@ -15,19 +15,18 @@ const SingleBox = ({
   isSelected = false,
   onPress = () => console.warn("pressed"),
 }: SingleBoxProps) => {
-  const borderColor = useThemeColorWithName("buttonBg");
   const selectedBorderColor = useThemeColorWithName("borderColor");
-  const unSelectedButtonBgColor = useThemeColorWithName("blurBg");
   const selectedButtonBgColor = useThemeColorWithName("toggleButton");
-
+  const cardBg = useThemeColorWithName("surface");
+  const cardBorder = useThemeColorWithName("cardBorder");
   return (
     <View style={[styles.expenseTypeButton]}>
       <Pressable
         style={[
           styles.expenseTypeButton_btn,
           {
-            borderColor: isSelected ? selectedBorderColor : borderColor,
-            backgroundColor: isSelected ? selectedButtonBgColor : unSelectedButtonBgColor,
+            borderColor: isSelected ? selectedBorderColor : cardBorder,
+            backgroundColor: isSelected ? selectedButtonBgColor : cardBg,
           },
         ]}
         onPress={onPress}
@@ -60,8 +59,6 @@ const styles = StyleSheet.create({
     elevation: 5,
   },
   expenseTypeButton_btn: {
-    backdropFilter: "blur(10px)",
-    backgroundColor: "#bababa93",
     width: 60,
     aspectRatio: 1,
     display: "flex",
