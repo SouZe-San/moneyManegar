@@ -2,7 +2,7 @@ import { FlatList, Dimensions, View, ViewToken } from "react-native";
 import { useSharedValue } from "react-native-reanimated";
 import { useSQLiteContext } from "expo-sqlite";
 import { useFocusEffect } from "expo-router";
-import { useCallback, useState } from "react";
+import { useCallback, useState, useRef } from "react";
 
 import AnimatedListItem from "@/components/animation/AnimatedListItem";
 import { globalStyles } from "@/constants/globalStyles";
@@ -13,14 +13,41 @@ import TransactionItem from "@/components/transaction/TransactionItem";
 
 import { fetchAllTransaction } from "@/hooks/useQueries";
 import { ITransaction } from "@/types/expanse";
+import { SectionList } from "react-native";
+import dayjs from "dayjs";
+import { useThemeColorWithName } from "@/hooks/useThemeColor";
+
+const groupByDate = (items: ITransaction[]) => {
+  const today = dayjs().format("DD/MM/YY");
+  const yesterday = dayjs().subtract(1, "day").format("DD/MM/YY");
+  const map = new Map<string, ITransaction[]>();
+  for (const it of items) {
+    if (!map.has(it.date)) map.set(it.date, []);
+    map.get(it.date)!.push(it);
+  }
+  return Array.from(map, ([date, data]) => ({
+    title: date === today ? "Today" : date === yesterday ? "Yesterday" : date,
+    data,
+  }));
+};
 
 const { width: SCREEN_Width, height: SCREEN_HEIGHT } = Dimensions.get("screen");
 
 const allTransaction = () => {
   const imgUrl = require("@/assets/images/temp/green.jpg");
   const headerTitle = "All Wastes ಠ⁠_⁠ಠ";
+  const mutedColor = useThemeColorWithName("textMuted");
 
   const viewableItems = useSharedValue<ViewToken[]>([]);
+  const onViewableItemsChanged = useRef(
+    ({ viewableItems: vItems }: { viewableItems: ViewToken[] }) => {
+      viewableItems.value = vItems;
+    },
+  ).current;
+  const viewabilityConfig = useRef({
+    itemVisiblePercentThreshold: 50,
+    // minimumViewTime: 60, // debounces rapid enter/leave during fast scroll
+  }).current;
 
   const [refresh, setRefresh] = useState(false);
   const [allTransactions, setAllTransaction] = useState<ITransaction[]>([]);
@@ -51,7 +78,12 @@ const allTransaction = () => {
   return (
     <ThemedView style={globalStyles.stack_container}>
       <ImageHeader imgUrl={imgUrl} title={headerTitle} />
-      <View style={[globalStyles.container, { width: SCREEN_Width, paddingBottom: 0 }]}>
+      <View
+        style={[
+          globalStyles.container,
+          { width: SCREEN_Width, paddingBottom: 0 },
+        ]}
+      >
         {allTransactions.length === 0 && (
           <ThemedText
             type="title"
@@ -61,25 +93,40 @@ const allTransaction = () => {
             Itne Jema Karke Kya kare Ga !!!
           </ThemedText>
         )}
-        <FlatList
-          data={allTransactions}
-          style={{
-            marginTop: 30,
-            height: SCREEN_HEIGHT,
-            gap: 10,
-            borderRadius: 10,
-          }}
+        <SectionList
+          sections={groupByDate(allTransactions)}
+          keyExtractor={(_,index) => index.toString()}
+          style={{ marginTop: 30, flex: 1 }}
+          contentContainerStyle={{ paddingBottom: 40 }}
           showsVerticalScrollIndicator={false}
-          nestedScrollEnabled={true}
-          onViewableItemsChanged={({ viewableItems: vItems }) => {
-            viewableItems.value = vItems;
-          }}
-          renderItem={({ item }) => (
-            <AnimatedListItem item={item} viewableItems={viewableItems}>
+          stickySectionHeadersEnabled={false}
+          onViewableItemsChanged={onViewableItemsChanged}
+          viewabilityConfig={viewabilityConfig}
+          initialNumToRender={10}
+          maxToRenderPerBatch={8}
+          windowSize={7}
+          renderSectionHeader={({ section }) => (
+            <ThemedText
+              style={{
+                fontSize: 12,
+                color: mutedColor,
+                marginTop: 16,
+                marginBottom: 8,
+                marginLeft: 4,
+              }}
+            >
+              {section.title}
+            </ThemedText>
+          )}
+          renderItem={({ item, index }) => (
+            <AnimatedListItem
+              item={item}
+              index={index}
+              viewableItems={viewableItems}
+            >
               <TransactionItem {...item} />
             </AnimatedListItem>
           )}
-          keyExtractor={(item) => item._id!.toString()}
         />
       </View>
     </ThemedView>
