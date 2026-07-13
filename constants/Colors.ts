@@ -29,6 +29,11 @@ export const Colors = {
     borderColor: "#498428",
     // borderColor: "#3c8600",
     toggleButton: "#7dbe15d5",
+    surface: "#ffffff",
+    cardBorder: "rgba(0,0,0,0.06)",
+    textMuted: "#5B6B66",
+    income: "#0F9D6E",
+    expense: "#E24B4A",
   },
   dark: {
     text: "#ECEDEE",
@@ -54,7 +59,11 @@ export const Colors = {
     inputBg: "#00df8230",
     // borderColor: "#00840b3e",
     toggleButton: "#00df8230",
-    // toggleButton: "rgba(25, 143, 227, 1)",
+    surface: "#10201C",
+    cardBorder: "rgba(255,255,255,0.06)",
+    textMuted: "#8A9B96",
+    income: "#34D399",
+    expense: "#FB7185",
   },
 };
 
@@ -68,15 +77,21 @@ export const ColorMapping = {
     Others: "#6B7280",
     Rent: "#14B8A6",
     Bill: "#4F46E5",
+    Salary: "#1d9e75",
+    Gift: "#f472b6",
+    Business: "#38bdf8",
   },
   dark: {
-    Food: "#FF6B6B", // Vibrant Red - great for Food category
+    Food: "#ff6900", // Vibrant Red - great for Food category
     Fuel: "#3B82F6", // Calm Blue - Fuel
     Shopping: "#FBBF24", // Golden Yellow - Shopping
     Recharge: "#34D399", // Fresh Green - Recharge
     Travels: "#A855F7", // Purple - Travels
-    Others: "#9CA3AF", // Muted Grey - Others
-    Rent: "#2DD4BF", // Aqua Cyan - Rent
+    Others: "#b6bfcd", // Muted Grey - Others
+    Rent: "#22d3ee", // Aqua Cyan - Rent
     Bill: "#6366F1", // Soft Indigo - Bill
+    Salary: "#a3e635",
+    Gift: "#f472b6",
+    Business: "#38bdf8",
   },
 };

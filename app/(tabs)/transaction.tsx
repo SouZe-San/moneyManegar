@@ -106,9 +106,9 @@ export default function Transaction() {
             viewableItems.value = vItems;
           }}
           refreshControl={<RefreshControl refreshing={loading} onRefresh={fetchData} />}
-          renderItem={({ item }) => (
+          renderItem={({ item ,index}) => (
             <Animated.View>
-              <AnimatedListItem item={item} viewableItems={viewableItems}>
+              <AnimatedListItem item={item} index={index} viewableItems={viewableItems}>
                 <TransactionRow
                   transactionId={item._id!}
                   expanseDescription={item.expanseDesc}

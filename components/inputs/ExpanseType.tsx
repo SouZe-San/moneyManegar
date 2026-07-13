@@ -1,4 +1,4 @@
-import { ScrollView, View, StyleSheet, Pressable, FlatList, ViewToken } from "react-native";
+import { ScrollView, View, StyleSheet, Pressable, FlatList, ViewToken, useColorScheme } from "react-native";
 import { ThemedText } from "../ThemedText";
 import { useThemeColorWithName } from "@/hooks/useThemeColor";
 import { iconReturn } from "@/constants/expanseIcon";
@@ -11,6 +11,9 @@ import Animated, {
   withSpring,
   ReduceMotion,
 } from "react-native-reanimated";
+import CategoryIcon from "../comp/CategoryIcon";
+import { expenseType } from "@/types/expanse";
+import { ColorMapping } from "@/constants/Colors";
 type ExpanseTypeProps = {
   value: string | undefined;
   setValue: (value: string) => void;
@@ -24,9 +27,8 @@ const ExpanseButton = ({
   setValue,
   viewableItems,
 }: { item: string; viewableItems: SharedValue<ViewToken[]> } & ExpanseTypeProps) => {
-  const borderColor = useThemeColorWithName("borderColor");
-  const buttonBgColor = useThemeColorWithName("toggleButton");
 
+  const scheme = useColorScheme() ?? "dark";
   const rStyle = useAnimatedStyle(() => {
     const isVisible = Boolean(
       viewableItems.value
@@ -54,6 +56,9 @@ const ExpanseButton = ({
     };
   }, [viewableItems.value]);
 
+   const categoryColor =
+     (ColorMapping[scheme] as Record<string, string>)[item]?.trim();
+
   return (
     <Animated.View style={[rStyle]}>
       <View style={[styles.expenseTypeButton]}>
@@ -61,14 +66,16 @@ const ExpanseButton = ({
           style={[
             styles.expenseTypeButton_btn,
             {
-              borderColor,
-              backgroundColor: value === item ? buttonBgColor : "transparent",
+              borderColor:
+                value === item ? categoryColor + "60" : "transparent",
+              backgroundColor:
+                value === item ? categoryColor + "26" : categoryColor + "15",
             },
           ]}
           onPress={() => setValue(item)}
         >
           <ThemedText style={styles.buttonLabel}>
-            {iconReturn(
+            {/* {iconReturn(
               item as
                 | "Food"
                 | "Fuel"
@@ -78,7 +85,12 @@ const ExpanseButton = ({
                 | "Others"
                 | "Rent"
                 | "Bill"
-            )}
+            )} */}
+            <CategoryIcon
+              type={item as "Salary" | "Gift" | "Business" | expenseType}
+              color={categoryColor}
+              size={22}
+            />
           </ThemedText>
         </Pressable>
         <ThemedText style={styles.buttonSubLabel} colorName="buttonBg">

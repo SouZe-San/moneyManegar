@@ -1,4 +1,4 @@
-import { View, StyleSheet, Text, TouchableOpacity } from "react-native";
+import { View, StyleSheet, Text, TouchableOpacity, useColorScheme } from "react-native";
 import { ThemedText } from "../ThemedText";
 import { useThemeColorWithName } from "@/hooks/useThemeColor";
 import { DeleteIcon, PayIcon, DownIcon, UpIcon } from "@/assets/icons/SVG/RandomIcons";
@@ -14,6 +14,8 @@ import {
 } from "@/hooks/useQueries";
 import { useSQLiteContext } from "expo-sqlite";
 import EasyAlert from "../comp/EasyAlert";
+import { ColorMapping } from "@/constants/Colors";
+import CategoryIcon from "../comp/CategoryIcon";
 
 type TransactionProps = {
   transactionId: number;
@@ -45,6 +47,24 @@ const TransactionRow = ({
   const payIconColor = useThemeColorWithName("highLightBackground");
   const backgroundColor = useThemeColorWithName("background");
   const blurBackgroundColor = useThemeColorWithName("blurBg");
+
+  const scheme = useColorScheme() ?? "dark";
+  const surface = useThemeColorWithName("surface");
+  const cardBorder = useThemeColorWithName("cardBorder");
+  const textMuted = useThemeColorWithName("textMuted");
+  const income = useThemeColorWithName("income");
+  const expense = useThemeColorWithName("expense");
+  
+   const isIncome = transactionType === "owned";
+  
+   // category color, with a fallback for income categories (Salary/Gift/…) and unknowns
+   const categoryColor =
+     (ColorMapping[scheme] as Record<string, string>)[expanseType]?.trim() ||
+     (isIncome ? income : "#6B7280");
+  
+   const amountColor = isIncome ? income : expense;
+   const sign = isIncome ? "+" : "−";
+   const formatted = Number(expanseAmount).toLocaleString("en-IN");
 
   const swipeableRef = useRef<SwipeableMethods | null>(null);
   const sqlite = useSQLiteContext();
@@ -179,42 +199,37 @@ const TransactionRow = ({
       onSwipeableOpen={() => onSwipeableWillOpen(transactionId.toString())}
       ref={swipeableRef}
     >
-      <View
-        style={{
-          backgroundColor,
-          marginVertical: 5,
-        }}
-      >
-        <View
-          style={[
-            styles.rowStyle,
-            {
-              backgroundColor: blurBackgroundColor,
-            },
-          ]}
-        >
-          <View style={styles.details}>
-            {/* Expanse Icon  */}
-            <View>
-              <ThemedText style={styles.expanseIcon}>{iconReturn(expanseType)}</ThemedText>
-            </View>
-            {/* Description  */}
-            <View style={[styles.description]}>
-              <ThemedText type="defaultSemiBold">{expanseDescription}</ThemedText>
-              <ThemedText style={styles.expanseDate}>
-                {expanseData} &mdash; {toWhom}
-              </ThemedText>
-            </View>
-          </View>
-          {/* Amount */}
-          <View style={styles.expanseAmount}>
-            <ThemedText type="defaultSemiBold">₹{expanseAmount}</ThemedText>
-            <Text style={{ fontSize: 10 }}>
-              {transactionType === "debt" ? <DownIcon color="red" /> : <UpIcon color="green" />}
-            </Text>
-          </View>
-        </View>
+     <View
+           style={[
+             styles.row,
+             { backgroundColor: surface, borderColor: cardBorder },
+           ]}
+         >
+        <View style={[styles.chip, { backgroundColor: categoryColor + "26" }]}>
+              <CategoryIcon type={expanseType} color={categoryColor} size={22} />
       </View>
+            {/* Description  */}
+            <View style={styles.middle}>
+                    <ThemedText
+                      type="defaultSemiBold"
+                      numberOfLines={1}
+                      style={styles.desc}
+                    >{expanseDescription}  </ThemedText>
+                            <ThemedText
+                              numberOfLines={1}
+                              style={[styles.meta, { color: textMuted }]}
+                            >
+                {expanseData} {toWhom ? ` · ${toWhom}` : ""}
+               </ThemedText>
+                   </View>
+             
+                   {/* Amount — color-coded + tabular numerals */}
+                   <ThemedText style={[styles.amount, { color: amountColor }]}>
+               {sign} ₹{formatted}
+      </ThemedText>
+    </View>
+      
+      
     </ReanimatedSwipeable>
   );
 };
@@ -222,6 +237,29 @@ const TransactionRow = ({
 export default TransactionRow;
 
 const styles = StyleSheet.create({
+  row: {
+    flexDirection: "row",
+    alignItems: "center",
+    gap: 12,
+    paddingVertical: 11,
+    paddingHorizontal: 12,
+    borderRadius: 14,
+    borderWidth: 1,
+    marginVertical: 5,
+  },
+  chip: {
+    width: 40,
+    height: 40,
+    borderRadius: 20,
+    justifyContent: "center",
+    alignItems: "center",
+  },
+  chipIcon: { fontSize: 20, lineHeight: 24 },
+  middle: { flex: 1 },
+  desc: { fontSize: 15 },
+  meta: { fontSize: 12, marginTop: 1 },
+  amount: { fontSize: 15, fontWeight: "600", fontVariant: ["tabular-nums"] },
+
   rowStyle: {
     position: "relative",
     zIndex: 3,

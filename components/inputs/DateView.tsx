@@ -21,14 +21,21 @@ const DateView = ({
   const textColor = useThemeColorWithName("text");
   const background = useThemeColorWithName("background");
   const blurBg = useThemeColorWithName("navBg");
+  const surface = useThemeColorWithName("surface");
+  const cardBorder = useThemeColorWithName("cardBorder");
   return (
     <Pressable
-      style={[styles.mainContainer, { borderColor }]}
+      style={[
+        styles.mainContainer,
+        { backgroundColor: surface, borderColor: cardBorder },
+      ]}
       onPress={() => setPickerVisible(!pickerVisible)}
     >
       <View style={[styles.viewSection]}>
         <CalenderIcon color={iconColor} />
-        <ThemedText style={{ fontSize: 15 }}>{date.format("DD/MM/YYYY")}</ThemedText>
+        <ThemedText style={{ fontSize: 15 }}>
+          {date.format("DD/MM/YYYY")}
+        </ThemedText>
       </View>
       <Modal
         visible={pickerVisible}
@@ -87,19 +94,16 @@ const styles = StyleSheet.create({
   mainContainer: {
     flexDirection: "row",
     alignItems: "center",
-    justifyContent: "flex-start",
-    borderRadius: 10,
-
-    borderWidth: 0.4,
-    paddingHorizontal: 10,
+    borderRadius: 14,
+    borderWidth: 1,
+    paddingHorizontal: 14,
+    minHeight: 54,
   },
   viewSection: {
     flexDirection: "row",
     alignItems: "center",
-    height: 40,
-    justifyContent: "flex-start",
-    gap: 5,
-    marginVertical: 10,
+    height: 54,
+    gap: 10,
   },
   datePicker: {
     width: "80%",

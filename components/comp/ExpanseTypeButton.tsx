@@ -1,6 +1,8 @@
-import { ScrollView, View, StyleSheet, Pressable, FlatList, ViewToken } from "react-native";
+import { ScrollView, View, StyleSheet, Pressable, FlatList, ViewToken, useColorScheme } from "react-native";
 import { ThemedText } from "../ThemedText";
 import { useThemeColorWithName } from "@/hooks/useThemeColor";
+import CategoryIcon from "./CategoryIcon";
+import { ColorMapping } from "@/constants/Colors";
 
 type ExpanseTypeProps = {
   value: string | undefined;
@@ -16,8 +18,10 @@ const iconLowMatch = {
 };
 
 const ExpenseTypeButton = ({ value, setValue, item }: ExpanseTypeProps) => {
-  const borderColor = useThemeColorWithName("borderColor");
-  const buttonBgColor = useThemeColorWithName("toggleButton");
+
+   const scheme = useColorScheme() ?? "dark";
+   const categoryColor =
+     (ColorMapping[scheme] as Record<string, string>)[item]?.trim();
 
   return (
     <View style={[styles.expenseTypeButton]}>
@@ -25,14 +29,20 @@ const ExpenseTypeButton = ({ value, setValue, item }: ExpanseTypeProps) => {
         style={[
           styles.expenseTypeButton_btn,
           {
-            borderColor,
-            backgroundColor: value === item ? buttonBgColor : "transparent",
+            borderColor: value === item ? categoryColor + "60" : "transparent",
+            backgroundColor:
+              value === item ? categoryColor + "26" : categoryColor + "15",
           },
         ]}
         onPress={() => setValue(item)}
       >
         <ThemedText style={styles.buttonLabel}>
-          {iconLowMatch[item as "Salary" | "Gift" | "Business" | "Others"]}
+          {/* {iconLowMatch[item as "Salary" | "Gift" | "Business" | "Others"]} */}
+          <CategoryIcon
+            type={item as "Salary" | "Gift" | "Business" | "Others"}
+            color={categoryColor}
+            size={22}
+          />
         </ThemedText>
       </Pressable>
       <ThemedText style={styles.buttonSubLabel} colorName="buttonBg">

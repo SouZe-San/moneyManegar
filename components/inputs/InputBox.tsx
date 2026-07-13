@@ -26,7 +26,7 @@ export function InputBox({
   style,
   maxLength = 50,
 }: InputBoxProps & TextProps) {
-  const placeTextColor = useThemeColorWithName("tabIconDefault");
+  const placeTextColor = useThemeColorWithName("textMuted");
   const inputTextColor = useThemeColorWithName("text");
 
   return (
@@ -49,25 +49,38 @@ export function InputWithIcon({
   value,
   setValue,
   maxLength,
-}: InputBoxProps & { icon: React.JSX.Element }) {
-  const borderColor = useThemeColorWithName("borderColor");
+  hero = false,
+}: InputBoxProps & { icon: React.JSX.Element; hero?: boolean }) {
+  const surface = useThemeColorWithName("surface");
+  const cardBorder = useThemeColorWithName("cardBorder");
+  const inputTextColor = useThemeColorWithName("text");
+  const accent = useThemeColorWithName("button");
   return (
-    <KeyboardAvoidingView
-      style={[styles.iconInputBox, { borderColor, borderWidth: 0.4, paddingHorizontal: 10 }]}
-      behavior={Platform.OS === "ios" ? "padding" : "height"}
-      keyboardVerticalOffset={30}
-      enabled
-    >
-      {icon}
-      <InputBox
-        placeholder={placeholder}
-        keyboardType={keyboardType}
-        value={value}
-        setValue={setValue}
-        maxLength={maxLength}
-        style={{ marginLeft: 5, marginVertical: 10 }}
-      />
-    </KeyboardAvoidingView>
+    <View style={{ width: "100%" }}>
+      <KeyboardAvoidingView
+        style={[
+          styles.field,
+          { backgroundColor: surface, borderColor: cardBorder },
+        ]}
+        behavior={Platform.OS === "ios" ? "padding" : "height"}
+        keyboardVerticalOffset={30}
+        enabled
+      >
+        {icon}
+        <InputBox
+          placeholder={placeholder}
+          keyboardType={keyboardType}
+          value={value}
+          setValue={setValue}
+          maxLength={maxLength}
+          style={[
+            styles.fieldInput,
+            hero && styles.heroInput,
+            { color: hero ? accent : inputTextColor },
+          ]}
+        />
+      </KeyboardAvoidingView>
+    </View>
   );
 }
 
@@ -102,6 +115,17 @@ export function SmallInputBox({
 }
 
 const styles = StyleSheet.create({
+  field: {
+    flexDirection: "row",
+    alignItems: "center",
+    gap: 10,
+    borderRadius: 14,
+    borderWidth: 1,
+    paddingHorizontal: 14,
+    minHeight: 54,
+  },
+  fieldInput: { flex: 1, fontSize: 15, height: 52 },
+  heroInput: { fontSize: 28, fontWeight: "600", height: 60 },
   input: {
     height: 40,
     fontSize: 15,
