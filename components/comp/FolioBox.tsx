@@ -36,7 +36,9 @@ const FolioBox = ({
   viewableItems,
   onPress = () => console.warn("pressed"),
 }: SingleBoxProps) => {
-  const unSelectedButtonBgColor = useThemeColorWithName("blurBg");
+
+  const cardBg = useThemeColorWithName("surface");
+  const cardBorder = useThemeColorWithName("cardBorder");
   const [isFile, setIsFile] = useState(false);
 
   useEffect(() => {
@@ -85,8 +87,8 @@ const FolioBox = ({
           style={[
             styles.expenseTypeButton_btn,
             {
-              backgroundColor: unSelectedButtonBgColor,
-              filter: "brightness(1.01)",
+              backgroundColor: cardBg,
+              borderColor: cardBorder,
             },
           ]}
           onPress={onPress}
@@ -97,7 +99,9 @@ const FolioBox = ({
               style={{ objectFit: "cover", width: "100%", height: "100%" }}
             />
           ) : isMem ? (
-            <ThemedText style={[styles.buttonLabel]}>{getRandomFaces()}</ThemedText>
+            <ThemedText type="title">
+              {getRandomFaces()}
+            </ThemedText>
           ) : (
             <ThemedText style={styles.buttonLabel}>{icon}</ThemedText>
           )}
@@ -129,20 +133,17 @@ const styles = StyleSheet.create({
     elevation: 5,
   },
   expenseTypeButton_btn: {
-    backdropFilter: "blur(10px)",
-    backgroundColor: "#bababa93",
     width: 100,
     aspectRatio: 3 / 4,
     display: "flex",
-
     flexDirection: "column",
     justifyContent: "center",
     alignItems: "center",
-    borderRadius: 10,
+    borderRadius: 14,
     overflow: "hidden",
   },
   buttonLabel: {
-    fontSize: 20,
+    fontSize: 34,
   },
   buttonSubLabel: {
     fontSize: 14,

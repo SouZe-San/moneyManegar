@@ -91,13 +91,20 @@ export function SmallInputBox({
   setValue,
   icon,
 }: InputBoxProps & { icon: React.JSX.Element }) {
-  const borderColor = useThemeColorWithName("borderColor");
 
+  const surface = useThemeColorWithName("surface");
+  const cardBorder = useThemeColorWithName("cardBorder");
+  const inputTextColor = useThemeColorWithName("text");
   return (
     <KeyboardAvoidingView
       style={[
-        styles.iconInputBox,
-        { borderColor, borderWidth: 0.4, paddingLeft: 10, width: "70%" },
+        styles.field,
+        {
+          backgroundColor: surface,
+          borderColor: cardBorder,
+          width: "70%",
+          paddingLeft: 10,
+        },
       ]}
       enabled
       behavior={Platform.OS === "ios" ? "padding" : "height"}
@@ -108,7 +115,7 @@ export function SmallInputBox({
         keyboardType={keyboardType}
         value={value}
         setValue={setValue}
-        style={{ marginLeft: 5, marginTop: 10, marginBottom: 5 }}
+        style={[styles.fieldInput, { color: inputTextColor }]}
       />
     </KeyboardAvoidingView>
   );

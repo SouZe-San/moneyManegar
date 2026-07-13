@@ -44,6 +44,8 @@ export function payble() {
   const horain = useThemeColorWithName("navBg");
   const iconColor = useThemeColorWithName("inputIcon");
   const borderColor = useThemeColorWithName("borderColor");
+  const surface = useThemeColorWithName("surface");
+  const cardBorder = useThemeColorWithName("cardBorder");
 
   // Routes
   const router = useRouter();
@@ -165,7 +167,15 @@ export function payble() {
               />
             </View>
             <View>
-              <View style={[globalStyles.iconInputBox, { borderColor, borderWidth: 0.4 }]}>
+              <View
+                style={[
+                  globalStyles.iconInputBox,
+                  {
+                    borderColor: cardBorder,
+                    backgroundColor: surface,
+                  },
+                ]}
+              >
                 {isImgFile && member?.imgUrl ? (
                   <View
                     style={{
@@ -177,14 +187,20 @@ export function payble() {
                   >
                     <Image
                       source={{ uri: member.imgUrl }}
-                      style={{ objectFit: "cover", width: "100%", height: "100%" }}
+                      style={{
+                        objectFit: "cover",
+                        width: "100%",
+                        height: "100%",
+                      }}
                     />
                   </View>
                 ) : (
                   <UserIcon color={iconColor} />
                 )}
-                <View style={[globalStyles.input, { justifyContent: "center" }]}>
-                  <ThemedText colorName="tabIconDefault" style={{ fontSize: 17 }}>
+                <View
+                  style={[globalStyles.input, { justifyContent: "center" }]}
+                >
+                  <ThemedText colorName="textMuted" style={{ fontSize: 17 }}>
                     {toWhom ?? "To whom"}
                   </ThemedText>
                 </View>
@@ -245,7 +261,10 @@ export function payble() {
 
           {/* Submit Button */}
           <View style={globalStyles.submit_btn_container}>
-            <SubmitButton button_label="Add Debt" onPress={() => finalSubmit()} />
+            <SubmitButton
+              button_label="Add Debt"
+              onPress={() => finalSubmit()}
+            />
           </View>
         </AnimatedStackView>
       </View>

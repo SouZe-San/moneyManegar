@@ -67,7 +67,8 @@ export function contribute() {
   const thumbColor = useColorScheme() === "light" ? "#8c8c8c" : "#ECEDEE";
   const selectedThumbColor = useColorScheme() === "light" ? "#dff169" : "#030f0e";
   const backgroundColor = useThemeColorWithName("background");
-  const borderColor = useThemeColorWithName("borderColor");
+  const surface = useThemeColorWithName("surface");
+  const cardBorder = useThemeColorWithName("cardBorder");
 
   const viewableItems = useSharedValue<ViewToken[]>([]);
 
@@ -239,7 +240,9 @@ export function contribute() {
   }
 
   return (
-    <ThemedView style={[globalStyles.entriesViewContainer, { position: "relative" }]}>
+    <ThemedView
+      style={[globalStyles.entriesViewContainer, { position: "relative" }]}
+    >
       <ImageHeader url={require("@/assets/images/entries/moneyGive.webp")} />
 
       <ThemedText
@@ -289,7 +292,15 @@ export function contribute() {
             </View>
 
             <View>
-              <View style={[globalStyles.iconInputBox, { borderColor, borderWidth: 0.4 }]}>
+              <View
+                style={[
+                  globalStyles.iconInputBox,
+                  {
+                    borderColor: cardBorder,
+                    backgroundColor: surface,
+                  },
+                ]}
+              >
                 {isImgFile && singlePersonName?.imgUrl ? (
                   <View
                     style={{
@@ -301,15 +312,21 @@ export function contribute() {
                   >
                     <Image
                       source={{ uri: singlePersonName.imgUrl }}
-                      style={{ objectFit: "cover", width: "100%", height: "100%" }}
+                      style={{
+                        objectFit: "cover",
+                        width: "100%",
+                        height: "100%",
+                      }}
                     />
                   </View>
                 ) : (
                   <UserIcon color={iconColor} />
                 )}
-                <View style={[globalStyles.input, { justifyContent: "center" }]}>
-                  <ThemedText colorName="tabIconDefault" style={{ fontSize: 17 }}>
-                    {toWhom ?? "To whom"}
+                <View
+                  style={[globalStyles.input, { justifyContent: "center" }]}
+                >
+                  <ThemedText colorName="textMuted" style={{ fontSize: 17 }}>
+                    {toWhom ?? "select people!!"}
                   </ThemedText>
                 </View>
               </View>
@@ -350,17 +367,24 @@ export function contribute() {
                     margin: 0,
                     height: 28,
                     width: "100%",
-                    backgroundColor: splitInGroups ? toggleButton : unSelectedToggleButton,
+                    backgroundColor: splitInGroups
+                      ? toggleButton
+                      : unSelectedToggleButton,
                   }}
                   thumbColor={splitInGroups ? selectedThumbColor : thumbColor}
                   trackColor={{ false: "transparent", true: "transparent" }}
-                  onValueChange={() => setInGroups((previousState) => !previousState)}
+                  onValueChange={() =>
+                    setInGroups((previousState) => !previousState)
+                  }
                 />
               </View>
             </View>
             {!splitInGroups ? (
               <View>
-                <SearchProfileSection member={singlePersonName} setMember={setSinglePersonName} />
+                <SearchProfileSection
+                  member={singlePersonName}
+                  setMember={setSinglePersonName}
+                />
               </View>
             ) : (
               <View>
@@ -424,7 +448,10 @@ export function contribute() {
 
           {/* Submit Button */}
           <View style={globalStyles.submit_btn_container}>
-            <SubmitButton button_label="Add Request" onPress={() => finalSubmit()} />
+            <SubmitButton
+              button_label="Add Request"
+              onPress={() => finalSubmit()}
+            />
           </View>
         </AnimatedStackView>
       </View>
