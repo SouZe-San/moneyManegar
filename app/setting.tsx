@@ -15,10 +15,10 @@ import {
   ResetIcon,
   DeleteIcon,
   LeftRightArrowIcon,
-  OnlineIcon,
+  OnlineIcon,DownArrowIcon
 } from "@/assets/icons/SVG/RandomIcons";
 import { useRouter } from "expo-router";
-import { exportExpensesToCSV, showToast, showToastWithMsg } from "@/hooks/useFunc";
+import { exportExpensesToCSV, showToast, showToastWithMsg,importDataFromZip } from "@/hooks/useFunc";
 import { useExpense } from "@/context/ExpanseContext";
 import { WarBonnetIcon } from "@/assets/icons/SVG/ExpanseIcons";
 import { useState } from "react";
@@ -82,6 +82,24 @@ const setting = () => {
     }
   }
 
+  const importDb = async () => {
+    setLoader(true);
+    try {
+      const summary = await importDataFromZip(sqlDb, setProgress);
+      if (!summary) return; // user cancelled the picker
+      onRefresh(); // refresh dashboard totals with the imported data
+      showToastWithMsg(
+        `Imported ✅ ${summary.expenses + summary.udhar} txns · ${summary.members} members · ${summary.groups} groups`,
+      );
+    } catch (error) {
+      showToastWithMsg("😹 Import Failed !!");
+      console.log("Error importing data", error);
+    } finally {
+      setProgress(0);
+      setLoader(false);
+    }
+  };
+
     if (loading) {
     return (
       <AnimateTabView
@@ -109,7 +127,8 @@ const setting = () => {
           🌐 Go Online & Sync
         </ThemedText>
         <ThemedText type="smallText">
-          Log in to stay in sync! Tap to update your data in real-time—it's like magic! ✨
+          Log in to stay in sync! Tap to update your data in real-time—it's like
+          magic! ✨
         </ThemedText>
 
         {/* Log in ANd Sign In  */}
@@ -122,7 +141,6 @@ const setting = () => {
           <LeftRightArrowIcon color={iconColor} />
           <ThemedText>Unification</ThemedText>
         </TouchableOpacity>
-
       </View>
       <View>
         <ThemedText type="subtitle" colorName="mountainMeadow">
@@ -130,19 +148,32 @@ const setting = () => {
         </ThemedText>
         {/* Track Reset */}
         <ThemedText type="smallText">
-          Time to clear the slate! Hit reset for a fresh start—no strings attached. Letting go feels
-          great! 😎
+          Time to clear the slate! Hit reset for a fresh start—no strings
+          attached. Letting go feels great! 😎
         </ThemedText>
 
-        <TouchableOpacity style={[styles.btn, { backgroundColor: bg }]} onPress={cleanHandler}>
+        <TouchableOpacity
+          style={[styles.btn, { backgroundColor: bg }]}
+          onPress={cleanHandler}
+        >
           <ResetIcon color={iconColor} />
           <ThemedText>Reset</ThemedText>
         </TouchableOpacity>
-                    {/* Import */}
+        {/* Import */}
 
-        <TouchableOpacity style={[styles.btn, { backgroundColor: bg, marginTop:5 }]} onPress={exportDb}>
-          <WarBonnetIcon color={iconColor}/>
-          <ThemedText style={{ fontSize:14}}>Export</ThemedText>
+        <TouchableOpacity
+          style={[styles.btn, { backgroundColor: bg, marginTop: 5 }]}
+          onPress={exportDb}
+        >
+          <WarBonnetIcon color={iconColor} />
+          <ThemedText style={{ fontSize: 14 }}>Export</ThemedText>
+        </TouchableOpacity>
+        <TouchableOpacity
+          style={[styles.btn, { backgroundColor: bg, marginTop: 5 }]}
+          onPress={importDb}
+        >
+          <DownArrowIcon color={iconColor} />
+          <ThemedText style={{ fontSize: 14 }}>Import</ThemedText>
         </TouchableOpacity>
       </View>
       <View>
@@ -150,21 +181,26 @@ const setting = () => {
           ⚙️ Account Setting
         </ThemedText>
         <ThemedText type="smallText">
-          Take control of your account! Log out to step away or delete it entirely for a fresh
-          start. Your account, your choice.💪
+          Take control of your account! Log out to step away or delete it
+          entirely for a fresh start. Your account, your choice.💪
         </ThemedText>
         {/* Log Out  */}
-        <TouchableOpacity style={[styles.btn, styles.logoutBtn, { backgroundColor: bg }]}>
+        <TouchableOpacity
+          style={[styles.btn, styles.logoutBtn, { backgroundColor: bg }]}
+        >
           <ThemedText style={{ color: "#bababad3" }}>Log Out</ThemedText>
         </TouchableOpacity>
         {/* Account Delete */}
-        <TouchableOpacity style={[styles.btn, styles.deleteButton]} onPress={deleteAccount}>
+        <TouchableOpacity
+          style={[styles.btn, styles.deleteButton]}
+          onPress={deleteAccount}
+        >
           <DeleteIcon color="#de0000ce" />
           <ThemedText style={{ color: "gray" }}>Delete Account</ThemedText>
         </TouchableOpacity>
         <ThemedText type="smallText">
-          Deleting your account erases all your digital traces. Make sure you're 100% sure—it&#39;s
-          the ultimate reset! 🗑️
+          Deleting your account erases all your digital traces. Make sure you're
+          100% sure—it&#39;s the ultimate reset! 🗑️
         </ThemedText>
       </View>
     </ThemedView>

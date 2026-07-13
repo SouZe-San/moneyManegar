@@ -19,6 +19,7 @@
     "@react-navigation/native": "^7.0.0",
     "expo": "^52.0.39",
     "expo-constants": "~17.0.3",
+    "expo-document-picker": "~13.0.3",
     "expo-drizzle-studio-plugin": "^0.1.2",
     "expo-file-system": "~18.0.11",
     "expo-font": "~13.0.1",

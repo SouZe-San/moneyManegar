@@ -3,7 +3,7 @@ import * as SecureStore from "expo-secure-store";
 import { BottomSheetRefProps } from "@/components/BottomSheetView";
 import * as Sharing from "expo-sharing";
 import { type SQLiteDatabase } from "expo-sqlite";
-
+import * as DocumentPicker from "expo-document-picker";
 import JSZip from "jszip";
 
 export const openBottomSheetModal = (
@@ -185,4 +185,137 @@ export const exportExpensesToCSV = async (
     console.error("Error exporting data:", error);
     alert("An error occurred while exporting data.");
   }
+};
+
+
+
+
+// ---- CSV parsing (reverses convertToCSV) ----
+const parseCSV = (text: string): Record<string, string>[] => {
+  const s = text.replace(/\r\n/g, "\n").replace(/\r/g, "\n");
+  const rows: string[][] = [];
+  let row: string[] = [];
+  let field = "";
+  let inQuotes = false;
+
+  for (let i = 0; i < s.length; i++) {
+    const c = s[i];
+    if (inQuotes) {
+      if (c === '"') {
+        if (s[i + 1] === '"') { field += '"'; i++; } // escaped ""
+        else inQuotes = false;
+      } else field += c;
+    } else {
+      if (c === '"') inQuotes = true;
+      else if (c === ",") { row.push(field); field = ""; }
+      else if (c === "\n") { row.push(field); rows.push(row); row = []; field = ""; }
+      else field += c;
+    }
+  }
+  if (field.length > 0 || row.length > 0) { row.push(field); rows.push(row); }
+  if (rows.length === 0) return [];
+
+  const headers = rows[0];
+  return rows
+    .slice(1)
+    .filter((r) => r.length === headers.length && r.some((v) => v !== ""))
+    .map((r) => Object.fromEntries(headers.map((h, i) => [h, r[i]])));
+};
+
+const num = (v?: string) => {
+  const n = parseFloat(v ?? "");
+  return isNaN(n) ? 0 : n;
+};
+const orNull = (v?: string) => (v == null || v === "" ? null : v);
+
+export type ImportSummary = {
+  expenses: number; udhar: number; members: number; groups: number; skipped: number;
+};
+
+// ---- Main import function ----
+export const importDataFromZip = async (
+  db: SQLiteDatabase,
+  setProgress: (n: number) => void
+): Promise<ImportSummary | null> => {
+  setProgress(0);
+
+  // A. Pick the backup zip
+  const picked = await DocumentPicker.getDocumentAsync({
+    // some Android file providers report zips as octet-stream, so allow a fallback
+    type: ["application/zip", "application/octet-stream", "*/*"],
+    copyToCacheDirectory: true, // required so FileSystem can read a content:// uri
+    multiple: false,
+  });
+  if (picked.canceled || !picked.assets?.length) return null; // user cancelled
+
+  // B. Read + unzip
+  const base64 = await FileSystem.readAsStringAsync(picked.assets[0].uri, {
+    encoding: FileSystem.EncodingType.Base64,
+  });
+  const zip = await JSZip.loadAsync(base64, { base64: true });
+  setProgress(35);
+
+  const readCsv = async (name: string) => {
+    const f = zip.file(name);
+    return f ? parseCSV(await f.async("string")) : [];
+  };
+
+  const expenses = await readCsv("MM_Expenses.csv");
+  const udhar = await readCsv("MM_Udhar.csv");
+  const members = await readCsv("MM_Members.csv");
+  const groups = await readCsv("MM_Groups.csv");
+  setProgress(55);
+
+  const summary: ImportSummary = { expenses: 0, udhar: 0, members: 0, groups: 0, skipped: 0 };
+
+  // C. Insert. One transaction = fast + safe. Per-row try/catch so one bad
+  //    row (constraint violation) is skipped instead of aborting everything.
+  await db.withTransactionAsync(async () => {
+    for (const m of members) {
+      try {
+        // UNIQUE(userName) -> OR IGNORE skips members you already have
+        const r = await db.runAsync(
+          "INSERT OR IGNORE INTO MemberTable (userName, owedAmount, dueAmount, userId, imgUrl) VALUES (?,?,?,?,?)",
+          [orNull(m.userName), num(m.owedAmount), num(m.dueAmount), orNull(m.userId), orNull(m.imgUrl)]
+        );
+        r.changes > 0 ? summary.members++ : summary.skipped++;
+      } catch { summary.skipped++; }
+    }
+
+    for (const g of groups) {
+      try {
+        // UNIQUE(name) -> OR IGNORE
+        const r = await db.runAsync(
+          "INSERT OR IGNORE INTO GroupTable (name, logo, imgUrl) VALUES (?,?,?)",
+          [orNull(g.name), orNull(g.logo), orNull(g.imgUrl)]
+        );
+        r.changes > 0 ? summary.groups++ : summary.skipped++;
+      } catch { summary.skipped++; }
+    }
+
+    for (const t of expenses) {
+      try {
+        await db.runAsync(
+          "INSERT INTO AllTransactions (amount, type, expenseType, date, toWhom, expanseDesc, memberId) VALUES (?,?,?,?,?,?,?)",
+          [num(t.amount), orNull(t.type), orNull(t.expenseType) ?? "Others",
+           orNull(t.date), orNull(t.toWhom) ?? "Own", orNull(t.expanseDesc) ?? "", orNull(t.memberId)]
+        );
+        summary.expenses++;
+      } catch { summary.skipped++; }
+    }
+
+    for (const u of udhar) {
+      try {
+        await db.runAsync(
+          "INSERT INTO UdharTransactions (amount, type, expenseType, date, toWhom, expanseDesc, memberId) VALUES (?,?,?,?,?,?,?)",
+          [num(u.amount), orNull(u.type), orNull(u.expenseType),
+           orNull(u.date), orNull(u.toWhom), orNull(u.expanseDesc) ?? "", orNull(u.memberId)]
+        );
+        summary.udhar++;
+      } catch { summary.skipped++; }
+    }
+  });
+
+  setProgress(100);
+  return summary;
 };
