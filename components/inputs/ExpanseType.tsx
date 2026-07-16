@@ -1,7 +1,7 @@
-import { ScrollView, View, StyleSheet, Pressable, FlatList, ViewToken, useColorScheme } from "react-native";
+import { View, StyleSheet, Pressable, FlatList, ViewToken, useColorScheme } from "react-native";
 import { ThemedText } from "../ThemedText";
 import { useThemeColorWithName } from "@/hooks/useThemeColor";
-import { iconReturn } from "@/constants/expanseIcon";
+
 import Animated, {
   useSharedValue,
   useAnimatedStyle,
@@ -27,7 +27,9 @@ const ExpanseButton = ({
   setValue,
   viewableItems,
 }: { item: string; viewableItems: SharedValue<ViewToken[]> } & ExpanseTypeProps) => {
-
+ const surface = useThemeColorWithName("surface");
+ const cardBorder = useThemeColorWithName("cardBorder");
+ const textMuted = useThemeColorWithName("textMuted");
   const scheme = useColorScheme() ?? "dark";
   const rStyle = useAnimatedStyle(() => {
     const isVisible = Boolean(
@@ -66,29 +68,16 @@ const ExpanseButton = ({
           style={[
             styles.expenseTypeButton_btn,
             {
-              borderColor:
-                value === item ? categoryColor + "60" : "transparent",
-              backgroundColor:
-                value === item ? categoryColor + "26" : categoryColor + "15",
+              borderColor: value === item ? categoryColor : cardBorder,
+              backgroundColor: value === item ? categoryColor + "26" : surface,
             },
           ]}
           onPress={() => setValue(item)}
         >
           <ThemedText style={styles.buttonLabel}>
-            {/* {iconReturn(
-              item as
-                | "Food"
-                | "Fuel"
-                | "Shopping"
-                | "Recharge"
-                | "Travels"
-                | "Others"
-                | "Rent"
-                | "Bill"
-            )} */}
             <CategoryIcon
               type={item as "Salary" | "Gift" | "Business" | expenseType}
-              color={categoryColor}
+              color={ value === item ? categoryColor: textMuted}
               size={22}
             />
           </ThemedText>

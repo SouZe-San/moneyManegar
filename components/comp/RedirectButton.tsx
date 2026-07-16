@@ -10,11 +10,14 @@ interface RedirectButtonProps {
   redirectUrl?: Href;
 }
 
-const RedirectButton = ({ label, icon, redirectUrl = "/(tabs)" }: RedirectButtonProps) => {
+const RedirectButton = ({
+  label,
+  icon,
+  redirectUrl = "/(tabs)",
+}: RedirectButtonProps) => {
   const accent = useThemeColorWithName("button");
-  const balanceBg = useThemeColorWithName("navBg");
-    const surface = useThemeColorWithName("surface");
-    const cardBorder = useThemeColorWithName("cardBorder");
+  const surface = useThemeColorWithName("surface");
+  const cardBorder = useThemeColorWithName("cardBorder");
   const text = useThemeColorWithName("text");
   const router = useRouter();
   return (
@@ -26,7 +29,7 @@ const RedirectButton = ({ label, icon, redirectUrl = "/(tabs)" }: RedirectButton
         alignItems: "center",
         justifyContent: "space-between",
         paddingHorizontal: 14,
-        paddingVertical: 15,
+        paddingVertical: 8,
         borderRadius: 14,
         borderWidth: 1,
         borderColor: pressed ? accent + "25" : cardBorder,
@@ -37,7 +40,18 @@ const RedirectButton = ({ label, icon, redirectUrl = "/(tabs)" }: RedirectButton
       })}
     >
       <View style={{ flexDirection: "row", alignItems: "center", gap: 10 }}>
-        {icon}
+        <View
+          style={{
+            width: 42,
+            aspectRatio: 1,
+            borderRadius: 12,
+            justifyContent: "center",
+            alignItems: "center",
+            backgroundColor: accent + "22",
+          }}
+        >
+          {icon}
+        </View>
         <ThemedText type="defaultSemiBold" colorName="antiFlashWhite">
           {label}
         </ThemedText>

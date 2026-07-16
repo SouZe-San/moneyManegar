@@ -1,4 +1,9 @@
-import { ScrollView, View, StyleSheet, Pressable, FlatList, ViewToken, useColorScheme } from "react-native";
+import {
+  View,
+  StyleSheet,
+  Pressable,
+  useColorScheme,
+} from "react-native";
 import { ThemedText } from "../ThemedText";
 import { useThemeColorWithName } from "@/hooks/useThemeColor";
 import CategoryIcon from "./CategoryIcon";
@@ -10,18 +15,14 @@ type ExpanseTypeProps = {
   item: string;
 };
 
-const iconLowMatch = {
-  Salary: "💰",
-  Gift: "🎁",
-  Business: "👤",
-  Others: "🧻",
-};
-
 const ExpenseTypeButton = ({ value, setValue, item }: ExpanseTypeProps) => {
-
-   const scheme = useColorScheme() ?? "dark";
-   const categoryColor =
-     (ColorMapping[scheme] as Record<string, string>)[item]?.trim();
+  const surface = useThemeColorWithName("surface");
+  const cardBorder = useThemeColorWithName("cardBorder");
+  const textMuted = useThemeColorWithName("textMuted");
+  const scheme = useColorScheme() ?? "dark";
+  const categoryColor = (ColorMapping[scheme] as Record<string, string>)[
+    item
+  ]?.trim();
 
   return (
     <View style={[styles.expenseTypeButton]}>
@@ -29,18 +30,16 @@ const ExpenseTypeButton = ({ value, setValue, item }: ExpanseTypeProps) => {
         style={[
           styles.expenseTypeButton_btn,
           {
-            borderColor: value === item ? categoryColor + "60" : "transparent",
-            backgroundColor:
-              value === item ? categoryColor + "26" : categoryColor + "15",
+            borderColor: value === item ? categoryColor : cardBorder,
+            backgroundColor: value === item ? categoryColor + "26" : surface,
           },
         ]}
         onPress={() => setValue(item)}
       >
         <ThemedText style={styles.buttonLabel}>
-          {/* {iconLowMatch[item as "Salary" | "Gift" | "Business" | "Others"]} */}
           <CategoryIcon
             type={item as "Salary" | "Gift" | "Business" | "Others"}
-            color={categoryColor}
+            color={value === item ? categoryColor : textMuted}
             size={22}
           />
         </ThemedText>
@@ -56,12 +55,10 @@ export default ExpenseTypeButton;
 
 const styles = StyleSheet.create({
   expanseTypeContainer: {
-    // gap: 10,
     flexGrow: 0,
     marginVertical: 5,
   },
   expenseTypeButton: {
-    // width: 60,
     height: 90,
     display: "flex",
     justifyContent: "center",

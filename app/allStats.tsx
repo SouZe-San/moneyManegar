@@ -13,15 +13,53 @@ import {
   fetchAllBudgets,
   fetchOnlyExpense,
   fetchOnlyIncome,
+  fetchMonthlyExpense,
+  fetchMonthlyIncome,
 } from "@/hooks/useQueries";
 import { useThemeColorWithName } from "@/hooks/useThemeColor";
 import { Budget } from "@/types/expanse";
+
+type Pt = { value: number; label?: string };
+type Bar = {
+  value: number;
+  frontColor: string;
+  spacing?: number;
+  label?: string;
+};
+
+const Legend = ({ items }: { items: { c: string; t: string }[] }) => (
+  <View style={{ flexDirection: "row", gap: 16, marginBottom: 12 }}>
+    {items.map((i) => (
+      <View
+        key={i.t}
+        style={{ flexDirection: "row", alignItems: "center", gap: 6 }}
+      >
+        <View
+          style={{
+            width: 10,
+            height: 10,
+            borderRadius: 3,
+            backgroundColor: i.c,
+          }}
+        />
+        <ThemedText style={{ fontSize: 12, color: "#8A9B96" }}>
+          {i.t}
+        </ThemedText>
+      </View>
+    ))}
+  </View>
+);
+
 
 export default function allStats() {
   const imageUrl = require("@/assets/images/temp/s1.jpg");
   const headerTitle = "Statistical Analysis";
 
-  const blurBackgoundColor = useThemeColorWithName("blurBg");
+  const expenseColor = useThemeColorWithName("expense");
+  const incomeColor = useThemeColorWithName("income");
+const surface = useThemeColorWithName("surface");
+const cardBorder = useThemeColorWithName("cardBorder");
+const textMuted = useThemeColorWithName("textMuted");
 
   interface ChartItem {
     value: number;
@@ -31,29 +69,32 @@ export default function allStats() {
     label?: string;
   }
 
-  const [onlyIncomeData, setOnlyIncomeData] = useState<{ value: number }[]>([]);
-  const [onlyExpenseData, setOnlyExpenseData] = useState<{ value: number }[]>(
-    [],
-  );
+  const [expenseData, setExpenseData] = useState<Pt[]>([]);
+  const [incomeData, setIncomeData] = useState<Pt[]>([]);
   const [budgets, setBudgets] = useState<ChartItem[]>([]);
-  const [budgetMax, setBudgetMax] = useState(0);
-
+  const [budgetMax, setBudgetMax] = useState(0);  const [lineMax, setLineMax] = useState(0);
+const [cardWidth, setCardWidth] = useState(0);
   const sqlDb = useSQLiteContext();
 
   const fetch = async () => {
     try {
-      const data1 = await fetchOnlyExpense(sqlDb);
-      const data2 = await fetchOnlyIncome(sqlDb);
+       const exp = await fetchMonthlyExpense(sqlDb);
+       const inc = await fetchMonthlyIncome(sqlDb);
+       setExpenseData(exp);
+       setIncomeData(inc);
+       setLineMax(
+         Math.max(0, ...exp.map((d) => d.value), ...inc.map((d) => d.value)),
+       );
 
       const budgetData: Budget[] = await fetchAllBudgets(sqlDb);
-
-      const chartData = budgetData.flatMap((item) => [
+       const last4 = budgetData.slice(-4);
+      const chartData = last4.flatMap((item) => [
         // 1st Item: Budget Amount
         {
           value: item.budget_amount,
-          frontColor: "#18b228",
+          frontColor: "#38BDF8",
           gradientColor: "#acfc6a",
-          spacing: 6,
+          spacing: 4,
           label: new Date(2020, parseInt(item.month, 10) - 1, 1).toLocaleString(
             "en-US",
             { month: "short" },
@@ -62,13 +103,12 @@ export default function allStats() {
         // 2nd Item: Total Expense
         {
           value: item.total_expense,
-          frontColor: "#e9723b",
+          frontColor: "#FBBF24",
           gradientColor: "#ffed4e",
         },
       ]);
 
-      setOnlyExpenseData(data1);
-      setOnlyIncomeData(data2);
+
 
       setBudgets(chartData);
       setBudgetMax(Math.max(...chartData.map((item) => item.value)));
@@ -81,119 +121,144 @@ export default function allStats() {
       fetch();
     }, []),
   );
+  const empty = expenseData.length === 0 && incomeData.length === 0;
+  const card = {
+    padding: 16,
+    borderRadius: 16,
+    backgroundColor: surface,
+    borderWidth: 1,
+    borderColor: cardBorder,
+    marginBottom: 16,
+  };
 
 
   return (
     <ThemedView style={globalStyles.stack_container}>
       <ImageHeader imgUrl={imageUrl} title={headerTitle} />
-      <View style={{ marginTop: 50, flex: 1, marginBottom: -5 }}>
-        {onlyExpenseData.length === 0 || onlyIncomeData.length === 0 ? (
+      <ScrollView
+        style={{ flex: 1 }}
+        contentContainerStyle={{
+          paddingHorizontal: 20,
+          paddingTop: 40,
+          paddingBottom: 60,
+        }}
+        showsVerticalScrollIndicator={false}
+      >
+        {empty ? (
           <ThemedText
             type="title"
             colorName="tabIconDefault"
-            style={{ textAlign: "center", marginTop: 100, paddingLeft: 20 }}
+            style={{ textAlign: "center", marginTop: 100 }}
           >
             Paisa Nehi hai Kya ~_* !!!
           </ThemedText>
         ) : (
-          <View
-            style={{
-              margin: 20,
-              padding: 16,
-              borderRadius: 12,
-              backgroundColor: blurBackgoundColor,
-              flex: 1,
-            }}
-          >
-            <ThemedText style={{ fontWeight: "bold" }} type="subtitle">
-              Expanse vs Income
-            </ThemedText>
+          <>
+            {/* Expense vs Income */}
             <View
-              style={{
-                paddingHorizontal: 4,
-                paddingVertical: 20,
-                alignItems: "center",
-              }}
+              style={card}
+              onLayout={(e) => setCardWidth(e.nativeEvent.layout.width - 32)}
             >
-              <ScrollView horizontal showsHorizontalScrollIndicator={false}>
-                <LineChart
-                  areaChart
-                  curved
-                  // hideYAxisText
-                  hideRules
-                  data={onlyExpenseData}
-                  data2={onlyIncomeData}
-                  yAxisTextStyle={{ color: "gray" }}
-                  height={300}
-                  spacing={40}
-                  initialSpacing={0}
-                  noOfSections={3}
-                  color1="#65e20b"
-                  thickness1={0.4}
-                  thickness2={0.4}
-                  color2="#fc7507"
-                  hideDataPoints
-                  yAxisThickness={0}
-                  xAxisThickness={0}
-                  startFillColor1="#4ff20e"
-                  startFillColor2="#fc7507"
-                  startOpacity={0.8}
-                  endOpacity={0.0}
-                />
-              </ScrollView>
+              <ThemedText type="subtitle" style={{ fontSize: 16 }}>
+                Expense vs Income
+              </ThemedText>
+              <ThemedText
+                style={{
+                  fontSize: 12,
+                  color: textMuted,
+                  marginTop: 2,
+                  marginBottom: 12,
+                }}
+              >
+                Monthly totals · last 4 months
+              </ThemedText>
+              <Legend
+                items={[
+                  { c: expenseColor, t: "Expense" },
+                  { c: incomeColor, t: "Income" },
+                ]}
+              />
+
+              <LineChart
+                areaChart
+                curved
+                hideDataPoints
+                data={expenseData}
+                data2={incomeData}
+                height={200}
+                parentWidth={cardWidth}
+                // width={260}
+                spacing={70}
+                initialSpacing={20}
+                endSpacing={10}
+                adjustToWidth // fit the 4 points into `width`
+                maxValue={Math.ceil((lineMax * 1.15) / 1000) * 1000 || 1000}
+                noOfSections={4}
+                color1={expenseColor}
+                color2={incomeColor}
+                hideRules
+                rulesType="solid"
+                rulesColor="transparent"
+                xAxisColor="transparent"
+                thickness1={2.5}
+                thickness2={2.5}
+                startFillColor1={expenseColor}
+                startFillColor2={incomeColor}
+                startOpacity={0.18}
+                endOpacity={0.0}
+                yAxisThickness={0}
+                xAxisThickness={0}
+                yAxisTextStyle={{ color: textMuted, fontSize: 8 }}
+                xAxisLabelTextStyle={{ color: textMuted, fontSize: 10 }}
+              />
             </View>
-          </View>
+
+            {/* Budget Overview */}
+            {budgets.length > 0 && (
+              <View style={card}>
+                <ThemedText type="subtitle" style={{ fontSize: 16 }}>
+                  Budget Overview
+                </ThemedText>
+                <ThemedText
+                  style={{
+                    fontSize: 12,
+                    color: textMuted,
+                    marginTop: 2,
+                    marginBottom: 12,
+                  }}
+                >
+                  Budget vs spent · per month
+                </ThemedText>
+                <Legend
+                  items={[
+                    { c: "#38BDF8", t: "Budget" },
+                    { c: "#FBBF24", t: "Spent" },
+                  ]}
+                />
+
+                <BarChart
+                  data={budgets}
+                  barWidth={14}
+                  initialSpacing={12}
+                  spacing={18}
+                  barBorderRadius={4}
+                  yAxisThickness={0}
+                  xAxisColor="rgba(255,255,255,0.08)"
+                  hideRules
+                  noOfSections={4}
+                  maxValue={Math.ceil((budgetMax * 1.15) / 500) * 500 || 500}
+                  yAxisTextStyle={{ color: textMuted, fontSize: 10 }}
+                  xAxisLabelTextStyle={{
+                    color: textMuted,
+                    fontSize: 11,
+                    textAlign: "center",
+                  }}
+                />
+              </View>
+            )}
+          </>
         )}
-      </View>
-
-{
-  onlyIncomeData.length > 0  &&
-      <View
-        style={{
-          margin: 20,
-          padding: 16,
-          borderRadius: 12,
-          backgroundColor: blurBackgoundColor,
-          flex: 1,
-          marginBottom: 40
-        }}
-      >
-        <ThemedText style={{ fontWeight: "bold" }} type="subtitle">
-          Budget Overview
-        </ThemedText>
-        <View
-          style={{
-            paddingHorizontal: 4,
-            paddingVertical: 20,
-            alignItems: "center",
-          }}
-        >
-          <ScrollView horizontal showsHorizontalScrollIndicator={false}>
-            <BarChart
-              data={budgets}
-              barWidth={16}
-              initialSpacing={10}
-              spacing={14}
-              barBorderRadius={3}
-              showGradient
-              yAxisThickness={0}
-              // xAxisType={ruleTypes.DASHED}
-              xAxisColor={'lightgray'}
-
-              yAxisTextStyle={{ color: "lightgray" }}
-              stepValue={ budgetMax > 5000 ? 1000 : budgetMax > 1000 ? 600 : 200}
-              maxValue={budgetMax + 500}
-              noOfSections={6}
-              // yAxisLabelTexts={["0", "1k", "2k", "3k", "4k", "5k", "6k"]}
-              yAxisLabelTexts={[]}
-              labelWidth={40}
-              xAxisLabelTextStyle={{ color: "lightgray", textAlign: "center" }}
-            />
-          </ScrollView>
-        </View>
-      </View>
-}
-  
+      </ScrollView>
     </ThemedView>
   );
 }

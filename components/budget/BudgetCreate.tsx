@@ -26,6 +26,9 @@ const BudgetCreate = ({
   const iconColor = useThemeColorWithName("inputIcon");
   const borderColor = useThemeColorWithName("borderColor");
   const bageBgColor = useThemeColorWithName("toggleButton");
+const surface = useThemeColorWithName("surface");
+const cardBorder = useThemeColorWithName("cardBorder");
+const textMuted = useThemeColorWithName("textMuted");
 
   const [amount, setAmount] = useState<string | undefined>(undefined);
   const [date, setDate] = useState<string | null>(null);
@@ -34,7 +37,7 @@ const BudgetCreate = ({
   const db = useSQLiteContext();
   const router = useRouter();
 
-  const budgetMonts = [
+  const budgetMonths = [
     "Jan",
     "Feb",
     "Mar",
@@ -72,7 +75,7 @@ const BudgetCreate = ({
 
       const data = {
         amount: parseInt(amount || "0"),
-        date: getFirstDayOfMonth(budgetMonts.indexOf(date)),
+        date: getFirstDayOfMonth(budgetMonths.indexOf(date)),
       };
 
       await addBudget(db, data);
@@ -90,7 +93,7 @@ const BudgetCreate = ({
 
   return (
     <ThemedView>
-      <ThemedText type="title" style={{ marginTop: 15, marginBottom: 20 }}>
+      <ThemedText type="subtitle" style={{ fontSize:24, marginTop: 15, marginBottom: 20 }}>
         Budget of Month
       </ThemedText>
       <View style={{ zIndex: 3, position: "relative" }}>
@@ -109,7 +112,7 @@ const BudgetCreate = ({
             marginVertical: 10,
           }}
           showsHorizontalScrollIndicator={false}
-          data={budgetMonts}
+          data={budgetMonths}
           keyExtractor={(item) => item}
           renderItem={({ item, index: numbers }) => {
             return (
@@ -118,14 +121,19 @@ const BudgetCreate = ({
                   style={[
                     styles.expenseTypeButton_btn,
                     {
-                      borderColor,
-                      backgroundColor:
-                        date === item ? bageBgColor : "transparent",
+                      borderColor: cardBorder,
+                      backgroundColor: date === item ? bageBgColor : surface,
                     },
                   ]}
+                  android_ripple={{ color: bageBgColor + "22" }}
                   onPress={() => setDate(item)}
                 >
-                  <ThemedText style={styles.buttonLabel}>{item}</ThemedText>
+                  <ThemedText
+                    style={styles.buttonLabel}
+                    colorName={date === item ? "text" : "textMuted"}
+                  >
+                    {item}
+                  </ThemedText>
                 </Pressable>
               </View>
             );
@@ -147,7 +155,7 @@ const BudgetCreate = ({
         }}
       >
         <ThemedText
-          colorName="antiFlashWhite"
+          colorName="textMuted"
           style={{ fontWeight: 400, letterSpacing: 1.5 }}
         >
           GoBack

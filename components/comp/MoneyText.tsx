@@ -32,15 +32,13 @@ const MoneyText = ({
       ]}
     >
       {prefix}
-      {grouped}
-      <Text
+      {grouped}<Text
         style={{
-          fontSize: size * 0.6,
+          fontSize: size * 0.65,
           color: decimalColor ? decimalColor : "#ffffff94",
           fontWeight: "600",
         }}
-      >
-        .{dec}
+      >.{dec}
       </Text>
     </ThemedText>
   );

@@ -43,6 +43,8 @@ export default function TabTwoScreen() {
   const thumbColor = useColorScheme() === "light" ? "#8c8c8c" : "#ECEDEE";
   const selectedThumbColor =
     useColorScheme() === "light" ? "#dff169" : "#030f0e";
+  const insetBg = "#0C1A17"; // one notch darker than surface, for the nested panel
+
   // States
   const [modalVisible, setModalVisible] = useState(false);
 
@@ -67,53 +69,59 @@ export default function TabTwoScreen() {
 
       <ThemedText type="subtitle">Account</ThemedText>
       <Collapsible title="Personal " iconName="userIcon">
-        <View>
-          <ThemedText>
-            <ThemedText style={{ fontSize: 15 }} type="smallText">
-              E-mail :{" "}
-            </ThemedText>
-            {email ?? "No Mail"}
-          </ThemedText>
-          <ThemedText>
-            <ThemedText style={{ fontSize: 15 }} type="smallText">
-              Status :{" "}
-            </ThemedText>
-            Offline
-          </ThemedText>
-
-          <ThemedText>
-            <ThemedText style={{ fontSize: 15 }} type="smallText">
-              Situation :{" "}
-            </ThemedText>
-            Broke
-          </ThemedText>
+        <View style={{ gap: 12 }}>
+          <View style={[styles.infoPanel, { backgroundColor: surface + "40" }]}>
+            <View style={styles.infoRow}>
+              <ThemedText style={styles.infoLabel} type="smallText">
+                E-mail
+              </ThemedText>
+              <ThemedText style={styles.infoValue}>
+                {email ?? "No Mail"}
+              </ThemedText>
+            </View>
+            <View style={styles.infoRow}>
+              <ThemedText style={styles.infoLabel} type="smallText">
+                Status
+              </ThemedText>
+              <View style={[styles.pill, { backgroundColor: "#8A9B9622" }]}>
+                <ThemedText style={[styles.pillText, { color: "#8A9B96" }]}>
+                  Offline
+                </ThemedText>
+              </View>
+            </View>
+            <View style={[styles.infoRow, { borderBottomWidth: 0 }]}>
+              <ThemedText style={styles.infoLabel} type="smallText">
+                Situation
+              </ThemedText>
+              <View style={[styles.pill, { backgroundColor: "#FB718522" }]}>
+                <ThemedText style={[styles.pillText, { color: "#fa894cfd" }]}>
+                  Broke
+                </ThemedText>
+              </View>
+            </View>
+          </View>
           <View
-            style={{
-              marginTop: 10,
-              display: "flex",
-              flexDirection: "row",
-              justifyContent: "space-between",
-              alignItems: "center",
-            }}
+            style={[
+              styles.settingCard,
+              { backgroundColor: surface + "40", borderColor: "transparent" },
+            ]}
           >
-            <ThemedText type="defaultSemiBold">
-              View Expanse in Month Wise ?
-            </ThemedText>
-            <View
-              style={{
-                borderWidth: 1,
-                borderRadius: 20,
-                overflow: "hidden",
-                borderBlockColor: "transparent",
-              }}
-            >
+            <View style={{ flex: 1, paddingRight: 12 }}>
+              <ThemedText type="defaultSemiBold" style={{ fontSize: 15 }}>
+                View expenses month-wise
+              </ThemedText>
+              <ThemedText
+                type="smallText"
+                style={{ fontSize: 10, color: textMuted }}
+              >
+                Show this month's totals instead of all-time.
+              </ThemedText>
+            </View>
+            <View style={{ borderRadius: 20, overflow: "hidden" }}>
               <Switch
                 value={expenseInMonth}
                 style={{
-                  padding: 0,
-                  margin: 0,
                   height: 28,
-                  width: "100%",
                   backgroundColor: expenseInMonth
                     ? toggleButton
                     : unSelectedToggleButton,
@@ -125,36 +133,35 @@ export default function TabTwoScreen() {
                     "durationType",
                     !expenseInMonth ? "true" : "false",
                   );
-
                   setExpenseInMonth((previousState) => !previousState);
                 }}
               />
             </View>
           </View>
-
-          <ThemedText type="defaultSemiBold" style={{ marginTop: 10 }}>
-            Add New
-          </ThemedText>
-          <View
-            style={{
-              flexGrow: 0,
-              marginVertical: 5,
-              flexWrap: "wrap",
-              flexDirection: "row",
-              position: "relative",
-            }}
-          >
-            <SingleBox
-              label="Member"
-              icon={<UserIcon color={iconColor} />}
-              onPress={() => onPress()}
-            />
-            <SingleBox
-              label="Group"
-              icon={<GroupsIcon color={iconColor} />}
-              onPress={() => router.push("/groups/create")}
-            />
-
+          <View>
+            <ThemedText style={styles.groupLabel} type="defaultSemiBold">
+              ADD NEW
+            </ThemedText>
+            <View
+              style={{
+                flexGrow: 0,
+                marginVertical: 5,
+                flexWrap: "wrap",
+                flexDirection: "row",
+                position: "relative",
+              }}
+            >
+              <SingleBox
+                label="Member"
+                icon={<UserIcon color={iconColor} />}
+                onPress={() => onPress()}
+              />
+              <SingleBox
+                label="Group"
+                icon={<GroupsIcon color={iconColor} />}
+                onPress={() => router.push("/groups/create")}
+              />
+            </View>
             <BottomSheetModal
               isOpen={modalVisible}
               setIsOpen={setModalVisible}
@@ -310,6 +317,56 @@ const styles = StyleSheet.create({
     width: 42,
     height: 42,
     borderRadius: 12,
+    justifyContent: "center",
+    alignItems: "center",
+  },
+  infoPanel: {
+    borderRadius: 12,
+    paddingHorizontal: 14,
+    paddingVertical: 4,
+  },
+  infoRow: {
+    flexDirection: "row",
+    alignItems: "center",
+    justifyContent: "space-between",
+    paddingVertical: 9,
+    borderBottomWidth: StyleSheet.hairlineWidth,
+    borderBottomColor: "rgba(255,255,255,0.05)",
+  },
+  infoLabel: { fontSize: 13, color: "#8A9B96" },
+  infoValue: { fontSize: 15, fontWeight: "500" },
+  pill: { paddingHorizontal: 12, paddingVertical: 2, borderRadius: 16 },
+  pillText: { fontSize: 12, fontWeight: "600" },
+  settingCard: {
+    flexDirection: "row",
+    alignItems: "center",
+    borderRadius: 14,
+    borderWidth: 1,
+    paddingHorizontal: 16,
+    paddingVertical: 14,
+  },
+  groupLabel: {
+    fontSize: 11,
+    letterSpacing: 0.6,
+    color: "#8A9B96",
+    marginLeft: 2,
+    marginBottom: 8,
+  },
+  actionCard: {
+    flex: 1,
+    flexDirection: "row",
+    alignItems: "center",
+    gap: 10,
+    borderRadius: 14,
+    borderWidth: 1,
+    paddingHorizontal: 12,
+    paddingVertical: 13,
+    overflow: "hidden",
+  },
+  actionChip: {
+    width: 38,
+    height: 38,
+    borderRadius: 11,
     justifyContent: "center",
     alignItems: "center",
   },

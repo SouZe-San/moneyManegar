@@ -11,12 +11,12 @@ export const openBottomSheetModal = (
   setOpenedItem: React.Dispatch<React.SetStateAction<boolean>>,
 ) => {
   setOpenedItem(true);
-  const isActive = ref?.current?.isActive();
-  if (isActive) {
-    ref?.current?.scrollTo(20);
-  } else {
-    ref?.current?.scrollTo(-200);
-  }
+  // const isActive = ref?.current?.isActive();
+  // if (isActive) {
+  //   ref?.current?.scrollTo(20);
+  // } else {
+  //   ref?.current?.scrollTo(-200);
+  // }
 };
 
 import { ToastAndroid } from "react-native";

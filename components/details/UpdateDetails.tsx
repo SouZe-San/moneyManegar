@@ -1,9 +1,12 @@
 import { ThemedView } from "../ThemedView";
 import { useState } from "react";
 import { ThemedText } from "../ThemedText";
-import SubmitButton from "../inputs/SubmitButton";
-import { View, TouchableOpacity, Image } from "react-native";
-import { updateImage_of_Member, updateMember, updateName_of_Member } from "@/hooks/useQueries";
+import { View, TouchableOpacity, Image, Text } from "react-native";
+import {
+  updateImage_of_Member,
+  updateMember,
+  updateName_of_Member,
+} from "@/hooks/useQueries";
 import { useSQLiteContext } from "expo-sqlite";
 
 import { useThemeColorWithName } from "@/hooks/useThemeColor";
@@ -23,9 +26,12 @@ const UpdateDetails = ({
   const [name, setName] = useState<string | undefined>(undefined);
   const [selectedImage, setSelectedImage] = useState<string | null>(null);
   const sqlDb = useSQLiteContext();
-  const bg = useThemeColorWithName("blurBg");
+
+  const surface = useThemeColorWithName("surface");
+  const cardBorder = useThemeColorWithName("cardBorder");
+  const textMuted = useThemeColorWithName("textMuted");
   const iconColor = useThemeColorWithName("icon");
-  const borderColor = useThemeColorWithName("highLightBackground");
+  const accent = useThemeColorWithName("highLightBackground");
 
   const update = async () => {
     try {
@@ -73,7 +79,10 @@ const UpdateDetails = ({
       quality: 1,
     });
     if (!result.canceled) {
-      const url = await photoUpload(result.assets[0].uri, result.assets[0].fileName);
+      const url = await photoUpload(
+        result.assets[0].uri,
+        result.assets[0].fileName,
+      );
       setSelectedImage(url);
 
       return;
@@ -82,28 +91,40 @@ const UpdateDetails = ({
   };
   return (
     <ThemedView>
-      <ThemedText type="subtitle" style={{ marginTop: 15, marginBottom: 20 }}>
+      <ThemedText type="subtitle" style={{ fontSize: 16, marginTop: 12 }}>
         Identity Update
+      </ThemedText>
+      <ThemedText
+        style={{
+          fontSize: 10,
+          color: textMuted,
+          marginBottom: 16,
+        }}
+      >
+        Change this member's name or photo. Leave a field blank to keep it.
       </ThemedText>
       <View
         style={{
           flexDirection: "row",
           alignItems: "center",
-          gap: 10,
-          marginTop: 10,
-          marginBottom: 15,
+          gap: 14,
+          // marginTop: 10,
+          marginBottom: 16,
         }}
       >
         <TouchableOpacity
           style={{
-            borderColor: bg,
-            backgroundColor: bg,
-            borderRadius: 10,
-            padding: selectedImage ? 0 : 15,
-            borderWidth: 1,
             width: selectedImage ? 100 : "auto",
             aspectRatio: 1,
+            borderRadius: 16,
+            borderColor: selectedImage ? cardBorder : "rgba(255,255,255,0.15)",
+            backgroundColor: surface,
+            padding: selectedImage ? 0 : 15,
+            borderWidth: 1,
+            borderStyle: selectedImage ? "solid" : "dashed",
             overflow: "hidden",
+            justifyContent: "center",
+            alignItems: "center",
           }}
           onPress={pickImage}
           activeOpacity={0.8}
@@ -114,49 +135,57 @@ const UpdateDetails = ({
               style={{ objectFit: "cover", width: "100%", height: "100%" }}
             />
           ) : (
-            <ProCamIcon color={iconColor} />
+            <ProCamIcon color={textMuted} />
           )}
         </TouchableOpacity>
-        <ThemedText type="defaultSemiBold">Profile Photo</ThemedText>
+        <View>
+          <ThemedText type="defaultSemiBold">Profile Photo</ThemedText>
+          <Text style={{ fontSize: 12, color: textMuted }}>
+            Tap to choose from gallery
+          </Text>
+        </View>
       </View>
 
       <View>
         <InputWithIcon
           icon={<UserIcon color={iconColor} />}
-          placeholder="Name..."
+          placeholder="Update Name"
           value={name}
           setValue={setName}
           keyboardType="default"
         />
       </View>
 
-      <View
-        style={{
-          width: "100%",
-          left: 10,
-          justifyContent: "center",
-          alignItems: "center",
-          alignSelf: "center",
-        }}
-      >
+      <View style={{ flexDirection: "row", gap: 10, marginTop: 16 }}>
         <TouchableOpacity
           onPress={() => setIsUpdate(false)}
           style={{
-            width: "90%",
-            height: 50,
-            justifyContent: "center",
-            alignItems: "center",
-            borderRadius: 10,
             borderWidth: 1,
-            borderColor,
-            alignSelf: "center",
-            marginTop: 40,
-            marginBottom: 20,
+            borderColor: cardBorder,
+            flex: 1,
+            alignItems: "center",
+            paddingVertical: 13,
+            borderRadius: 12,
           }}
         >
-          <ThemedText style={{ fontWeight: 600, letterSpacing: 1.5 }}>Cancel</ThemedText>
+          <ThemedText style={{ color: textMuted }}>Cancel</ThemedText>
         </TouchableOpacity>
-        <SubmitButton button_label="Update Details" onPress={update} />
+        <TouchableOpacity
+          onPress={update}
+          style={[
+            {
+              flex: 1,
+              alignItems: "center",
+              paddingVertical: 13,
+              borderRadius: 12,
+            },
+            { backgroundColor: accent },
+          ]}
+        >
+          <ThemedText style={{ color: "#071311", fontWeight: "700" }}>
+            Update
+          </ThemedText>
+        </TouchableOpacity>
       </View>
     </ThemedView>
   );

@@ -6,11 +6,11 @@ import Animated, {
   useAnimatedStyle,
   useSharedValue,
   withSpring,
-  Extrapolate,
+  Extrapolation,
   interpolate,
 } from "react-native-reanimated";
 
-const { height: SCREEN_HEIGHT } = Dimensions.get("window");
+const { height: SCREEN_HEIGHT,width:SCREEN_WIDTH } = Dimensions.get("window");
 
 const MAX_TRANSLATE_Y = -SCREEN_HEIGHT + 50;
 
@@ -62,7 +62,7 @@ const BottomSheetView = React.forwardRef<BottomSheetRefProps, BottomSheetProps>(
         translateY.get(),
         [MAX_TRANSLATE_Y + 50, MAX_TRANSLATE_Y],
         [25, 5],
-        Extrapolate.CLAMP
+        Extrapolation.CLAMP,
       );
       return {
         borderRadius,
@@ -99,10 +99,12 @@ const styles = StyleSheet.create({
     marginVertical: 10,
   },
   container: {
-    width: "100%",
+    width: SCREEN_WIDTH,
     height: SCREEN_HEIGHT,
     top: SCREEN_HEIGHT,
     position: "absolute",
+    left: 0,
+    // right: 0,
     borderTopLeftRadius: 25,
     borderTopRightRadius: 25,
     paddingHorizontal: 20,

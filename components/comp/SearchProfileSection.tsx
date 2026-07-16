@@ -97,7 +97,10 @@ export default function SearchProfileSection({ member, setMember }: SearchProfil
 
       <View style={[styles.searchMemberView]}>
         {searchResult.length === 0 ? (
-          <ThemedText style={{ marginTop: 5, textAlign: "center" }} colorName="blurBg">
+          <ThemedText
+            style={{ marginTop: 5, textAlign: "center" }}
+            colorName="blurBg"
+          >
             Nonnnnnn
           </ThemedText>
         ) : (
@@ -105,6 +108,7 @@ export default function SearchProfileSection({ member, setMember }: SearchProfil
             scrollEnabled={true}
             scrollsToTop={true}
             data={searchResult}
+            contentContainerStyle={{ gap: 8 }}
             renderItem={({ item }) => <SearchMember member={item} />}
             keyExtractor={(member) => member.userId ?? member.userName}
           />
@@ -120,14 +124,13 @@ const MembersRow = ({ member }: { member: Members }) => {
   return (
     <View style={[styles.row, { backgroundColor: bg }]}>
       <UserIcon color={iconColor} />
-      <ThemedText type="defaultSemiBold">{member.userName}</ThemedText>
+      <ThemedText colorName="textMuted">{member.userName}</ThemedText>
     </View>
   );
 };
 
 const styles = StyleSheet.create({
   row: {
-    marginBottom: 10,
     paddingHorizontal: 10,
     paddingVertical: 15,
     borderRadius: 10,

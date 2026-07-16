@@ -1,7 +1,7 @@
 import { getInfoAsync } from "expo-file-system";
 import { View, StyleSheet, ScrollView, Image, TouchableOpacity, Alert } from "react-native";
 import { useCallback, useState } from "react";
-import { router, useFocusEffect } from "expo-router";
+import {  useFocusEffect } from "expo-router";
 import { useSQLiteContext } from "expo-sqlite";
 
 // components
@@ -22,11 +22,12 @@ import React from "react";
 
 const MemberDetails = ({ id }: { id: string | null }) => {
   // Colors
-  const borderColor = useThemeColorWithName("borderColor");
-  const darkTextColor = "#030f0e";
-  const balanceBg = useThemeColorWithName("highLightBackground");
-  const icon = useThemeColorWithName("icon");
-  const bg = useThemeColorWithName("blurBg");
+  const surface = useThemeColorWithName("surface");
+  const accent = useThemeColorWithName("button");
+  const textMuted = useThemeColorWithName("textMuted");
+  const expenseColor = useThemeColorWithName("expense");
+  const incomeColor = useThemeColorWithName("income");
+
 
   const [member, setMember] = useState<Members | null>(null);
   const [isFile, setIsFile] = useState(false);
@@ -85,107 +86,86 @@ const MemberDetails = ({ id }: { id: string | null }) => {
   };
   return (
     <ThemedView>
-      <View
-        style={{
-          flexDirection: "row",
-          alignItems: "center",
-          justifyContent: "space-between",
-          marginVertical: 20,
-        }}
-      >
-        <View style={{ flexDirection: "row", alignItems: "center", gap: 10 }}>
-          <ThemedText type="title">{member?.userName}</ThemedText>
-          <View
-            style={{
-              height: 40,
-              width: 3,
-              backgroundColor: bg,
-              marginLeft: 10,
-              borderRadius: 10,
-            }}
-          ></View>
-          <TouchableOpacity
-            style={{
-              padding: 10,
-            }}
-            onPress={() => setIsUpdate(true)}
-          >
-            <PenIcon color={balanceBg} outline={icon} />
-          </TouchableOpacity>
-          <View
-            style={{
-              height: 40,
-              width: 3,
-              backgroundColor: bg,
-              marginLeft: 10,
-              borderRadius: 10,
-            }}
-          ></View>
-          <TouchableOpacity
-            style={{
-              padding: 10,
-            }}
-            onPress={deleteHandler}
-          >
-            <DeleteIcon color="#de0000ce" />
-          </TouchableOpacity>
-        </View>
-
-        <View
-          style={{
-            borderRadius: "50%",
-            padding: 0,
-            width: 80,
-            aspectRatio: 1,
-            overflow: "hidden",
-            justifyContent: "center",
-            alignItems: "center",
-            backgroundColor: balanceBg,
-          }}
-        >
+      <View style={styles.header}>
+        <View style={[styles.avatar, { backgroundColor: "#34D39922" }]}>
           {member?.imgUrl && isFile ? (
             <Image
               source={{ uri: member.imgUrl }}
-              style={{ objectFit: "cover", width: "100%", height: "100%" }}
+              style={{ width: "100%", height: "100%" }}
             />
           ) : (
-            <ThemedText
-              type="title"
-              style={{
-                textAlign: "center",
-              }}
-            >
-              🤡
+            <ThemedText type="title" style={{ textAlign: "center" }}>
+              🐸
             </ThemedText>
           )}
+        </View>
+
+        <View style={{ flex: 1, justifyContent: "center" }}>
+          <ThemedText type="title" numberOfLines={1}>
+            {member?.userName}
+          </ThemedText>
+        </View>
+
+        <View style={{ flexDirection: "row", gap: 8 }}>
+          <TouchableOpacity
+            style={[styles.actionChip, { backgroundColor: incomeColor + "20" }]}
+            onPress={() => setIsUpdate(true)}
+          >
+            <PenIcon color={incomeColor + "20"} outline={accent} />
+          </TouchableOpacity>
+          <TouchableOpacity
+            style={[styles.actionChip, { backgroundColor: "#FB718522" }]}
+            onPress={deleteHandler}
+          >
+            <DeleteIcon color="#FB7185" />
+          </TouchableOpacity>
         </View>
       </View>
       {isUpdate ? (
         <UpdateDetails setIsUpdate={setIsUpdate} _id={Number(id)} />
       ) : (
-        <View style={{ marginVertical: 20, width: "100%", gap: 8 }}>
+        <View style={{ marginVertical: 16, gap: 10 }}>
           <View
-            style={[styles.costViewBox, { backgroundColor: balanceBg, borderColor: balanceBg }]}
+            style={[
+              styles.balanceCard,
+              { backgroundColor: surface, borderColor: expenseColor + "44" },
+            ]}
           >
-            <ThemedText type="defaultSemiBold" style={{ fontSize: 14, color: darkTextColor }}>
-              Pending Payment
-            </ThemedText>
-            <ThemedText type="subtitle" style={{ fontSize: 26, color: darkTextColor }}>
-              {member?.owedAmount?.toFixed(2) ?? 0} ₹
+            <View>
+              <ThemedText style={{ fontSize: 14 }}>Pending Payment</ThemedText>
+              <ThemedText style={{ fontSize: 11, color: textMuted }}>
+                you owe
+              </ThemedText>
+            </View>
+            <ThemedText
+              type="subtitle"
+              style={[{ fontSize: 20, fontWeight: "600", color: expenseColor }]}
+            >
+              ₹{member?.owedAmount?.toFixed(2) ?? 0.0}
             </ThemedText>
           </View>
-          <View style={[styles.costViewBox, { borderColor }]}>
-            <ThemedText type="default" style={{ fontSize: 14 }}>
-              Deu Payment
-            </ThemedText>
-            <ThemedText type="subtitle" style={{ fontSize: 26 }}>
-              {member?.dueAmount?.toFixed(2) ?? 0} ₹
+
+          <View
+            style={[
+              styles.balanceCard,
+              { backgroundColor: surface, borderColor: incomeColor + "44" },
+            ]}
+          >
+            <View>
+              <ThemedText style={{ fontSize: 14 }}>Due Payment</ThemedText>
+              <ThemedText style={{ fontSize: 11, color: textMuted }}>
+                owed to you
+              </ThemedText>
+            </View>
+            <ThemedText
+              type="subtitle"
+              style={[{ fontSize: 20, fontWeight: "600", color: incomeColor }]}
+            >
+              ₹{member?.dueAmount?.toFixed(2) ?? 0.0}
             </ThemedText>
           </View>
         </View>
       )}
-      {!isUpdate && <ThemedText type="subtitle">All Transactions</ThemedText>}
-      <ScrollView></ScrollView>
     </ThemedView>
   );
 };
@@ -202,5 +182,35 @@ const styles = StyleSheet.create({
     paddingBottom: 15,
     height: 100,
     padding: 10,
+  },
+  header: {
+    flexDirection: "row",
+    alignItems: "center",
+    gap: 14,
+    marginVertical: 18,
+  },
+  avatar: {
+    width: 64,
+    height: 64,
+    borderRadius: 32,
+    overflow: "hidden",
+    justifyContent: "center",
+    alignItems: "center",
+  },
+  actionChip: {
+    width: 38,
+    height: 38,
+    borderRadius: 11,
+    justifyContent: "center",
+    alignItems: "center",
+  },
+  balanceCard: {
+    flexDirection: "row",
+    alignItems: "center",
+    justifyContent: "space-between",
+    borderWidth: 1,
+    borderRadius: 14,
+    paddingHorizontal: 15,
+    paddingVertical: 13,
   },
 });

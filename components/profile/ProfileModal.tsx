@@ -53,18 +53,32 @@ export default function ProfileModal({
   const iconColor = useThemeColorWithName("icon");
   const borderColor = useThemeColorWithName("buttonBg");
   const highLightNotify = useThemeColorWithName("highLightBackground");
-  const bg = useThemeColorWithName("blurBg");
+  const bg = useThemeColorWithName("surface");
+  const cardBorder = useThemeColorWithName("cardBorder")
 
   //
   return (
     <ThemedView>
       {/* Ist ROw */}
-      <View style={{ flexDirection: "row", alignItems: "center", justifyContent: "space-between" }}>
-        <View>{userName && <Profile userName={userName} selectedImage={selectedImage} />}</View>
+      <View
+        style={{
+          flexDirection: "row",
+          alignItems: "center",
+          justifyContent: "space-between",
+        }}
+      >
+        <View>
+          {userName && (
+            <Profile userName={userName} selectedImage={selectedImage} />
+          )}
+        </View>
 
         {/* <Link href="/notification" style={}}> */}
         <Pressable
-          style={[styles.iconView, { borderColor }]}
+          style={[
+            styles.iconView,
+            { borderColor: cardBorder, backgroundColor: borderColor + "22" },
+          ]}
           onPress={() => {
             setOpenedItem(false);
             router.push("/notification");
@@ -95,22 +109,69 @@ export default function ProfileModal({
         onPress={pickImage}
         activeOpacity={0.8}
       >
-        <ProCamIcon color={iconColor} />
-        <ThemedText type="defaultSemiBold">Profile Photo</ThemedText>
+        <View
+          style={{
+            backgroundColor: highLightNotify + "22",
+            width: 42,
+            aspectRatio: 1,
+            borderRadius: 12,
+            justifyContent: "center",
+            alignItems: "center",
+          }}
+        >
+          <ProCamIcon color={highLightNotify} />
+        </View>
+        <ThemedText type="defaultSemiBold" colorName="textMuted">
+          Profile Photo
+        </ThemedText>
       </TouchableOpacity>
 
       {/* //! 3rd Row || Log In  */}
-      <ThemedText type="title" style={{ fontSize: 20, marginBottom: 10 }}>
+      <ThemedText
+        style={{
+          fontSize: 14,
+          marginBottom: 10,
+          color: "#8A9B96",
+          letterSpacing: 0.6,
+          textTransform: "uppercase",
+        }}
+      >
         Log In / Sign In
       </ThemedText>
-      <View style={{ flexDirection: "row", justifyContent: "space-between", alignItems: "center" }}>
-        <Pressable style={[styles.button, { borderColor: bg }]}>
-          <ThemedText type="defaultSemiBold" style={{ textAlign: "center" }}>
+      <View
+        style={{
+          flexDirection: "row",
+          justifyContent: "space-between",
+          alignItems: "center",
+        }}
+      >
+        <Pressable
+          style={[
+            styles.button,
+            { borderColor: cardBorder, backgroundColor: bg },
+          ]}
+          android_ripple={{ color: "#828282" + "22" }}
+        >
+          <ThemedText
+            type="defaultSemiBold"
+            colorName="textMuted"
+            style={{ textAlign: "center" }}
+          >
             Log In
           </ThemedText>
         </Pressable>
-        <Pressable style={[styles.button, { borderColor: bg }]}>
-          <ThemedText type="defaultSemiBold" style={{ textAlign: "center" }}>
+        <Pressable
+          style={[
+            styles.button,
+            { borderColor: cardBorder, backgroundColor: bg },
+          ]}
+          android_ripple={{ color: "#969696" + "22" }}
+        >
+          <ThemedText
+            type="defaultSemiBold"
+            colorName="textMuted"
+            style={{ textAlign: "center" }}
+          >
             sign In
           </ThemedText>
         </Pressable>
@@ -127,7 +188,7 @@ const Profile = ({
   selectedImage: string | null;
 }) => {
   return (
-    <View style={{ flexDirection: "row", alignItems: "center", gap: 10 }}>
+    <View style={{ flexDirection: "row", alignItems: "center", gap: 14 }}>
       <View style={[styles.image]}>
         <Image
           source={
@@ -136,7 +197,7 @@ const Profile = ({
           style={{ objectFit: "cover", width: "100%", height: "100%" }}
         />
       </View>
-      <ThemedText type="defaultSemiBold" style={{ fontSize: 20 }}>
+      <ThemedText type="defaultSemiBold" style={{ fontSize: 24 }}>
         {userName}
       </ThemedText>
     </View>
@@ -165,7 +226,7 @@ const styles = StyleSheet.create({
   },
   titleBox: {
     paddingHorizontal: 10,
-    paddingVertical: 15,
+    paddingVertical: 8,
     borderRadius: 10,
     borderWidth: 1,
     marginVertical: 20,
@@ -179,7 +240,6 @@ const styles = StyleSheet.create({
     borderWidth: 1,
     gap: 6,
     color: "#aaaaaa",
-    backgroundColor: "#abcbc427",
     position: "relative",
     overflow: "hidden",
   },

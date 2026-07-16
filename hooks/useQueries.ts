@@ -203,7 +203,49 @@ const fetchOnlyIncome = async (db: SQLiteDatabase) => {
     return [];
   }
 };
+const fetchMonthlyExpense = async (db: SQLiteDatabase) => {
+  try {
+    const rows = await db.getAllAsync<{ ym: string; value: number }>(
+      `SELECT
+         STRFTIME('%Y-%m', '20' || SUBSTR(date,7,2) || '-' || SUBSTR(date,4,2) || '-' || SUBSTR(date,1,2)) AS ym,
+         SUM(amount) AS value
+       FROM AllTransactions
+       WHERE type = 'expense'
+       GROUP BY ym
+       ORDER BY ym DESC
+       LIMIT 4`,
+    );
+    return rows.reverse().map((r) => ({
+      value: r.value ?? 0,
+      label: new Date(r.ym + "-01").toLocaleString("en-US", { month: "short" }),
+    }));
+  } catch (error) {
+    console.error("Error fetching monthly expense: ", error);
+    return [];
+  }
+};
 
+const fetchMonthlyIncome = async (db: SQLiteDatabase) => {
+  try {
+    const rows = await db.getAllAsync<{ ym: string; value: number }>(
+      `SELECT
+         STRFTIME('%Y-%m', '20' || SUBSTR(date,7,2) || '-' || SUBSTR(date,4,2) || '-' || SUBSTR(date,1,2)) AS ym,
+         SUM(amount) AS value
+       FROM AllTransactions
+       WHERE type = 'income'
+       GROUP BY ym
+       ORDER BY ym DESC
+       LIMIT 4`,
+    );
+    return rows.reverse().map((r) => ({
+      value: r.value ?? 0,
+      label: new Date(r.ym + "-01").toLocaleString("en-US", { month: "short" }),
+    }));
+  } catch (error) {
+    console.error("Error fetching monthly income: ", error);
+    return [];
+  }
+};
 // Fetch All Member
 const fetchAllMember = async (db: SQLiteDatabase) => {
   try {
@@ -628,6 +670,8 @@ export {
   fetchOnlyExpense,
   fetchOnlyIncome,
   fetchAllBudgets,
+  fetchMonthlyExpense,
+  fetchMonthlyIncome,
   fetchThisMonthBudget,
   // Update
   addDueAmount_of_Member,

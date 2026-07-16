@@ -31,6 +31,9 @@ export default function create() {
 
   // colors
   const bg = useThemeColorWithName("blurBg");
+  const surface = useThemeColorWithName("surface");
+  const cardBorder = useThemeColorWithName("cardBorder");
+  const textMuted = useThemeColorWithName("textMuted");
   const iconColor = useThemeColorWithName("icon");
 
   const router = useRouter();
@@ -107,17 +110,20 @@ export default function create() {
           marginTop: 20,
         }}
       >
-        <ThemedText type="title">Group Create</ThemedText>
+        <ThemedText type="title">Create Group</ThemedText>
         <TouchableOpacity
           style={{
-            borderColor: bg,
-            backgroundColor: bg,
-            borderRadius: selectedImage ? "50%" : 10,
-            padding: selectedImage ? 0 : 15,
-            borderWidth: 1,
             width: selectedImage ? 80 : "auto",
             aspectRatio: 1,
+            borderRadius: 16,
+            borderColor: selectedImage ? cardBorder : "rgba(255,255,255,0.15)",
+            backgroundColor: surface,
+            padding: selectedImage ? 0 : 15,
+            borderWidth: 1,
+            borderStyle: selectedImage ? "solid" : "dashed",
             overflow: "hidden",
+            justifyContent: "center",
+            alignItems: "center",
           }}
           onPress={pickImage}
           activeOpacity={0.8}

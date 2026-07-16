@@ -1,7 +1,7 @@
 import BottomSheetView, { BottomSheetRefProps } from "@/components/BottomSheetView";
 
 import React, { useCallback } from "react";
-import { Modal, View } from "react-native";
+import { Dimensions, Modal, View } from "react-native";
 import { GestureHandlerRootView } from "react-native-gesture-handler";
 
 type PropsInterface = {
@@ -9,7 +9,7 @@ type PropsInterface = {
   setIsOpen: React.Dispatch<React.SetStateAction<boolean>>;
   children?: React.ReactNode;
 };
-
+const { height: SCREEN_HEIGHT } = Dimensions.get("window");
 const BottomSheetModal = React.forwardRef<BottomSheetRefProps, PropsInterface>(
   ({ children, isOpen, setIsOpen }, ref) => {
     return (
@@ -18,6 +18,11 @@ const BottomSheetModal = React.forwardRef<BottomSheetRefProps, PropsInterface>(
         animationType="slide"
         statusBarTranslucent={true}
         transparent={true}
+        onShow={()=>{
+           (ref as React.RefObject<BottomSheetRefProps>)?.current?.scrollTo(
+             -SCREEN_HEIGHT * 0.6,
+           );
+        }}
         onRequestClose={() => {
           setIsOpen(false);
         }}
@@ -29,7 +34,7 @@ const BottomSheetModal = React.forwardRef<BottomSheetRefProps, PropsInterface>(
               justifyContent: "flex-end",
               flex: 1,
               position: "relative",
-              alignItems: "center",
+              // alignItems: "center",
             }}
           >
             <BottomSheetView ref={ref}>{children}</BottomSheetView>

@@ -192,7 +192,7 @@ const OnlineIcon = ({ color, ...props }: SvgPropWithColor) => (
   </Svg>
 );
 
-const DownArrowIcon = ({ color, ...props }: SvgPropWithColor) => (
+const ImportIcon = ({ color, ...props }: SvgPropWithColor) => (
   <Svg
     width={18}
     height={18}
@@ -205,8 +205,39 @@ const DownArrowIcon = ({ color, ...props }: SvgPropWithColor) => (
     {...props}
     color={color || "#f1f2f6"}
   >
-    <Path d="M8 18L12 22L16 18" />
-    <Path d="M12 2V22" />
+    <Path d="M12 3V15M8 11l4 4 4-4M4 21h16" />
+  </Svg>
+);
+const ExportIcon = ({ color, ...props }: SvgPropWithColor) => (
+  <Svg
+    width={18}
+    height={18}
+    viewBox="0 0 24 24"
+    fill="none"
+    stroke="currentColor"
+    strokeWidth={2}
+    strokeLinecap="round"
+    strokeLinejoin="round"
+    {...props}
+    color={color || "#f1f2f6"}
+  >
+    <Path d="M12 15V3M8 7l4-4 4 4M4 21h16" />
+  </Svg>
+);
+const LogoutIcon = ({ color, ...props }: SvgPropWithColor) => (
+  <Svg
+    width={18}
+    height={18}
+    viewBox="0 0 24 24"
+    fill="none"
+    stroke="currentColor"
+    strokeWidth={2}
+    strokeLinecap="round"
+    strokeLinejoin="round"
+    {...props}
+    color={color || "#f1f2f6"}
+  >
+    <Path d="M15 4h4a1 1 0 0 1 1 1v14a1 1 0 0 1-1 1h-4M10 17l5-5-5-5M15 12H3" />
   </Svg>
 );
 
@@ -248,7 +279,7 @@ const IncomeUpIcon = ({ color, ...props }: SvgPropWithColor) => (
 
 export {
   ExpanseDownIcon,IncomeUpIcon,
-  MailIcon,
+  MailIcon,LogoutIcon,
   TermsIcon,
   PrivacyIcon,
   HelpIcon,
@@ -267,5 +298,5 @@ export {
   StatsIcon,
   RightArrowIcon,
   DbIcon,
-  DownArrowIcon,
+  ExportIcon,ImportIcon,
 };

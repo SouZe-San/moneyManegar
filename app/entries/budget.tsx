@@ -216,6 +216,7 @@ export function budget() {
               <SubmitButton button_label="New Budget" onPress={createNew} />
             </View>
           </View>
+        </AnimatedStackView>
 
           <BottomSheetModal
             isOpen={modalVisible}
@@ -224,7 +225,6 @@ export function budget() {
           >
             <BudgetCreate setModalVisibility={setModalVisible} />
           </BottomSheetModal>
-        </AnimatedStackView>
       </View>
     </ThemedView>
   );

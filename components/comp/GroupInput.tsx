@@ -46,7 +46,9 @@ function GroupInput({
   setGroupLogo,
 }: GroupInputProps) {
   // states
-  const [storedMember, setStoredMember] = useState<Members[]>(useExpense().members);
+  const [storedMember, setStoredMember] = useState<Members[]>(
+    useExpense().members,
+  );
   const [searchName, setSearchName] = useState("");
   const [searchResult, setSearchResult] = useState<Members[]>([]);
 
@@ -54,20 +56,27 @@ function GroupInput({
   const iconColor = useThemeColorWithName("inputIcon");
   const buttonBg = useThemeColorWithName("blurBg");
   const borderColor = useThemeColorWithName("borderColor");
-  const placeTextColor = useThemeColorWithName("tabIconDefault");
+  const placeTextColor = useThemeColorWithName("textMuted");
   const inputTextColor = useThemeColorWithName("text");
+  const surface = useThemeColorWithName("surface");
+  const cardBorder = useThemeColorWithName("cardBorder");
 
   //! Search Member Component
   const SearchMember = ({ member }: { member: Members }) => {
     //  Add Members
     const addMembers = (newMember: Members) => {
       // Check if the member is already in the group based on userName
-      if (!members.some((existingMember) => existingMember._id === newMember._id)) {
+      if (
+        !members.some((existingMember) => existingMember._id === newMember._id)
+      ) {
         // If the member is not already in the list, add them
         setMembers([...members, newMember]);
       } else {
         // Optionally, show an alert or feedback for duplicate member
-        Alert.alert("Member already added", `${newMember.userName} is already in the group.`);
+        Alert.alert(
+          "Member already added",
+          `${newMember.userName} is already in the group.`,
+        );
       }
     };
     return (
@@ -88,7 +97,7 @@ function GroupInput({
     }
     // Filter members based on searchName
     const filteredMembers = storedMember.filter((member) =>
-      member.userName.toLowerCase().includes(searchName.trim().toLowerCase())
+      member.userName.toLowerCase().includes(searchName.trim().toLowerCase()),
     );
 
     // Update the search result with the filtered members
@@ -105,18 +114,24 @@ function GroupInput({
           justifyContent: "space-between",
         }}
       >
-        <View style={{ width: "80%" }}>
+        <View style={{ flex: 1 }}>
           <MembersRow member={member} />
         </View>
         <TouchableOpacity
           onPress={() => {
             // Remove the member from the list
-            setMembers(members.filter((existingMember) => existingMember._id !== member._id));
+            setMembers(
+              members.filter(
+                (existingMember) => existingMember._id !== member._id,
+              ),
+            );
           }}
+          style={[
+            styles.deleteBtn,
+            { backgroundColor: "#FB718518", position: "absolute", right: 8 },
+          ]}
         >
-          <View style={[styles.deleteBtn, { backgroundColor: buttonBg }]}>
-            <DeleteIcon color="red" />
-          </View>
+          <DeleteIcon color="#FB7185" />
         </TouchableOpacity>
       </View>
     );
@@ -124,19 +139,28 @@ function GroupInput({
 
   return (
     <View style={styles.container}>
-      <View style={{ marginTop: 30 }}>
-        <InputWithIcon
-          icon={<GroupsIcon color={iconColor} />}
-          keyboardType="default"
-          placeholder="Group Name?"
-          value={groupName}
-          setValue={setGroupName}
-        />
-      </View>
+      <View style={{ marginTop: 30 }} />
+      <InputWithIcon
+        icon={<GroupsIcon color={iconColor} />}
+        keyboardType="default"
+        placeholder="Group Name?"
+        value={groupName}
+        setValue={setGroupName}
+      />
+      {/* </View> */}
       {/* placeholder="Enter logo (one character or emoji)" */}
-      <View style={{ marginTop: 10 }}></View>
-      <View style={[styles.iconInputBox, { borderColor, borderWidth: 0.6, paddingHorizontal: 10 }]}>
-        <ThemedText>{"(?)"}</ThemedText>
+      <View style={{ marginTop: 8 }}></View>
+      <View
+        style={[
+          styles.iconInputBox,
+          {
+            borderColor: cardBorder,
+            paddingHorizontal: 10,
+            backgroundColor: surface,
+          },
+        ]}
+      >
+        <ThemedText colorName="text">{"(?)"}</ThemedText>
         <TextInput
           placeholder="Logo (1 letter or emoji)"
           keyboardType="default"
@@ -144,7 +168,10 @@ function GroupInput({
           placeholderTextColor={placeTextColor}
           onChangeText={setGroupLogo}
           maxLength={2}
-          style={[styles.input, { marginLeft: 5, marginVertical: 10, color: inputTextColor }]}
+          style={[
+            styles.input,
+            { marginLeft: 14, marginVertical: 10, color: "#ECEDEE" },
+          ]}
         />
       </View>
       <View
@@ -161,7 +188,7 @@ function GroupInput({
           style={{
             flexDirection: "row",
             justifyContent: "space-between",
-            alignItems: "center",
+            alignItems: "center", gap:10
           }}
         >
           <SmallInputBox
@@ -176,7 +203,9 @@ function GroupInput({
             style={[styles.btn, { backgroundColor: buttonBg }]}
             onPress={searchMembers}
           >
-            <ThemedText>Search</ThemedText>
+            <ThemedText type="defaultSemiBold" >
+              Search
+            </ThemedText>
           </TouchableOpacity>
         </View>
 
@@ -184,7 +213,10 @@ function GroupInput({
 
         <View style={[styles.searchMemberView]}>
           {searchResult.length === 0 ? (
-            <ThemedText style={{ marginVertical: 10, textAlign: "center" }} colorName="blurBg">
+            <ThemedText
+              style={{ marginVertical: 10, textAlign: "center" }}
+              colorName="blurBg"
+            >
               Nonnnnnn
             </ThemedText>
           ) : (
@@ -192,6 +224,7 @@ function GroupInput({
               scrollEnabled={true}
               scrollsToTop={true}
               data={searchResult}
+              contentContainerStyle={{ gap: 8 }}
               renderItem={({ item }) => <SearchMember member={item} />}
               keyExtractor={(member) => member.userId ?? member.userName}
             />
@@ -203,7 +236,10 @@ function GroupInput({
         <ThemedText type="defaultSemiBold">Included Members</ThemedText>
 
         {members.length === 0 ? (
-          <ThemedText style={{ marginVertical: 10, textAlign: "center" }} colorName="blurBg">
+          <ThemedText
+            style={{ marginVertical: 10, textAlign: "center" }}
+            colorName="blurBg"
+          >
             Non
           </ThemedText>
         ) : (
@@ -211,6 +247,7 @@ function GroupInput({
             scrollEnabled={true}
             scrollsToTop={true}
             data={members}
+            contentContainerStyle={{ gap: 8 }}
             renderItem={({ item }) => <SelectedMember member={item} />}
             keyExtractor={(member) => member.userName}
           />
@@ -234,12 +271,21 @@ export default GroupInput;
 
 const MembersRow = ({ member }: { member: Members }) => {
   const iconColor = useThemeColorWithName("icon");
-  const bg = useThemeColorWithName("blurBg");
+  const surface = useThemeColorWithName("surface");
+
+  const cardBorder = useThemeColorWithName("cardBorder");
+  const textMuted = useThemeColorWithName("textMuted");
+
   return (
     <View
       style={[
         styles.row,
-        { borderColor: bg, borderWidth: 0.7, paddingVertical: member.imgUrl ? 5 : 15 },
+        {
+          borderColor: cardBorder,
+          backgroundColor: surface,
+          borderWidth: 0.7,
+          paddingVertical: 5,
+        },
       ]}
     >
       {member.imgUrl ? (
@@ -249,6 +295,8 @@ const MembersRow = ({ member }: { member: Members }) => {
             aspectRatio: 1,
             borderRadius: "50%",
             overflow: "hidden",
+            borderColor: cardBorder,
+            backgroundColor: surface,
           }}
         >
           <Image
@@ -257,7 +305,20 @@ const MembersRow = ({ member }: { member: Members }) => {
           />
         </View>
       ) : (
-        <UserIcon color={iconColor} />
+        <View
+          style={{
+            width: 50,
+            aspectRatio: 1,
+            justifyContent: "center",
+            alignItems: "center",
+            borderRadius: "50%",
+            overflow: "hidden",
+            borderColor: cardBorder,
+            backgroundColor: "#94A3B823",
+          }}
+        >
+          <UserIcon color={iconColor} />
+        </View>
       )}
       <ThemedText type="defaultSemiBold">{member.userName}</ThemedText>
     </View>
@@ -272,12 +333,13 @@ const styles = StyleSheet.create({
     alignItems: "flex-start",
   },
   btn: {
-    borderRadius: 10,
-    paddingVertical: 10,
-    paddingHorizontal: 25,
+    borderRadius: 10,flex:1,
+    paddingVertical: 12,
+    // paddingHorizontal: 25,
+    justifyContent:"center",
+    alignItems:"center"
   },
   row: {
-    marginBottom: 10,
     paddingHorizontal: 10,
     borderRadius: 10,
     flexDirection: "row",
@@ -295,20 +357,21 @@ const styles = StyleSheet.create({
     alignItems: "center",
     justifyContent: "flex-start",
     borderRadius: 10,
+    paddingHorizontal: 14,
   },
   input: {
     height: 40,
     fontSize: 15,
-
     color: "white",
     paddingHorizontal: 5,
-    width: "80%",
+    flex: 1,
   },
   deleteBtn: {
     display: "flex",
     justifyContent: "center",
     alignItems: "center",
-    padding: 12,
+    paddingHorizontal: 16,
+    paddingVertical: 10,
     borderRadius: 10,
   },
 });
