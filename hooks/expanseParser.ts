@@ -1,0 +1,210 @@
+import { expenseType } from "@/types/expanse";
+
+export type ParsedEntry = {
+  amount: number;
+  type: "income" | "expense";
+  category: expenseType | "Salary" | "Gift" | "Business";
+  description: string;
+  confidence: number;
+  isLending?: boolean; // true => candidate for UdharTransactions routing
+};
+
+
+export const CONFIDENCE_THRESHOLD = 0.5;
+
+const INCOME_WORDS =
+  /\b(salary|income|got|get|gotten|received|recieved|credited|earned|refund|cashback|bonus|prize|reward|won|paid me|sold|profit|gift(?:ed)?)\b/i;
+
+// Lending / borrowing / repayment — detected before everything else.
+const LENDING_WORDS =
+  /\b(lend|lent|lended|borrow|borrowed|udhar|loan|loaned|repaid|repay|returned|return|owe|owed|paid back|get back|got back|give back|gave back)\b/i;
+const MONEY_IN =
+  /\b(get back|got back|received back|returned|repaid|paid back|back my|refund)\b/i;
+const MONEY_OUT =
+  /\b(lend|lent|lended|loan(?:ed)?|gave|give|borrow(?:ed)?\s+to)\b/i;
+
+// ─────────────────────────────────────────────────────────────
+// Category rules — first match wins. Tuned for Indian English,
+// plurals, and common typos. Add a word here and it's supported.
+// ─────────────────────────────────────────────────────────────
+const CATEGORY_RULES: {
+  cat: expenseType | "Salary" | "Gift" | "Business";
+  re: RegExp;
+}[] = [
+  { cat: "Salary", re: /\b(salary|payday|wage|stipend)\b/i },
+  {
+    cat: "Gift",
+    re: /\b(gift|gifted|present|prize|reward|won|inheritance)\b/i,
+  },
+  {
+    cat: "Business",
+    re: /\b(business|client|invoice|freelance|freelancing|project\s?payment|vendor|supplier|stock|inventory|wholesale|profit|commission|deal)\b/i,
+  },
+  {
+    cat: "Bill",
+    re: /\b(bill|bills|electric|electricity|current\s?bill|water\s?bill|internet|wifi|wi-fi|broadband|fiber|dth|emi|insurance|premium|subscription|netflix|spotify|prime|hotstar)\b/i,
+  },
+  {
+    cat: "Fuel",
+    re: /\b(fuel|fule|feul|petrol|petrl|diesel|gas|cng|pump|scooty|scuty|scooter|bike|car)\b/i,
+  },
+  {
+    cat: "Recharge",
+    re: /\b(recharge|recharg|rechrge|topup|top-up|jio|airtel|vi|vodafone|data\s?pack|prepaid|mobile\s?plan|talktime)\b/i,
+  },
+  { cat: "Rent", re: /\b(rent|deposit|landlord|pg|hostel|lease)\b/i },
+  {
+    cat: "Travels",
+    re: /\b(travel|trip|tour|touring|uber|ola|rapido|cab|taxi|auto|bus|train|flight|ticket|metro|toll|parking|mamabari|outing|vacation)\b/i,
+  },
+  {
+    cat: "Shopping",
+    re: /\b(shopping|shop|cloth(?:es|ing)?|shirt|shirts|shari|saree|sari|pant|pants|shoe|shoes|amazon|flipkart|filpakar|flipkar|myntra|meesho|ajio|dress|electronics?|gadget|headphone|headphones|earphone|keyboard|mouse|laptop|phone|watch|order)\b/i,
+  },
+  {
+    cat: "Food",
+    re: /\b(food|foods|lunch|dinner|breakfast|snack|snacks|chai|tea|coffee|eggroll|roll|momo|samosa|swiggy|zomato|restaurant|hotel|dhaba|grocery|groceries|milk|vegetable|veggies|fruit|fruits|meal|meals|pizza|burger|biryani|eat|eating|ate)\b/i,
+  },
+];
+
+// ─────────────────────────────────────────────────────────────
+// Amount extraction
+// ─────────────────────────────────────────────────────────────
+
+const WORD_NUM: Record<string, number> = {
+  hundred: 100,
+  thousand: 1000,
+  lakh: 100000,
+  k: 1000,
+};
+
+function extractAmount(text: string): { amount: number; conf: number } {
+  const t = text.toLowerCase();
+  const kMatch = t.match(/(\d+(?:\.\d+)?)\s*k\b/);
+  if (kMatch)
+    return { amount: Math.round(parseFloat(kMatch[1]) * 1000), conf: 0.9 };
+  const wordMatch = t.match(/(\d+(?:\.\d+)?)\s*(hundred|thousand|lakh)\b/);
+  if (wordMatch)
+    return {
+      amount: Math.round(parseFloat(wordMatch[1]) * WORD_NUM[wordMatch[2]]),
+      conf: 0.85,
+    };
+  const numMatches = [
+    ...t.matchAll(/(?:₹|rs\.?|inr\s*)?\s*(\d[\d,]*(?:\.\d+)?)/g),
+  ]
+    .map((m) => parseFloat(m[1].replace(/,/g, "")))
+    .filter((n) => !isNaN(n) && n > 0);
+  if (numMatches.length === 0) return { amount: 0, conf: 0 };
+  const amount = Math.max(...numMatches);
+  const hasCurrency = /(?:₹|rs\.?|rupees?|ruppes?|inr)/i.test(t);
+  return {
+    amount,
+    conf: hasCurrency ? 0.85 : numMatches.length === 1 ? 0.75 : 0.6,
+  };
+}
+
+
+// ─────────────────────────────────────────────────────────────
+// Short 5–6 word description (strips amounts, filler, verbs)
+// ─────────────────────────────────────────────────────────────
+const STOPWORDS = new Set(
+  (
+    "i we my me a an the of for on at to is was were be been bought buy brought paid pay spent spend cost costs " +
+    "total get got gotten received recieved add today yesterday eve evening morning night rs rupees ruppes inr " +
+    "way go going went out outside whole and then just some around about approx approximately please note need " +
+    "as order repaire repair someone which witch back form from this months month"
+  ).split(" "),
+);
+
+function makeDescription(text: string, category: string): string {
+  const words = text
+    .replace(/[₹]/g, " ")
+    .replace(
+      /\d[\d,]*(?:\.\d+)?\s*(k|thousand|hundred|lakh|rs|rupees?|ruppes?|inr)?/gi,
+      " ",
+    )
+    .replace(/[^\p{L}\s]/gu, " ")
+    .split(/\s+/)
+    .map((w) => w.trim())
+    .filter((w) => w.length > 1 && !STOPWORDS.has(w.toLowerCase()));
+  const picked = words.slice(0, 6);
+  if (picked.length === 0) return category;
+  const desc = picked.join(" ");
+  return desc.charAt(0).toUpperCase() + desc.slice(1);
+}
+
+// ─────────────────────────────────────────────────────────────
+// Path B — pure on-device rules
+// ─────────────────────────────────────────────────────────────
+
+export function parseLocally(raw: string): ParsedEntry {
+  const text = raw.trim();
+  const { amount, conf: amountConf } = extractAmount(text);
+
+  let type: "income" | "expense";
+  let category: expenseType | "Salary" | "Gift" | "Business";
+  let catConf: number;
+  let isLending = false;
+
+  if (LENDING_WORDS.test(text)) {
+    // Lending / repayment -> Business, direction inferred
+    isLending = true;
+    category = "Business";
+    catConf = 0.7;
+    type = MONEY_IN.test(text)
+      ? "income"
+      : MONEY_OUT.test(text)
+        ? "expense"
+        : "expense";
+  } else {
+    const isIncome =
+      INCOME_WORDS.test(text) &&
+      !/\b(bought|buy|brought)\b.*\bgift/i.test(text);
+    type = isIncome ? "income" : "expense";
+    category = "Others";
+    catConf = 0.4;
+    for (const rule of CATEGORY_RULES) {
+      if (rule.re.test(text)) {
+        category = rule.cat;
+        catConf = 0.9;
+        break;
+      }
+    }
+    if (isIncome && category === "Others") {
+      category = "Salary";
+      catConf = 0.55;
+    }
+  }
+
+  const description = makeDescription(text, category);
+  const confidence =
+    amount > 0 ? Math.min(1, amountConf * 0.6 + catConf * 0.4) : 0.2;
+
+  return { amount, type, category, description, confidence, isLending };
+}
+
+//! ─────────────────────────────────────────────────────────────  
+// THE SEAM — the app calls this, never parseLocally directly.
+// Moving to Path A later = uncomment the block + implement parseViaCloud.
+// Return shape is identical, so nothing downstream changes.
+// ─────────────────────────────────────────────────────────────
+export async function parseEntry(raw: string): Promise<ParsedEntry> {
+  const local = parseLocally(raw);
+
+  // ─── PATH A HOOK (future) ───────────────────────────────
+  // if (local.confidence < CONFIDENCE_THRESHOLD) {
+  //   try { return await parseViaCloud(raw); } catch { /* fall back to local */ }
+  // }
+  // ────────────────────────────────────────────────────────
+
+  return local;
+}
+
+// async function parseViaCloud(raw: string): Promise<ParsedEntry> {
+//   const res = await fetch("https://your-worker.example/parse", {
+//     method: "POST",
+//     headers: { "Content-Type": "application/json" },
+//     body: JSON.stringify({ text: raw }),
+//   });
+//   return (await res.json()) as ParsedEntry;
+// }

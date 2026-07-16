@@ -60,5 +60,14 @@ export const migrateDbIfNeeded = async (db: SQLiteDatabase) => {
             UNIQUE(groupId, memberId)
         );
 
+        CREATE TABLE IF NOT EXISTS CaptureInbox (
+            _id INTEGER PRIMARY KEY AUTOINCREMENT,
+            raw_text TEXT NOT NULL,
+            source TEXT NOT NULL DEFAULT 'text',
+            status TEXT NOT NULL DEFAULT 'pending',
+            parsed_json TEXT,
+            created_at TEXT NOT NULL
+        );
+
         `);
 };
