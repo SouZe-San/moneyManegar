@@ -1,5 +1,4 @@
 import {
-  FlatList,
   Dimensions,
   View,
   ViewToken,
@@ -9,7 +8,7 @@ import {
 import { useSharedValue } from "react-native-reanimated";
 import { useSQLiteContext } from "expo-sqlite";
 import { useFocusEffect } from "expo-router";
-import { useCallback, useState, useRef } from "react";
+import { useCallback, useState, useRef, useMemo } from "react";
 
 import AnimatedListItem from "@/components/animation/AnimatedListItem";
 import { globalStyles } from "@/constants/globalStyles";
@@ -17,9 +16,6 @@ import ImageHeader from "@/components/animation/ImageHeader";
 import { ThemedView } from "@/components/ThemedView";
 import { ThemedText } from "@/components/ThemedText";
 import TransactionItem from "@/components/transaction/TransactionItem";
-import { showToast } from "@/hooks/useFunc";
-import { useExpense } from "@/context/ExpanseContext";
-import EasyAlert from "@/components/comp/EasyAlert";
 
 import {
   fetchAllTransaction,
@@ -29,13 +25,13 @@ import { ITransaction } from "@/types/expanse";
 import { SectionList } from "react-native";
 import dayjs from "dayjs";
 import { useThemeColorWithName } from "@/hooks/useThemeColor";
-
-const { width: SCREEN_Width, height: SCREEN_HEIGHT } = Dimensions.get("screen");
+import { showToast } from "@/hooks/useFunc";
+import { useExpense } from "@/context/ExpanseContext";
+import EasyAlert from "@/components/comp/EasyAlert";
 
 const groupByDate = (items: ITransaction[]) => {
   const today = dayjs().format("DD/MM/YY");
   const yesterday = dayjs().subtract(1, "day").format("DD/MM/YY");
-
   const map = new Map<string, ITransaction[]>();
   for (const it of items) {
     if (!map.has(it.date)) map.set(it.date, []);
@@ -47,12 +43,12 @@ const groupByDate = (items: ITransaction[]) => {
   }));
 };
 
+const { width: SCREEN_Width, height: SCREEN_HEIGHT } = Dimensions.get("screen");
+
 const allTransaction = () => {
   const imgUrl = require("@/assets/images/temp/green.jpg");
   const headerTitle = "All Wastes ಠ⁠_⁠ಠ";
-
   const mutedColor = useThemeColorWithName("textMuted");
-  const accent = useThemeColorWithName("highLightBackground");
 
   const viewableItems = useSharedValue<ViewToken[]>([]);
   const onViewableItemsChanged = useRef(
@@ -62,6 +58,7 @@ const allTransaction = () => {
   ).current;
   const viewabilityConfig = useRef({
     itemVisiblePercentThreshold: 50,
+    // minimumViewTime: 60, // debounces rapid enter/leave during fast scroll
   }).current;
 
   const [refresh, setRefresh] = useState(false);
@@ -69,29 +66,13 @@ const allTransaction = () => {
 
   const sqlDb = useSQLiteContext();
 
+  const sections = useMemo(
+    () => groupByDate(allTransactions),
+    [allTransactions],
+  );
+
   // keep Home screen totals (Left Over / Income / Expense) in sync after a delete
   const { onRefresh } = useExpense();
-
-  const fetch = async () => {
-    if (!refresh)
-      try {
-        setRefresh(true);
-        const data = await fetchAllTransaction(sqlDb);
-        data.sort((a, b) => {
-          return b._id! - a._id!;
-        });
-        setAllTransaction(data);
-      } catch (error) {
-        console.log("ERROR :", error);
-      } finally {
-        setRefresh(false);
-      }
-  };
-  useFocusEffect(
-    useCallback(() => {
-      fetch();
-    }, []),
-  );
 
   // Long-press a row -> confirm -> delete from DB + list + refresh totals
   const confirmDelete = useCallback(
@@ -128,6 +109,28 @@ const allTransaction = () => {
     },
     [sqlDb, onRefresh],
   );
+
+  const fetch = async () => {
+    if (!refresh)
+      try {
+        setRefresh(true);
+        const data = await fetchAllTransaction(sqlDb);
+        data.sort((a, b) => {
+          return b._id! - a._id!;
+        });
+        setAllTransaction(data);
+      } catch (error) {
+        console.log("ERROR :", error);
+      } finally {
+        setRefresh(false);
+      }
+  };
+  useFocusEffect(
+    useCallback(() => {
+      fetch();
+    }, []),
+  );
+
   return (
     <ThemedView style={globalStyles.stack_container}>
       <ImageHeader imgUrl={imgUrl} title={headerTitle} />
@@ -147,8 +150,8 @@ const allTransaction = () => {
           </ThemedText>
         )}
         <SectionList
-          sections={groupByDate(allTransactions)}
-          keyExtractor={(_, index) => index.toString()}
+          sections={sections}
+          keyExtractor={(item, index) => item._id?.toString() ?? String(index)}
           style={{ marginTop: 30, flex: 1 }}
           contentContainerStyle={{ paddingBottom: 40 }}
           showsVerticalScrollIndicator={false}
