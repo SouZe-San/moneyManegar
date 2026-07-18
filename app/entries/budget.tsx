@@ -1,13 +1,13 @@
-import { View, StyleSheet } from "react-native";
+import { View } from "react-native";
 
 // components
-import AnimatedStackView from "@/components/animation/AnimatedStackView";
 import { globalStyles } from "@/constants/globalStyles";
 import ImageHeader from "@/components/comp/ImageHeader";
 import { ThemedText } from "@/components/ThemedText";
 import { ThemedView } from "@/components/ThemedView";
 import SubmitButton from "@/components/inputs/SubmitButton";
 import BudgetCreate from "@/components/budget/BudgetCreate";
+import BudgetSummaryCard from "@/components/budget/BudgetSummaryCard";
 
 // hooks
 import { openBottomSheetModal, showToast } from "@/hooks/useFunc";
@@ -20,7 +20,8 @@ import { fetchThisMonthBudget, isBudgetHave } from "@/hooks/useQueries";
 import { useSQLiteContext } from "expo-sqlite";
 import AnimateTabView from "@/components/animation/AnimateTabView";
 import RedirectButton from "@/components/comp/RedirectButton";
-import { DbIcon } from "@/assets/icons/SVG/RandomIcons";
+import { StatsIcon } from "@/assets/icons/SVG/RandomIcons";
+import AnimatedStackView from "@/components/animation/AnimatedStackView";
 
 type Budget = {
   month: string;
@@ -42,9 +43,6 @@ export function budget() {
 
   // Colors
   const backgroundColor = useThemeColorWithName("background");
-  const borderColor = useThemeColorWithName("borderColor");
-  const expanseBg = useThemeColorWithName("expanseBg");
-  const iconColor = useThemeColorWithName("icon");
 
   const createNew = useCallback(() => {
     openBottomSheetModal(ref, setModalVisible);
@@ -124,17 +122,14 @@ export function budget() {
                   justifyContent: "center",
                 }}
               >
-                <ThemedText
-                  colorName="tabIconDefault"
-                  style={{ textAlign: "center" }}
-                >
-                  Set budget for{" "}
+                <ThemedText type="subtitle" style={{ textAlign: "center" }}>
+                  No budgets yet
                 </ThemedText>
                 <ThemedText
-                  colorName="tabIconDefault"
-                  style={{ textAlign: "center" }}
+                  colorName="textMuted"
+                  style={{ textAlign: "center", fontSize: 13, marginTop: 6 }}
                 >
-                  your wallet OR your month{" "}
+                  Set a budget for your wallet or your month.
                 </ThemedText>
               </View>
             ) : (
@@ -142,69 +137,38 @@ export function budget() {
                 {!budget ? (
                   <View
                     style={{
-                      height: 500,
                       width: "100%",
+                      paddingVertical: 46,
                       alignItems: "center",
                       justifyContent: "center",
+                      gap: 6,
                     }}
                   >
-                    <ThemedText
-                      colorName="tabIconDefault"
-                      style={{ textAlign: "center", letterSpacing: 2 }}
-                    >
-                      No Budget yet
+                    <ThemedText type="subtitle" style={{ textAlign: "center" }}>
+                      No budget this month
                     </ThemedText>
                     <ThemedText
-                      colorName="tabIconDefault"
-                      style={{ textAlign: "center", letterSpacing: 5 }}
+                      colorName="textMuted"
+                      style={{ textAlign: "center", fontSize: 13 }}
                     >
-                      For This Month
+                      Set one and track it as you spend.
                     </ThemedText>
                   </View>
                 ) : (
-                  <>
-                    <View style={[styles.costViewBox, { borderColor }]}>
-                      <ThemedText type="default" style={{ fontSize: 14 }}>
-                        {new Date(
-                          2020,
-                          parseInt(budget.month, 10) - 1,
-                          1,
-                        ).toLocaleString("en-US", { month: "long" })}
-                        's Budget
-                      </ThemedText>
-                      <ThemedText type="subtitle" style={{ fontSize: 26 }}>
-                        {budget.budget_amount.toFixed(2)} ₹
-                      </ThemedText>
-                    </View>
-                    <View
-                      style={[
-                        styles.costViewBox,
-                        { backgroundColor: expanseBg },
-                      ]}
-                    >
-                      <ThemedText type="default" style={{ fontSize: 14 }}>
-                        {new Date(
-                          2020,
-                          parseInt(budget.month, 10) - 1,
-                          1,
-                        ).toLocaleString("en-US", { month: "long" })}
-                        's Expanse
-                      </ThemedText>
-                      <ThemedText type="subtitle" style={{ fontSize: 26 }}>
-                        {budget.total_expense.toFixed(2)} ₹
-                      </ThemedText>
-                    </View>
-                  </>
+                  <BudgetSummaryCard
+                    month={budget.month}
+                    budget_amount={budget.budget_amount}
+                    total_expense={budget.total_expense}
+                  />
                 )}
                 <View
                   style={{
                     width: "100%",
-                    // paddingHorizontal: "4%",
                     marginTop: 15,
                   }}
                 >
                   <RedirectButton
-                    icon={<DbIcon color={iconColor} />}
+                    icon={<StatsIcon color="#38BDF8" />}
                     label="All Budgets"
                     redirectUrl={"/allBudgets"}
                   />
@@ -217,7 +181,7 @@ export function budget() {
             </View>
           </View>
         </AnimatedStackView>
-
+        <View style={{ position: "relative" }}>
           <BottomSheetModal
             isOpen={modalVisible}
             setIsOpen={setModalVisible}
@@ -225,23 +189,10 @@ export function budget() {
           >
             <BudgetCreate setModalVisibility={setModalVisible} />
           </BottomSheetModal>
+        </View>
       </View>
     </ThemedView>
   );
 }
 
 export default budget;
-
-const styles = StyleSheet.create({
-  costViewBox: {
-    borderWidth: 1,
-    display: "flex",
-    borderRadius: 10,
-    borderColor: "transparent",
-    justifyContent: "space-between",
-    width: "100%",
-    paddingBottom: 15,
-    height: 100,
-    padding: 10,
-  },
-});

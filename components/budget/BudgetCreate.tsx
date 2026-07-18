@@ -92,8 +92,11 @@ const textMuted = useThemeColorWithName("textMuted");
   };
 
   return (
-    <ThemedView>
-      <ThemedText type="subtitle" style={{ fontSize:24, marginTop: 15, marginBottom: 20 }}>
+    <ThemedView style={{ gap: 4, paddingBottom: 24 }}>
+      <ThemedText
+        type="subtitle"
+        style={{ fontSize: 24, marginTop: 15, marginBottom: 20 }}
+      >
         Budget of Month
       </ThemedText>
       <View style={{ zIndex: 3, position: "relative" }}>
@@ -111,6 +114,7 @@ const textMuted = useThemeColorWithName("textMuted");
             flexGrow: 0,
             marginVertical: 10,
           }}
+          keyboardShouldPersistTaps="handled"
           showsHorizontalScrollIndicator={false}
           data={budgetMonths}
           keyExtractor={(item) => item}
