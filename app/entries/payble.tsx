@@ -102,7 +102,7 @@ export function payble() {
     // All Checks Pass
     // Submit the data to the serve
     const data: IUdahar = {
-      amount: parseInt(amount),
+      amount: parseFloat(amount),
       date: date.format("DD/MM/YY"),
       expanseDesc: expanseReason,
       expenseType: expenseType as expenseType,
@@ -117,7 +117,7 @@ export function payble() {
       }
       await add_udhar(sqlDb, data);
       await addDueAmount_of_Member(sqlDb, {
-        amount: parseInt(amount),
+        amount: parseFloat(amount),
         userName: member?.userName,
       });
       router.push("/(tabs)");

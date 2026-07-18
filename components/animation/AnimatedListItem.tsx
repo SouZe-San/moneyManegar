@@ -11,14 +11,14 @@ import Animated, {
   FadeOut,
   LinearTransition,
 } from "react-native-reanimated";
-import { ITransaction, IUdahar } from "@/types/expanse";
+import {Budget, ITransaction, IUdahar } from "@/types/expanse";
 
 const ROW_STAGGER = 45; // ms between neighbouring rows -> the "one by one" feel
 const ROWS_PER_SCREEN = 9; // restart the cascade each screenful (so row 130 doesn't wait)
 
 type ListItemProps = ViewProps & {
   viewableItems: SharedValue<ViewToken[]>;
-  item: IUdahar | ITransaction;
+  item: IUdahar | ITransaction | Budget;
   index?: number;
 };
 

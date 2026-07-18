@@ -9,7 +9,7 @@ import * as SecureStore from "expo-secure-store";
 import { useColorScheme } from "react-native";
 import { useSQLiteContext } from "expo-sqlite";
 
-import { Members, IGroup, IUdahar, expenseType } from "@/types/expanse";
+import type { Members, IGroup, IUdahar, expenseType } from "@/types/expanse";
 
 import {
   fetchAllGroup,
@@ -34,10 +34,10 @@ export interface ExpenseContextType {
   firstRefresh: () => Promise<void>;
   groups: IGroup[];
   members: Members[];
-  allTransaction: IUdahar[];
+  // allTransaction: IUdahar[];
   onRefresh: () => void;
   refresh: boolean;
-  removeTransaction: (transactionId: string) => void;
+  // removeTransaction: (transactionId: string) => void;
   totalBudget: {
     label: string;
     value: number;
@@ -57,7 +57,7 @@ export const ExpenseProvider: React.FC<{ children: React.ReactNode }> = ({
   const [totalExpense, setTotalExpense] = useState<number>(0);
   const [totalIncomeMonthWise, setTotalIncomeMonthWise] = useState<number>(0);
   const [totalExpenseMonthWise, setTotalExpenseMonthWise] = useState<number>(0);
-  const [allTransaction, setAllTransaction] = useState<IUdahar[]>([]);
+  // const [allTransaction, setAllTransaction] = useState<IUdahar[]>([]);
   const [groups, setGroups] = useState<IGroup[]>([]);
   const [userName, setUserName] = useState<string | null>(null);
   const [email, setEmail] = useState<string | null>(null);
@@ -169,13 +169,13 @@ export const ExpenseProvider: React.FC<{ children: React.ReactNode }> = ({
     fetchData();
   }, []);
 
-  const removeTransaction = useCallback((transactionId: string) => {
-    setAllTransaction((prev) =>
-      prev.filter(
-        (transaction) => transaction._id?.toString() !== transactionId,
-      ),
-    );
-  }, []);
+  // const removeTransaction = useCallback((transactionId: string) => {
+  //   setAllTransaction((prev) =>
+  //     prev.filter(
+  //       (transaction) => transaction._id?.toString() !== transactionId,
+  //     ),
+  //   );
+  // }, []);
 
   const totalBudget = [
     {
@@ -201,8 +201,8 @@ export const ExpenseProvider: React.FC<{ children: React.ReactNode }> = ({
         email,
         firstRefresh,
         leftBalance,
-        allTransaction,
-        removeTransaction,
+        // allTransaction,
+        // removeTransaction,
         refresh,
         onRefresh,
         groups,

@@ -209,63 +209,115 @@ export default function TabTwoScreen() {
 
       <ThemedText type="subtitle">Support</ThemedText>
       <Collapsible title="How This Works" iconName="serviceIcon">
-        <ThemedText style={{ marginBottom: 10 }}>
-          Welcome to MoneyManager! This app is designed to help you track your
-          expenses, manage your budget, and split costs with friends or family
-          effortlessly.
-        </ThemedText>
-        <ThemedText type="smallText" style={{ marginBottom: 10 }}>
-          <ThemedText type="defaultSemiBold">
-            {" "}
-            {"\u2022"} Add Expenses:
-          </ThemedText>{" "}
-          Simply tap on the "Add Expense" button to input your spending. You can
-          categorize your expenses for better tracking.
-        </ThemedText>
-        <ThemedText type="smallText" style={{ marginBottom: 10 }}>
-          <ThemedText type="defaultSemiBold">
-            {"\u2022"} Split Amounts:
-          </ThemedText>{" "}
-          When you want to share costs, select the "Split" option. Enter the
-          total amount and choose the participants. The app will automatically
-          calculate each person's share.
-        </ThemedText>
-        <ThemedText type="smallText" style={{ marginBottom: 10 }}>
-          <ThemedText type="defaultSemiBold">{"\u2022"} Analysis:</ThemedText>{" "}
-          Check the "Stats" section to see your spending patterns over time.
-          This will help you make informed financial decisions.
-        </ThemedText>
+        <View
+          style={[
+            {
+              paddingHorizontal: 6,
+              paddingVertical: 14,
+            },
+          ]}
+        >
+          <ThemedText style={{ marginBottom: 10 }}>
+            Welcome to MoneyManager! This app is designed to help you track your
+            expenses, manage your budget, and split costs with friends or family
+            effortlessly.
+          </ThemedText>
+          <ThemedText type="smallText" style={{ marginBottom: 10 }}>
+            <ThemedText type="defaultSemiBold">
+              {" "}
+              {"\u2022"} Add Expenses:
+            </ThemedText>{" "}
+            Simply tap on the "Add Expense" button to input your spending. You
+            can categorize your expenses for better tracking.
+          </ThemedText>
+          <ThemedText type="smallText" style={{ marginBottom: 10 }}>
+            <ThemedText type="defaultSemiBold">
+              {"\u2022"} Split Amounts:
+            </ThemedText>{" "}
+            When you want to share costs, select the "Split" option. Enter the
+            total amount and choose the participants. The app will automatically
+            calculate each person's share.
+          </ThemedText>
+          <ThemedText type="smallText" style={{ marginBottom: 10 }}>
+            <ThemedText type="defaultSemiBold">{"\u2022"} Analysis:</ThemedText>{" "}
+            Check the "Stats" section to see your spending patterns over time.
+            This will help you make informed financial decisions.
+          </ThemedText>
+        </View>
       </Collapsible>
       <Collapsible title="Something To Say ?" iconName="mailIcon">
-        <ThemedText>
-          We value your feedback! If you have any questions, suggestions, or
-          need assistance, please reach out to us. You can contact our support
-          team through the email us at{" "}
-          <ThemedText type="link">soumyajit.codemail@gmail.com</ThemedText> .
-          We&#39;re here to help!
-        </ThemedText>
+        <View
+          style={[
+            {
+              paddingHorizontal: 6,
+              paddingVertical: 14,
+            },
+          ]}
+        >
+          <ThemedText>
+            We value your feedback! If you have any questions, suggestions, or
+            need assistance, please reach out to us. You can contact our support
+            team through the email us at{" "}
+            <ThemedText type="link">soumyajit.codemail@gmail.com</ThemedText> .
+            We&#39;re here to help!
+          </ThemedText>
+        </View>
       </Collapsible>
       <Collapsible title="Help" iconName="helpIcon">
-        <ThemedText>
-          Need help using the app? Sorry Bro/Sis Not thi Time.
-        </ThemedText>
+        <View
+          style={[
+            {
+              paddingHorizontal: 6,
+              paddingVertical: 14,
+            },
+          ]}
+        >
+          <ThemedText>
+            Need help using the app? Sorry Bro/Sis Not thi Time.
+          </ThemedText>
+        </View>
       </Collapsible>
 
       {/* // Legal info - Add Some web page link and details */}
-      <ThemedText type="subtitle">Legal Information</ThemedText>
+      <View
+        style={[
+          {
+            paddingHorizontal: 6,
+            paddingVertical: 14,
+          },
+        ]}
+      >
+        <ThemedText type="subtitle">Legal Information</ThemedText>
+      </View>
       <Collapsible title="Privacy And Policy" iconName="privacyIcon">
-        <ThemedText>
-          Your privacy is important to us. This Privacy Policy explains how we
-          collect, use, and protect your information when you use the Expense
-          Manager app.
-        </ThemedText>
-        <ThemedText type="defaultSemiBold" style={{ marginTop: 10 }}>
-          {"\u2022"} This is a Offline App, So All data will be stored in ur
-          Device, SO we Are not seeing or collecting ur any data.
-        </ThemedText>
+        <View
+          style={[
+            {
+              paddingHorizontal: 6,
+              paddingVertical: 14,
+            },
+          ]}
+        >
+          <ThemedText>
+            Your privacy is important to us. This Privacy Policy explains how we
+            collect, use, and protect your information when you use the Expense
+            Manager app.
+          </ThemedText>
+          <ThemedText type="defaultSemiBold" style={{ marginTop: 10 }}>
+            {"\u2022"} This is a Offline App, So All data will be stored in ur
+            Device, SO we Are not seeing or collecting ur any data.
+          </ThemedText>
+        </View>
       </Collapsible>
 
       <Collapsible title="Terms & Conditions" iconName="termsIcon">
+            <View
+          style={[
+            {
+              paddingHorizontal: 6,
+              paddingVertical: 14,
+            },
+          ]}>
         <ThemedText>
           Welcome to the MoneyManager app! By using our app, you agree to comply
           with and be bound by the following terms and conditions. Please read
@@ -281,7 +333,7 @@ export default function TabTwoScreen() {
           We reserve the right to modify these Terms & Conditions at any time.
           Your continued use of the app after any changes constitutes your
           acceptance of the new Terms.
-        </ThemedText>
+        </ThemedText></View>
       </Collapsible>
       <View style={{ height: 50 }} />
     </ParallaxScrollView>

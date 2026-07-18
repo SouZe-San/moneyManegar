@@ -1,8 +1,8 @@
 import { View, StyleSheet, Text, TouchableOpacity, useColorScheme } from "react-native";
 import { ThemedText } from "../ThemedText";
 import { useThemeColorWithName } from "@/hooks/useThemeColor";
-import { DeleteIcon, PayIcon, DownIcon, UpIcon } from "@/assets/icons/SVG/RandomIcons";
-import { iconReturn } from "@/constants/expanseIcon";
+import { DeleteIcon, PayIcon } from "@/assets/icons/SVG/RandomIcons";
+
 import { useEffect, useRef } from "react";
 import ReanimatedSwipeable, {
   SwipeableMethods,
@@ -16,6 +16,7 @@ import { useSQLiteContext } from "expo-sqlite";
 import EasyAlert from "../comp/EasyAlert";
 import { ColorMapping } from "@/constants/Colors";
 import CategoryIcon from "../comp/CategoryIcon";
+import { LinearGradient } from "expo-linear-gradient";
 
 type TransactionProps = {
   transactionId: number;
@@ -44,10 +45,7 @@ const TransactionRow = ({
   removeTransaction,
   openedItem,
 }: TransactionProps) => {
-  const payIconColor = useThemeColorWithName("highLightBackground");
-  const backgroundColor = useThemeColorWithName("background");
-  const blurBackgroundColor = useThemeColorWithName("blurBg");
-
+  
   const scheme = useColorScheme() ?? "dark";
   const surface = useThemeColorWithName("surface");
   const cardBorder = useThemeColorWithName("cardBorder");
@@ -64,7 +62,10 @@ const TransactionRow = ({
   
    const amountColor = isIncome ? income : expense;
    const sign = isIncome ? "+" : "−";
-   const formatted = Number(expanseAmount).toLocaleString("en-IN");
+    const formatted = Number(expanseAmount).toLocaleString("en-IN", {
+      minimumFractionDigits: Number.isInteger(expanseAmount) ? 0 : 2,
+      maximumFractionDigits: 2,
+    });
 
   const swipeableRef = useRef<SwipeableMethods | null>(null);
   const sqlite = useSQLiteContext();
@@ -126,19 +127,21 @@ const TransactionRow = ({
   //^ Pay tab
   const RightActions = (amount: number, type: "debt" | "owned", transactionId: number) => {
     return (
-      <TouchableOpacity onPress={() => addTransactionAmount(amount, type, transactionId)}>
+      <TouchableOpacity
+        onPress={() => addTransactionAmount(amount, type, transactionId)}
+      >
         <View
           style={{
             alignItems: "center",
             justifyContent: "center",
             display: "flex",
-            width: 70,
-            aspectRatio: 1,
+            height: 70,
+            aspectRatio: 3 / 2,
           }}
         >
           <Text
             style={{
-              shadowColor: payIconColor,
+              shadowColor: income + "50",
               shadowOffset: {
                 width: 0,
                 height: 6,
@@ -148,7 +151,7 @@ const TransactionRow = ({
               elevation: 5,
             }}
           >
-            <PayIcon color={payIconColor} />
+            <PayIcon color={income} />
           </Text>
         </View>
       </TouchableOpacity>
@@ -168,8 +171,8 @@ const TransactionRow = ({
             alignItems: "center",
             justifyContent: "center",
             display: "flex",
-            width: 70,
-            aspectRatio: 1,
+            height: 70,
+            aspectRatio: 3 / 2,
           }}
         >
           <Text
@@ -184,7 +187,7 @@ const TransactionRow = ({
               elevation: 5,
             }}
           >
-            <DeleteIcon color="red" />
+            <DeleteIcon color={expense} />
           </Text>
         </View>
       </TouchableOpacity>
@@ -192,45 +195,63 @@ const TransactionRow = ({
   };
 
   return (
-    <ReanimatedSwipeable
-      renderLeftActions={() => LeftActions(expanseAmount, transactionType, transactionId)}
-      renderRightActions={() => RightActions(expanseAmount, transactionType, transactionId)}
-      onSwipeableClose={() => onSwipeableWillClose(transactionId.toString())}
-      onSwipeableOpen={() => onSwipeableWillOpen(transactionId.toString())}
-      ref={swipeableRef}
+    <LinearGradient
+      colors={[expense + "20", income + "20"]}
+      start={{ x: 0, y: 0.5 }}
+      end={{ x: 1, y: 0.5 }}
+      locations={ [0.5, 0.5] }
+      style={{
+        borderRadius: 14,
+        marginVertical: 5,
+      }}
     >
-     <View
-           style={[
-             styles.row,
-             { backgroundColor: surface, borderColor: cardBorder },
-           ]}
-         >
-        <View style={[styles.chip, { backgroundColor: categoryColor + "26" }]}>
-              <CategoryIcon type={expanseType} color={categoryColor} size={22} />
-      </View>
-            {/* Description  */}
-            <View style={styles.middle}>
-                    <ThemedText
-                      type="defaultSemiBold"
-                      numberOfLines={1}
-                      style={styles.desc}
-                    >{expanseDescription}  </ThemedText>
-                            <ThemedText
-                              numberOfLines={1}
-                              style={[styles.meta, { color: textMuted }]}
-                            >
-                {expanseData} {toWhom ? ` · ${toWhom}` : ""}
-               </ThemedText>
-                   </View>
-             
-                   {/* Amount — color-coded + tabular numerals */}
-                   <ThemedText style={[styles.amount, { color: amountColor }]}>
-               {sign} ₹{formatted}
-      </ThemedText>
-    </View>
-      
-      
-    </ReanimatedSwipeable>
+      <ReanimatedSwipeable
+        renderLeftActions={() =>
+          LeftActions(expanseAmount, transactionType, transactionId)
+        }
+        renderRightActions={() =>
+          RightActions(expanseAmount, transactionType, transactionId)
+        }
+        onSwipeableClose={() => onSwipeableWillClose(transactionId.toString())}
+        onSwipeableOpen={() => onSwipeableWillOpen(transactionId.toString())}
+        ref={swipeableRef}
+      >
+        <View
+          style={[
+            styles.row,
+            { backgroundColor: surface, borderColor: cardBorder },
+          ]}
+        >
+          <View
+            style={[styles.chip, { backgroundColor: categoryColor + "26" }]}
+          >
+            <CategoryIcon type={expanseType} color={categoryColor} size={22} />
+          </View>
+          {/* Description  */}
+          <View style={styles.middle}>
+            <ThemedText
+              type="defaultSemiBold"
+              numberOfLines={1}
+              style={styles.desc}
+            >
+              {expanseDescription}{" "}
+            </ThemedText>
+            <ThemedText
+              numberOfLines={1}
+              style={[styles.meta, { color: textMuted }]}
+            >
+              {expanseData} {toWhom ? ` · ${toWhom}` : ""}
+            </ThemedText>
+          </View>
+
+          {/* Amount — color-coded + tabular numerals */}
+          <ThemedText style={[styles.amount, { color: amountColor }]}>
+            {sign} ₹
+            <Text style={{ fontFamily: "SpaceGroteskBold" }}>{formatted}</Text>
+          </ThemedText>
+        </View>
+      </ReanimatedSwipeable>
+    </LinearGradient>
   );
 };
 
@@ -244,8 +265,6 @@ const styles = StyleSheet.create({
     paddingVertical: 11,
     paddingHorizontal: 12,
     borderRadius: 14,
-    borderWidth: 1,
-    marginVertical: 5,
   },
   chip: {
     width: 40,

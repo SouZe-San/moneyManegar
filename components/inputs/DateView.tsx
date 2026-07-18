@@ -7,6 +7,14 @@ import { ThemedText } from "../ThemedText";
 import { useThemeColorWithName } from "@/hooks/useThemeColor";
 import { CalenderIcon } from "@/assets/icons/SVG/InputIcons";
 
+/** "Today" / "Yesterday" / "18 Jul 2026" — most entries are one of the first two. */
+const relativeLabel = (date: Dayjs) => {
+  const today = dayjs();
+  if (date.isSame(today, "day")) return "Today";
+  if (date.isSame(today.subtract(1, "day"), "day")) return "Yesterday";
+  return date.format("DD MMM YYYY");
+};
+
 const DateView = ({
   date,
   setDate,
@@ -14,77 +22,152 @@ const DateView = ({
   date: Dayjs;
   setDate: React.Dispatch<React.SetStateAction<dayjs.Dayjs>>;
 }) => {
-  const buttonBgColor = useThemeColorWithName("button");
   const [pickerVisible, setPickerVisible] = useState(false);
+
+  const accent = useThemeColorWithName("button");
   const iconColor = useThemeColorWithName("inputIcon");
   const borderColor = useThemeColorWithName("borderColor");
   const textColor = useThemeColorWithName("text");
   const background = useThemeColorWithName("background");
-  const blurBg = useThemeColorWithName("navBg");
   const surface = useThemeColorWithName("surface");
   const cardBorder = useThemeColorWithName("cardBorder");
+  const textMuted = useThemeColorWithName("textMuted");
+
+  const close = () => setPickerVisible(false);
+  const pick = (d: Dayjs) => {
+    setDate(d);
+    close();
+  };
+
+  const isToday = date.isSame(dayjs(), "day");
+  const isYesterday = date.isSame(dayjs().subtract(1, "day"), "day");
+
   return (
-    <Pressable
-      style={[
-        styles.mainContainer,
-        { backgroundColor: surface, borderColor: cardBorder },
-      ]}
-      onPress={() => setPickerVisible(!pickerVisible)}
-    >
-      <View style={[styles.viewSection]}>
-        <CalenderIcon color={iconColor} />
-        <ThemedText style={{ fontSize: 15 }}>
-          {date.format("DD/MM/YYYY")}
+    <>
+      {/* Trigger row */}
+      <Pressable
+        style={({ pressed }) => [
+          styles.mainContainer,
+          {
+            backgroundColor: surface,
+            borderColor: pressed ? accent + "40" : cardBorder,
+          },
+        ]}
+        onPress={() => setPickerVisible(true)}
+      >
+        <View style={styles.viewSection}>
+          <CalenderIcon color={iconColor} />
+          <ThemedText style={{ fontSize: 15 }}>
+            {relativeLabel(date)}
+          </ThemedText>
+          {!isToday && !isYesterday ? null : (
+            <ThemedText style={{ fontSize: 12, color: textMuted }}>
+              {date.format("DD/MM/YY")}
+            </ThemedText>
+          )}
+        </View>
+        <ThemedText style={{ fontSize: 12, color: accent, fontWeight: "600" }}>
+          Change
         </ThemedText>
-      </View>
+      </Pressable>
+
+      {/* Picker */}
       <Modal
         visible={pickerVisible}
         animationType="fade"
         statusBarTranslucent={true}
         transparent={true}
-        onRequestClose={() => setPickerVisible(false)}
+        onRequestClose={close}
         presentationStyle="overFullScreen"
       >
-        <View
-          style={{
-            backgroundColor: blurBg,
-            flex: 1,
-            justifyContent: "center",
-            alignItems: "center",
-          }}
-        >
-          <View
+        <Pressable style={styles.scrim} onPress={close}>
+          <Pressable
             style={[
               styles.datePicker,
-              {
-                shadowColor: buttonBgColor,
-                backgroundColor: background,
-              },
+              { backgroundColor: surface, borderColor: cardBorder },
             ]}
+            onPress={() => {}}
           >
+            <ThemedText type="defaultSemiBold" style={{ fontSize: 15 }}>
+              Select date
+            </ThemedText>
+
             <DateTimePicker
               mode="single"
               date={date}
               calendarTextStyle={{ color: textColor }}
               headerTextStyle={{ color: textColor }}
-              weekDaysTextStyle={{ color: textColor }}
-              selectedItemColor={buttonBgColor}
-              headerButtonColor={buttonBgColor}
+              weekDaysTextStyle={{ color: textMuted }}
+              selectedItemColor={accent}
+              headerButtonColor={accent}
               selectedTextStyle={{ color: background }}
               height={300}
-              monthContainerStyle={{ backgroundColor: background, borderColor }}
-              yearContainerStyle={{ backgroundColor: background, borderColor }}
+              monthContainerStyle={{ backgroundColor: surface, borderColor }}
+              yearContainerStyle={{ backgroundColor: surface, borderColor }}
               onChange={(params) => {
-                if (params.date) {
-                  setDate(params.date as Dayjs); // Only set if params.date is defined
-                  setPickerVisible(false);
-                }
+                if (params.date) pick(params.date as Dayjs);
               }}
             />
-          </View>
-        </View>
+
+            {/* Quick picks — most entries are today or yesterday */}
+            <View style={[styles.footer, { borderTopColor: cardBorder }]}>
+              <View style={{ flexDirection: "row", gap: 8 }}>
+                <Pressable
+                  onPress={() => pick(dayjs())}
+                  style={[
+                    styles.chip,
+                    {
+                      borderColor: isToday ? accent : cardBorder,
+                      backgroundColor: isToday ? accent + "1F" : "transparent",
+                    },
+                  ]}
+                >
+                  <ThemedText
+                    style={{
+                      fontSize: 12,
+                      fontWeight: "600",
+                      color: isToday ? accent : textMuted,
+                    }}
+                  >
+                    Today
+                  </ThemedText>
+                </Pressable>
+                <Pressable
+                  onPress={() => pick(dayjs().subtract(1, "day"))}
+                  style={[
+                    styles.chip,
+                    {
+                      borderColor: isYesterday ? accent : cardBorder,
+                      backgroundColor: isYesterday
+                        ? accent + "1F"
+                        : "transparent",
+                    },
+                  ]}
+                >
+                  <ThemedText
+                    style={{
+                      fontSize: 12,
+                      fontWeight: "600",
+                      color: isYesterday ? accent : textMuted,
+                    }}
+                  >
+                    Yesterday
+                  </ThemedText>
+                </Pressable>
+              </View>
+
+              <Pressable onPress={close} style={styles.chip}>
+                <ThemedText
+                  style={{ fontSize: 12, fontWeight: "600", color: textMuted }}
+                >
+                  Cancel
+                </ThemedText>
+              </Pressable>
+            </View>
+          </Pressable>
+        </Pressable>
       </Modal>
-    </Pressable>
+    </>
   );
 };
 
@@ -94,6 +177,7 @@ const styles = StyleSheet.create({
   mainContainer: {
     flexDirection: "row",
     alignItems: "center",
+    justifyContent: "space-between",
     borderRadius: 14,
     borderWidth: 1,
     paddingHorizontal: 14,
@@ -105,15 +189,36 @@ const styles = StyleSheet.create({
     height: 54,
     gap: 10,
   },
-  datePicker: {
-    width: "80%",
-    backfaceVisibility: "hidden",
-    shadowOffset: { width: 0, height: 2 },
-    shadowOpacity: 0.25,
-    shadowRadius: 4,
-    elevation: 5,
-    zIndex: 100,
-    borderRadius: 10,
+  scrim: {
+    flex: 1,
+    backgroundColor: "rgba(0,0,0,0.62)",
+    justifyContent: "center",
+    alignItems: "center",
+    paddingHorizontal: 20,
   },
-  monthContainer: {},
+  datePicker: {
+    width: "100%",
+    maxWidth: 380,
+    borderRadius: 16,
+    borderWidth: 1,
+    paddingHorizontal: 14,
+    paddingTop: 16,
+    paddingBottom: 8,
+  },
+  footer: {
+    flexDirection: "row",
+    alignItems: "center",
+    justifyContent: "space-between",
+    borderTopWidth: 1,
+    paddingTop: 10,
+    paddingBottom: 6,
+    marginTop: 4,
+  },
+  chip: {
+    paddingHorizontal: 12,
+    paddingVertical: 7,
+    borderRadius: 999,
+    borderWidth: 1,
+    borderColor: "transparent",
+  },
 });

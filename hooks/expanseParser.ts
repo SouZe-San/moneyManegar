@@ -1,9 +1,9 @@
-import { expenseType } from "@/types/expanse";
+import { expenseType, transactionCategory } from "@/types/expanse";
 
 export type ParsedEntry = {
   amount: number;
   type: "income" | "expense";
-  category: expenseType | "Salary" | "Gift" | "Business";
+  category: transactionCategory;
   description: string;
   confidence: number;
   isLending?: boolean; // true => candidate for UdharTransactions routing
@@ -28,7 +28,7 @@ const MONEY_OUT =
 // plurals, and common typos. Add a word here and it's supported.
 // ─────────────────────────────────────────────────────────────
 const CATEGORY_RULES: {
-  cat: expenseType | "Salary" | "Gift" | "Business";
+  cat: transactionCategory;
   re: RegExp;
 }[] = [
   { cat: "Salary", re: /\b(salary|payday|wage|stipend)\b/i },

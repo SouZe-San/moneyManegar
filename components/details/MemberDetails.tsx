@@ -1,5 +1,5 @@
 import { getInfoAsync } from "expo-file-system";
-import { View, StyleSheet, ScrollView, Image, TouchableOpacity, Alert } from "react-native";
+import { View, StyleSheet, ScrollView, Image, TouchableOpacity, Alert, Text } from "react-native";
 import { useCallback, useState } from "react";
 import {  useFocusEffect } from "expo-router";
 import { useSQLiteContext } from "expo-sqlite";
@@ -141,7 +141,7 @@ const MemberDetails = ({ id }: { id: string | null }) => {
               type="subtitle"
               style={[{ fontSize: 20, fontWeight: "600", color: expenseColor }]}
             >
-              ₹{member?.owedAmount?.toFixed(2) ?? 0.0}
+              ₹<Text style={{ fontFamily: "SpaceGroteskBold" }}>{member?.dueAmount?.toFixed(2) ?? 0.0}</Text>
             </ThemedText>
           </View>
 
@@ -161,7 +161,7 @@ const MemberDetails = ({ id }: { id: string | null }) => {
               type="subtitle"
               style={[{ fontSize: 20, fontWeight: "600", color: incomeColor }]}
             >
-              ₹{member?.dueAmount?.toFixed(2) ?? 0.0}
+              ₹<Text style={{ fontFamily: "SpaceGroteskBold" }}>{member?.owedAmount?.toFixed(2) ?? 0.0}</Text>
             </ThemedText>
           </View>
         </View>

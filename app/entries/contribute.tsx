@@ -31,7 +31,7 @@ import { ThemedView } from "@/components/ThemedView";
 
 // icons
 import { MoneyBagIcon, BagIcon, UserIcon } from "@/assets/icons/SVG/InputIcons";
-import { expenseType, IGroup, IUdahar, Members } from "@/types/expanse";
+import { expenseType, IGroup, IUdahar, Members, transactionCategory } from "@/types/expanse";
 
 // hooks
 import {
@@ -153,17 +153,17 @@ export function contribute() {
 
     // It out from wallet so money reduce
          await addData_in_AllTransaction(sqlDb, {
-      amount: parseInt(amount),
-      type: "expense",
-      expenseType: expenseType as expenseType | "Salary" | "Gift" | "Business",
-      date: date.format("DD/MM/YY"),
-      expanseDesc: expanseReason,
-        });
+           amount: parseFloat(amount),
+           type: "expense",
+           expenseType: expenseType as transactionCategory,
+           date: date.format("DD/MM/YY"),
+           expanseDesc: expanseReason,
+         });
 
     if (!splitInGroups) {
       // Submit the data for single person
       const data: IUdahar = {
-        amount: parseInt(amount),
+        amount: parseFloat(amount),
         date: date.format("DD/MM/YY"),
         expanseDesc: expanseReason,
         expenseType: expenseType as expenseType,
@@ -354,19 +354,15 @@ export function contribute() {
               <ThemedText type="defaultSemiBold">Split in Groups ?</ThemedText>
               <View
                 style={{
-                  borderWidth: 1,
                   borderRadius: 20,
                   overflow: "hidden",
-                  borderBlockColor: "transparent",
                 }}
               >
                 <Switch
                   value={splitInGroups}
                   style={{
-                    padding: 0,
-                    margin: 0,
                     height: 28,
-                    width: "100%",
+                    // width: "100%",
                     backgroundColor: splitInGroups
                       ? toggleButton
                       : unSelectedToggleButton,

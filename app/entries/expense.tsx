@@ -22,7 +22,7 @@ import { useThemeColorWithName } from "@/hooks/useThemeColor";
 
 // icons
 import { BagIcon, MoneyBagIcon } from "@/assets/icons/SVG/InputIcons";
-import { expenseType, ITransaction } from "@/types/expanse";
+import {  ITransaction, transactionCategory } from "@/types/expanse";
 import { showToast, showToastWithMsg } from "@/hooks/useFunc";
 
 export function expense() {
@@ -46,7 +46,7 @@ export function expense() {
       return;
     }
 
-    const dbAmount: number = parseInt(expense || "0");
+    const dbAmount: number = parseFloat(expense || "0");
     const dbData: string = date.format("DD/MM/YY");
     const dbDesc: string = description || "";
     const dbExpenseType: string = expenseType!;
@@ -54,7 +54,7 @@ export function expense() {
     const newData: ITransaction = {
       amount: dbAmount,
       type: "expense",
-      expenseType: dbExpenseType as expenseType | "Salary" | "Gift" | "Business",
+      expenseType: dbExpenseType as transactionCategory,
       date: dbData,
       expanseDesc: dbDesc,
     };

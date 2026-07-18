@@ -1,5 +1,16 @@
-import { Groups, ITransaction, IUdahar, Members, IGroup, expenseType, Budget } from "@/types/expanse";
+import type { Groups, ITransaction, IUdahar, Members, IGroup, expenseType, Budget } from "@/types/expanse";
 import { type SQLiteDatabase } from "expo-sqlite";
+
+/**
+ * SQLite fragment that converts the app's stored `DD/MM/YY` date text
+ * into ISO `YYYY-MM-DD` so SQLite date/strftime functions work on it.
+ *
+ * NOTE: assumes 21st-century years (prefixes "20"), matching how dates are
+ * written on insert via dayjs("DD/MM/YY"). This is the single source of truth
+ * for that assumption — change it here if the stored format ever changes.
+ */
+const isoFromTxnDate = (col: string = "date") =>
+  `'20' || SUBSTR(${col}, 7, 2) || '-' || SUBSTR(${col}, 4, 2) || '-' || SUBSTR(${col}, 1, 2)`;
 
 // ! Data INSERTING - INSERTION ---->
 
@@ -46,7 +57,10 @@ const add_udhar = async (db: SQLiteDatabase, data: IUdahar) => {
       ]
     );
 
-    await db.runAsync("UPDATE MemberTable SET dueAmount = dueAmount + ? WHERE _id = ?", []); // update dueAmount in MemberTable
+    // await db.runAsync(
+    //   "UPDATE MemberTable SET dueAmount = dueAmount + ? WHERE _id = ?",
+    //   [data.amount, data.memberId],
+    // ); // update dueAmount in MemberTable
   } catch (error) {
     console.error("From useQueries \nError inserting transaction:", error);
   }
@@ -152,7 +166,7 @@ const getTotalIncomeMonthWise = async (db: SQLiteDatabase) => {
       `SELECT SUM(amount) as total
        FROM AllTransactions
        WHERE type = 'income'
-         AND STRFTIME(     '%Y-%m',     '20' || SUBSTR(date, 7, 2) || '-' || SUBSTR(date, 4, 2) || '-' || SUBSTR(date, 1, 2)   ) = strftime('%Y-%m','now','localtime') `
+       AND STRFTIME(     '%Y-%m',     ${isoFromTxnDate("date")}   ) = strftime('%Y-%m','now','localtime') `,
     );
     return rows[0].total ?? 0;
   } catch (error) {
@@ -165,9 +179,9 @@ const getTotalExpenseMonthWise = async (db: SQLiteDatabase) => {
   try {
     const rows = await db.getAllAsync<{ total: number }>(
       `SELECT SUM(amount) as total
-       FROM AllTransactions
-       WHERE type = 'expense'
-         AND STRFTIME(     '%Y-%m',     '20' || SUBSTR(date, 7, 2) || '-' || SUBSTR(date, 4, 2) || '-' || SUBSTR(date, 1, 2)   ) = strftime('%Y-%m','now','localtime') `
+      FROM AllTransactions
+      WHERE type = 'expense'
+      AND STRFTIME(     '%Y-%m',     ${isoFromTxnDate("date")}   ) = strftime('%Y-%m','now','localtime') `,
     );
     return rows[0].total ?? 0;
   } catch (error) {
@@ -207,7 +221,7 @@ const fetchMonthlyExpense = async (db: SQLiteDatabase) => {
   try {
     const rows = await db.getAllAsync<{ ym: string; value: number }>(
       `SELECT
-         STRFTIME('%Y-%m', '20' || SUBSTR(date,7,2) || '-' || SUBSTR(date,4,2) || '-' || SUBSTR(date,1,2)) AS ym,
+          STRFTIME('%Y-%m', ${isoFromTxnDate("date")}) AS ym,
          SUM(amount) AS value
        FROM AllTransactions
        WHERE type = 'expense'
@@ -229,7 +243,7 @@ const fetchMonthlyIncome = async (db: SQLiteDatabase) => {
   try {
     const rows = await db.getAllAsync<{ ym: string; value: number }>(
       `SELECT
-         STRFTIME('%Y-%m', '20' || SUBSTR(date,7,2) || '-' || SUBSTR(date,4,2) || '-' || SUBSTR(date,1,2)) AS ym,
+         STRFTIME('%Y-%m', ${isoFromTxnDate("date")}) AS ym,
          SUM(amount) AS value
        FROM AllTransactions
        WHERE type = 'income'
@@ -440,7 +454,7 @@ const updateMember = async (
     if (!data._id) {
       throw new Error("Member Id not provided");
     }
-    await db.runAsync("UPDATE MemberTable SET userName = ? imgUrl = ? WHERE _id = ?", [
+    await db.runAsync("UPDATE MemberTable SET userName = ?, imgUrl = ? WHERE _id = ?", [
       data.userName,
       data.imgUrl,
       data._id,
@@ -629,6 +643,18 @@ const deleteBudget = async (db: SQLiteDatabase, budgetId: string) => {
     throw new Error("Some Terrible Happens AT Budget Delete");
   }
 };
+// delete a single main (income/expense) transaction from AllTransactions
+const deleteTransaction_from_AllTransaction = async (
+  db: SQLiteDatabase,
+  transactionId: string,
+) => {
+  try {
+    await db.runAsync("DELETE FROM AllTransactions WHERE _id = ?", [transactionId]);
+  } catch (error) {
+    console.error("Error deleting AllTransaction row: ", error);
+    throw new Error("Some Terrible Happens AT AllTransaction Delete");
+  }
+};
 
 const resetDb = async (db: SQLiteDatabase) => {
   try {
@@ -691,6 +717,7 @@ export {
   deleteGroupMember_ON_grpDelete,
   deleteGroupMember_ON_memDelete,
   deleteSingleTransaction,
+  deleteTransaction_from_AllTransaction,
 
   // Clear
   clearAllTransactionTable,

@@ -26,6 +26,12 @@ export interface IExpanse {
   toWhom?: string;
 }
 
+// Income-only categories (never valid expense categories).
+export type incomeType = "Salary" | "Gift" | "Business";
+
+// Every category a transaction can have (expense + income categories).
+export type transactionCategory = expenseType | incomeType;
+
 export interface IUdahar {
   _id?: number;
   amount: number;
@@ -43,7 +49,7 @@ export interface ITransaction {
   _id?: number;
   amount: number;
   type: mainTransactionType;
-  expenseType: expenseType | "Salary" | "Gift" | "Business";
+  expenseType: transactionCategory;
   date: string;
   expanseDesc: string;
   toWhom?: string;

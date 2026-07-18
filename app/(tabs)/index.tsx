@@ -50,8 +50,7 @@ export default function HomeScreen() {
   const balanceBg = useThemeColorWithName("highLightBackground");
   const surface = useThemeColorWithName("surface");
   const cardBorder = useThemeColorWithName("cardBorder");
-  const expenseColor = useThemeColorWithName("expense");
-  const incomeColor = useThemeColorWithName("income");  
+
 
   // States
   const [modalVisible, setModalVisible] = useState(false);
@@ -217,7 +216,7 @@ export default function HomeScreen() {
         </View>
 
         {/* New User Image */}
-        {members.length === 0 && (
+        {(members.length === 0 || (totalIncome+ totalExpense) === 0) && (
           <View
             style={{
               justifyContent: "center",
@@ -386,7 +385,7 @@ export default function HomeScreen() {
           style={{
             flexDirection: "row",
             justifyContent: "space-between",
-            alignItems:"flex-end",
+            alignItems: "flex-end",
             marginVertical: 10,
             marginTop: 40,
             paddingHorizontal: 20,
@@ -457,8 +456,7 @@ export default function HomeScreen() {
               hideRules
             />
             {/* Color Labeling */}
-            <View
-            >
+            <View>
               {totalBudget.map((item, index) => {
                 return (
                   <ColorLabeling

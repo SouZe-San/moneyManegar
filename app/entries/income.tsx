@@ -4,7 +4,7 @@ import { useRouter } from "expo-router";
 import { useState } from "react";
 import { useSQLiteContext } from "expo-sqlite";
 
-import { ITransaction, expenseType } from "@/types/expanse";
+import { ITransaction, transactionCategory } from "@/types/expanse";
 
 // components
 import AnimatedStackView from "@/components/animation/AnimatedStackView";
@@ -22,7 +22,7 @@ import { addData_in_AllTransaction } from "@/hooks/useQueries";
 import { useThemeColorWithName } from "@/hooks/useThemeColor";
 
 // icons
-import { MoneyBagIcon, BagIcon } from "@/assets/icons/SVG/InputIcons";
+import { MoneyBagIcon, BagIcon, DescIcon } from "@/assets/icons/SVG/InputIcons";
 import { showToast, showToastWithMsg } from "@/hooks/useFunc";
 
 const incomeExpanseType = ["Salary", "Business", "Gift", "Others"];
@@ -44,7 +44,7 @@ export function income() {
 
   //  Data Insert Function
   const insertData = async () => {
-    const dbAmount: number = parseInt(amount || "0");
+    const dbAmount: number = parseFloat(amount || "0");
     const dbData: string = date.format("DD/MM/YY");
     const dbDesc: string = description || "";
     const dbExpenseType: string = expenseType!;
@@ -52,7 +52,7 @@ export function income() {
     const newData: ITransaction = {
       amount: dbAmount,
       type: "income",
-      expenseType: dbExpenseType as expenseType | "Salary" | "Gift" | "Business",
+      expenseType: dbExpenseType as transactionCategory,
       date: dbData,
       expanseDesc: dbDesc,
     };
@@ -118,7 +118,7 @@ export function income() {
             </View>
             <View>
               <InputWithIcon
-                icon={<BagIcon color={iconColor} />}
+                icon={<DescIcon color={iconColor} />}
                 placeholder="Description..."
                 value={description}
                 setValue={setDescription}
@@ -140,7 +140,11 @@ export function income() {
                 keyExtractor={(item) => item}
                 renderItem={({ item, index: numbers }) => {
                   return (
-                    <ExpenseTypeButton value={expenseType} setValue={setExpenseType} item={item} />
+                    <ExpenseTypeButton
+                      value={expenseType}
+                      setValue={setExpenseType}
+                      item={item}
+                    />
                   );
                 }}
               />

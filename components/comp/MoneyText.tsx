@@ -32,13 +32,16 @@ const MoneyText = ({
       ]}
     >
       {prefix}
-      {grouped}<Text
+      <Text style={{ fontFamily: "SpaceGroteskBold" }}>{grouped}</Text>
+      <Text
         style={{
           fontSize: size * 0.65,
           color: decimalColor ? decimalColor : "#ffffff94",
           fontWeight: "600",
+          fontFamily: "SpaceGroteskBold",
         }}
-      >.{dec}
+      >
+        .{dec}
       </Text>
     </ThemedText>
   );

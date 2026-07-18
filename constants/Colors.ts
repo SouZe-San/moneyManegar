@@ -71,7 +71,7 @@ export const ColorMapping = {
   light: {
     Food: "#D94F4F",
     Fuel: "#3B82F6",
-    Shopping: "#F59E0B ",
+    Shopping: "#F59E0B",
     Recharge: "#10B981",
     Travels: "#8B5CF6",
     Others: "#6B7280",

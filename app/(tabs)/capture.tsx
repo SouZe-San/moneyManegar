@@ -5,6 +5,7 @@ import {
   Pressable,
   ScrollView,
   StyleSheet,
+  Text,
 } from "react-native";
 import { useCallback, useRef, useState } from "react";
 import { useFocusEffect } from "expo-router";
@@ -399,8 +400,7 @@ export default function CaptureScreen() {
                       fontWeight: "600",
                       color: isIncome ? incomeColor : expenseColor,
                     }}
-                  >
-                    ₹{p.amount.toLocaleString("en-IN")}
+                  >₹<Text style={{ fontFamily: "SpaceGroteskBold" }}>{p.amount.toLocaleString("en-IN")}</Text>
                   </ThemedText>
                   <IconBtn bg={accent + "22"} onPress={() => confirm(row)}>
                     <I d="M20 6L9 17l-5-5" c={accent} w={2.5} s={15} />
@@ -459,20 +459,22 @@ export default function CaptureScreen() {
             );
           })}
         </ScrollView>
+        <View style={{ position: "relative" }}>
+          <BottomSheetModal
+            isOpen={sheetOpen}
+            setIsOpen={setSheetOpen}
+            ref={sheetRef}
+          >
+            {editRow?.parsed_json && (
+              <EditEntrySheet
+                initial={JSON.parse(editRow.parsed_json)}
+                onSave={saveEdit}
+                onClose={() => setSheetOpen(false)}
+              />
+            )}
+          </BottomSheetModal>
+        </View>
       </AnimateTabView>
-      <BottomSheetModal
-        isOpen={sheetOpen}
-        setIsOpen={setSheetOpen}
-        ref={sheetRef}
-      >
-        {editRow?.parsed_json && (
-          <EditEntrySheet
-            initial={JSON.parse(editRow.parsed_json)}
-            onSave={saveEdit}
-            onClose={() => setSheetOpen(false)}
-          />
-        )}
-      </BottomSheetModal>
     </ThemedView>
   );
 }
@@ -482,8 +484,8 @@ const styles = StyleSheet.create({
     flexDirection: "row",
     alignItems: "center",
     gap: 5,
-    borderRadius: 20,
-    paddingHorizontal: 14,
+    borderRadius: 14,
+    paddingHorizontal: 16,
     height: 36,
     marginTop: 4,
   },

@@ -1,5 +1,5 @@
 import { useColorScheme } from "react-native";
-import Svg, { SvgProps, Path, G } from "react-native-svg";
+import Svg, { SvgProps, Path, G, Rect } from "react-native-svg";
 interface SvgPropWithColor extends SvgProps {
   color: string;
 }
@@ -73,6 +73,25 @@ const GroupsIcon = ({ color, ...props }: SvgPropWithColor) => (
       fill="currentColor"
       d="M1850 688q45 25 82 61t62 80 40 93 14 102h-128q0-52-20-99t-55-81-82-55-99-21q-53 0-99 20t-81 55-55 82-21 99q0 91-41 173t-115 136q65 33 117 81t90 108 57 128 20 142h-128q0-79-30-149t-83-122-122-82-149-31q-79 0-149 30t-122 83-82 122-31 149H512q0-73 20-141t57-128 89-108 118-82q-73-54-114-136t-42-173q0-52-20-99t-55-81-82-55-99-21q-53 0-99 20t-81 55-55 82-21 99H0q0-52 14-101t39-93 63-80 82-62q-33-35-51-81t-19-95q0-52 20-99t55-81 81-55 100-21q52 0 99 20t81 55 55 82 21 99q0 49-18 95t-52 81q82 45 134 124 54-80 138-126t182-46q97 0 181 46t139 126q52-79 134-124-33-35-51-81t-19-95q0-52 20-99t55-81 81-55 100-21q52 0 99 20t81 55 55 82 21 99q0 49-18 95t-52 81M256 512q0 27 10 50t27 40 41 28 50 10q27 0 50-10t40-27 28-41 10-50q0-27-10-50t-27-40-41-28-50-10q-27 0-50 10t-40 27-28 41-10 50m768 768q52 0 99-20t81-55 55-81 21-100q0-52-20-99t-55-81-82-55-99-21q-53 0-99 20t-81 55-55 82-21 99q0 53 20 99t55 81 81 55 100 21m512-768q0 27 10 50t27 40 41 28 50 10q27 0 50-10t40-27 28-41 10-50q0-27-10-50t-27-40-41-28-50-10q-27 0-50 10t-40 27-28 41-10 50"
     />
+  </Svg>
+);
+
+
+export const DescIcon = ({ color, ...props }: SvgPropWithColor) => (
+  <Svg
+    width={24}
+    height={24}
+    fill="none"
+    stroke="#fff"
+    strokeLinecap="round"
+    strokeLinejoin="round"
+    viewBox="0 0 24 24"
+    strokeWidth={1}
+    {...props}
+    color={color || "#f1f2f6"}
+  >
+    <Rect width={8} height={4} x={8} y={2} rx={1} ry={1} />
+    <Path d="M16 4h2a2 2 0 0 1 2 2v14a2 2 0 0 1-2 2H6a2 2 0 0 1-2-2V6a2 2 0 0 1 2-2h2M12 11h4M12 16h4M8 11h.01M8 16h.01" />
   </Svg>
 );
 export { GroupsIcon, UserIcon };

@@ -1,4 +1,11 @@
-import { FlatList, Dimensions, View, ViewToken } from "react-native";
+import {
+  FlatList,
+  Dimensions,
+  View,
+  ViewToken,
+  Pressable,
+  Alert,
+} from "react-native";
 import { useSharedValue } from "react-native-reanimated";
 import { useSQLiteContext } from "expo-sqlite";
 import { useFocusEffect } from "expo-router";
@@ -10,16 +17,25 @@ import ImageHeader from "@/components/animation/ImageHeader";
 import { ThemedView } from "@/components/ThemedView";
 import { ThemedText } from "@/components/ThemedText";
 import TransactionItem from "@/components/transaction/TransactionItem";
+import { showToast } from "@/hooks/useFunc";
+import { useExpense } from "@/context/ExpanseContext";
+import EasyAlert from "@/components/comp/EasyAlert";
 
-import { fetchAllTransaction } from "@/hooks/useQueries";
+import {
+  fetchAllTransaction,
+  deleteTransaction_from_AllTransaction,
+} from "@/hooks/useQueries";
 import { ITransaction } from "@/types/expanse";
 import { SectionList } from "react-native";
 import dayjs from "dayjs";
 import { useThemeColorWithName } from "@/hooks/useThemeColor";
 
+const { width: SCREEN_Width, height: SCREEN_HEIGHT } = Dimensions.get("screen");
+
 const groupByDate = (items: ITransaction[]) => {
   const today = dayjs().format("DD/MM/YY");
   const yesterday = dayjs().subtract(1, "day").format("DD/MM/YY");
+
   const map = new Map<string, ITransaction[]>();
   for (const it of items) {
     if (!map.has(it.date)) map.set(it.date, []);
@@ -31,12 +47,12 @@ const groupByDate = (items: ITransaction[]) => {
   }));
 };
 
-const { width: SCREEN_Width, height: SCREEN_HEIGHT } = Dimensions.get("screen");
-
 const allTransaction = () => {
   const imgUrl = require("@/assets/images/temp/green.jpg");
   const headerTitle = "All Wastes ಠ⁠_⁠ಠ";
+
   const mutedColor = useThemeColorWithName("textMuted");
+  const accent = useThemeColorWithName("highLightBackground");
 
   const viewableItems = useSharedValue<ViewToken[]>([]);
   const onViewableItemsChanged = useRef(
@@ -46,13 +62,15 @@ const allTransaction = () => {
   ).current;
   const viewabilityConfig = useRef({
     itemVisiblePercentThreshold: 50,
-    // minimumViewTime: 60, // debounces rapid enter/leave during fast scroll
   }).current;
 
   const [refresh, setRefresh] = useState(false);
   const [allTransactions, setAllTransaction] = useState<ITransaction[]>([]);
 
   const sqlDb = useSQLiteContext();
+
+  // keep Home screen totals (Left Over / Income / Expense) in sync after a delete
+  const { onRefresh } = useExpense();
 
   const fetch = async () => {
     if (!refresh)
@@ -72,9 +90,44 @@ const allTransaction = () => {
   useFocusEffect(
     useCallback(() => {
       fetch();
-    }, [])
+    }, []),
   );
 
+  // Long-press a row -> confirm -> delete from DB + list + refresh totals
+  const confirmDelete = useCallback(
+    (item: ITransaction) => {
+      if (item._id == null) return;
+      const id = item._id;
+      const amount = Number(item.amount).toLocaleString("en-IN");
+      Alert.alert(
+        "Delete transaction?",
+        `${item.expanseDesc || item.expenseType} · ₹${amount}`,
+        [
+          { text: "Cancel", style: "cancel" },
+          {
+            text: "Delete",
+            style: "destructive",
+            onPress: async () => {
+              try {
+                await deleteTransaction_from_AllTransaction(
+                  sqlDb,
+                  id.toString(),
+                );
+                setAllTransaction((prev) => prev.filter((t) => t._id !== id));
+                showToast("DELETE");
+                onRefresh();
+              } catch (error) {
+                console.log("Delete transaction error:", error);
+                EasyAlert("Error", "Could not delete. Please try again.");
+              }
+            },
+          },
+        ],
+        { cancelable: true },
+      );
+    },
+    [sqlDb, onRefresh],
+  );
   return (
     <ThemedView style={globalStyles.stack_container}>
       <ImageHeader imgUrl={imgUrl} title={headerTitle} />
@@ -95,7 +148,7 @@ const allTransaction = () => {
         )}
         <SectionList
           sections={groupByDate(allTransactions)}
-          keyExtractor={(_,index) => index.toString()}
+          keyExtractor={(_, index) => index.toString()}
           style={{ marginTop: 30, flex: 1 }}
           contentContainerStyle={{ paddingBottom: 40 }}
           showsVerticalScrollIndicator={false}
@@ -124,7 +177,17 @@ const allTransaction = () => {
               index={index}
               viewableItems={viewableItems}
             >
-              <TransactionItem {...item} />
+              <Pressable
+                onLongPress={() => confirmDelete(item)}
+                delayLongPress={350}
+                style={({ pressed }) => [
+                  {
+                    opacity: pressed ? 0.7 : 1,
+                  },
+                ]}
+              >
+                <TransactionItem {...item} />
+              </Pressable>
             </AnimatedListItem>
           )}
         />

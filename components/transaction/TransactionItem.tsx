@@ -25,7 +25,10 @@ const expense = useThemeColorWithName("expense");
 
  const amountColor = isIncome ? income : expense;
  const sign = isIncome ? "+" : "−";
- const formatted = Number(data.amount).toLocaleString("en-IN");
+ const formatted = Number(data.amount).toLocaleString("en-IN", {
+   minimumFractionDigits: Number.isInteger(data.amount) ? 0 : 2,
+   maximumFractionDigits: 2,
+ });
   return (
     <View
       style={[
@@ -35,9 +38,6 @@ const expense = useThemeColorWithName("expense");
     >
       {/* Category chip — color from ColorMapping at ~15% alpha */}
       <View style={[styles.chip, { backgroundColor: categoryColor + "26" }]}>
-        {/* <ThemedText style={styles.chipIcon}>
-          {iconReturn(data.expenseType)}
-        </ThemedText> */}
         <CategoryIcon type={data.expenseType} color={categoryColor} size={22} />
       </View>
 
@@ -60,8 +60,13 @@ const expense = useThemeColorWithName("expense");
       </View>
 
       {/* Amount — color-coded + tabular numerals */}
-      <ThemedText style={[styles.amount, { color: amountColor }]}>
-        {sign} ₹{formatted}
+      <ThemedText
+        style={[
+          styles.amount,
+          { color: amountColor },
+        ]}
+      >
+        {sign} ₹<Text style={{ fontFamily: "SpaceGroteskBold" }}>{formatted}</Text>
       </ThemedText>
     </View>
   );

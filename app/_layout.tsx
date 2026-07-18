@@ -29,7 +29,7 @@ export default function RootLayout() {
   const headerTextColor = useThemeColorWithName("text");
 
   const [loaded] = useFonts({
-    SpaceMono: require("../assets/fonts/SpaceMono-Regular.ttf"),
+    SpaceGroteskBold: require("../assets/fonts/SpaceGrotesk-Bold.ttf"),
   });
 
   useEffect(() => {

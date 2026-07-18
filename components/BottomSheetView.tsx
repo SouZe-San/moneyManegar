@@ -30,7 +30,6 @@ const BottomSheetView = React.forwardRef<BottomSheetRefProps, BottomSheetProps>(
     const scrollTo = useCallback((destination: number) => {
       "worklet";
       active.value = destination !== 0;
-
       translateY.value = withSpring(destination, { damping: 50 });
     }, []);
 
@@ -105,6 +104,7 @@ const styles = StyleSheet.create({
     position: "absolute",
     left: 0,
     // right: 0,
+    zIndex:3,
     borderTopLeftRadius: 25,
     borderTopRightRadius: 25,
     paddingHorizontal: 20,
