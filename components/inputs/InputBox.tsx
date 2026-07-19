@@ -12,10 +12,12 @@ import { ThemedText } from "../ThemedText";
 
 type InputBoxProps = {
   placeholder: string;
-  keyboardType?: "numeric" | "default";
+  keyboardType?: "numeric" | "default" | "email-address";
   value: string | undefined;
   setValue: (value: string) => void;
   maxLength?: number;
+  autoCapitalize?: "none" | "sentences" | "words" | "characters";
+  autoCorrect?: boolean;
 };
 
 export function InputBox({
@@ -25,6 +27,8 @@ export function InputBox({
   setValue,
   style,
   maxLength = 50,
+  autoCapitalize,
+  autoCorrect,
 }: InputBoxProps & TextProps) {
   const placeTextColor = useThemeColorWithName("textMuted");
   const inputTextColor = useThemeColorWithName("text");
@@ -38,6 +42,8 @@ export function InputBox({
       value={value}
       onChangeText={setValue}
       maxLength={maxLength}
+      autoCapitalize={autoCapitalize}
+      autoCorrect={autoCorrect}
     />
   );
 }
@@ -50,6 +56,8 @@ export function InputWithIcon({
   setValue,
   maxLength,
   hero = false,
+  autoCapitalize,
+  autoCorrect,
 }: InputBoxProps & { icon: React.JSX.Element; hero?: boolean }) {
   const surface = useThemeColorWithName("surface");
   const cardBorder = useThemeColorWithName("cardBorder");
@@ -73,6 +81,8 @@ export function InputWithIcon({
           value={value}
           setValue={setValue}
           maxLength={maxLength}
+          autoCapitalize={autoCapitalize}
+          autoCorrect={autoCorrect}
           style={[
             styles.fieldInput,
             hero && styles.heroInput,
