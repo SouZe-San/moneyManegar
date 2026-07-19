@@ -431,7 +431,6 @@ export default function CaptureScreen() {
               >
                 <View style={{ flex: 1 }}>
                   <ThemedText
-                    // numberOfLines={2}
                     style={{ fontSize: 14, color: "#C7D0CC" }}
                   >
                     {row.raw_text}

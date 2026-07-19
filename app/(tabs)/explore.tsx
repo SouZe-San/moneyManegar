@@ -1,7 +1,6 @@
 import {
   StyleSheet,
   View,
-  TouchableOpacity,
   Switch,
   useColorScheme,
   Pressable,
