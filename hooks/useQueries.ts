@@ -1,4 +1,12 @@
-import type { Groups, ITransaction, IUdahar, Members, IGroup, expenseType, Budget } from "@/types/expanse";
+import type {
+  Groups,
+  ITransaction,
+  IUdahar,
+  Members,
+  IGroup,
+  expenseType,
+  Budget,
+} from "@/types/expanse";
 import { type SQLiteDatabase } from "expo-sqlite";
 
 /**
@@ -15,12 +23,15 @@ const isoFromTxnDate = (col: string = "date") =>
 // ! Data INSERTING - INSERTION ---->
 
 // data insert im AllTransaction Table
-const addData_in_AllTransaction = async (db: SQLiteDatabase, data: ITransaction) => {
+const addData_in_AllTransaction = async (
+  db: SQLiteDatabase,
+  data: ITransaction,
+) => {
   db.withTransactionAsync(async () => {
     try {
       await db.runAsync(
         "INSERT INTO AllTransactions (amount, type, expenseType, date, expanseDesc) VALUES (?, ?, ?, ?, ?)",
-        [data.amount, data.type, data.expenseType, data.date, data.expanseDesc]
+        [data.amount, data.type, data.expenseType, data.date, data.expanseDesc],
       );
     } catch (error) {
       console.error("From useQueries \n Error inserting transaction:", error);
@@ -28,12 +39,23 @@ const addData_in_AllTransaction = async (db: SQLiteDatabase, data: ITransaction)
   });
 };
 
-const add_Transaction_In_AllTransaction = async (db: SQLiteDatabase, data: ITransaction) => {
+const add_Transaction_In_AllTransaction = async (
+  db: SQLiteDatabase,
+  data: ITransaction,
+) => {
   db.withTransactionAsync(async () => {
     try {
       await db.runAsync(
-        "INSERT INTO AllTransactions (amount, type, expenseType, date, expanseDesc,toWhom) VALUES (?, ?, ?, ?, ?,?)",
-        [data.amount, data.type, data.expenseType, data.date, data.expanseDesc, data.toWhom!]
+        "INSERT INTO AllTransactions (amount, type, expenseType, date, expanseDesc,toWhom, memberId) VALUES (?, ?, ?, ?, ?,?,?)",
+        [
+          data.amount,
+          data.type,
+          data.expenseType,
+          data.date,
+          data.expanseDesc,
+          data.toWhom!,
+          data.memberId!,
+        ],
       );
     } catch (error) {
       console.error("From useQueries \n Error inserting transaction:", error);
@@ -54,7 +76,7 @@ const add_udhar = async (db: SQLiteDatabase, data: IUdahar) => {
         data.expanseDesc,
         data.toWhom,
         data.memberId,
-      ]
+      ],
     );
 
     // await db.runAsync(
@@ -70,11 +92,10 @@ const add_udhar = async (db: SQLiteDatabase, data: IUdahar) => {
 const memberCreate = async (db: SQLiteDatabase, data: Members) => {
   db.withTransactionAsync(async () => {
     try {
-      await db.runAsync("INSERT INTO MemberTable (userName,userId,imgUrl) VALUES (?,?,?)", [
-        data.userName,
-        data.userId,
-        data.imgUrl,
-      ]);
+      await db.runAsync(
+        "INSERT INTO MemberTable (userName,userId,imgUrl) VALUES (?,?,?)",
+        [data.userName, data.userId, data.imgUrl],
+      );
     } catch (error) {
       console.error("From useQueries \nError While Member Add : ", error);
     }
@@ -85,11 +106,10 @@ const memberCreate = async (db: SQLiteDatabase, data: Members) => {
 const groupCreate = async (db: SQLiteDatabase, data: IGroup) => {
   db.withTransactionAsync(async () => {
     try {
-      await db.runAsync("INSERT INTO GroupTable (name,logo,imgUrl) VALUES (?,?,?)", [
-        data.name,
-        data.logo,
-        data.imgUrl,
-      ]);
+      await db.runAsync(
+        "INSERT INTO GroupTable (name,logo,imgUrl) VALUES (?,?,?)",
+        [data.name, data.logo, data.imgUrl],
+      );
     } catch (error) {
       console.error("From useQueries \nError While Creating Group : ", error);
     }
@@ -99,15 +119,18 @@ const groupCreate = async (db: SQLiteDatabase, data: IGroup) => {
 // add Member in Group
 const addMember_in_Group = async (
   db: SQLiteDatabase,
-  data: { groupId: number; memberId: number }
+  data: { groupId: number; memberId: number },
 ) => {
   try {
-    await db.runAsync("INSERT INTO Group_Member (groupId, memberId) VALUES (?,?)", [
-      data.groupId,
-      data.memberId,
-    ]);
+    await db.runAsync(
+      "INSERT INTO Group_Member (groupId, memberId) VALUES (?,?)",
+      [data.groupId, data.memberId],
+    );
   } catch (error) {
-    console.error("From useQueries \nError While Adding Member in Group : ", error);
+    console.error(
+      "From useQueries \nError While Adding Member in Group : ",
+      error,
+    );
     throw new Error("Error While Adding Member in Group");
   }
 };
@@ -117,7 +140,9 @@ const addMember_in_Group = async (
 // Fetch All Transaction
 const fetchAllTransaction = async (db: SQLiteDatabase) => {
   try {
-    const rows: ITransaction[] = await db.getAllAsync("SELECT * FROM AllTransactions");
+    const rows: ITransaction[] = await db.getAllAsync(
+      "SELECT * FROM AllTransactions",
+    );
     return rows;
   } catch (error) {
     console.error("Error fetching AllTransactions: ", error);
@@ -128,7 +153,9 @@ const fetchAllTransaction = async (db: SQLiteDatabase) => {
 
 const fetchAllUnPaidTransaction = async (db: SQLiteDatabase) => {
   try {
-    const rows: IUdahar[] = await db.getAllAsync("SELECT * FROM UdharTransactions");
+    const rows: IUdahar[] = await db.getAllAsync(
+      "SELECT * FROM UdharTransactions",
+    );
     return rows;
   } catch (error) {
     console.error("Error fetching Udhari Data: ", error);
@@ -139,7 +166,7 @@ const fetchAllUnPaidTransaction = async (db: SQLiteDatabase) => {
 const getTotalIncome = async (db: SQLiteDatabase) => {
   try {
     const rows = await db.getAllAsync<{ total: number }>(
-      "SELECT SUM(amount) as total FROM AllTransactions WHERE type = 'income'"
+      "SELECT SUM(amount) as total FROM AllTransactions WHERE type = 'income'",
     );
     return rows[0].total;
   } catch (error) {
@@ -150,7 +177,7 @@ const getTotalIncome = async (db: SQLiteDatabase) => {
 const getTotalExpense = async (db: SQLiteDatabase) => {
   try {
     const rows = await db.getAllAsync<{ total: number }>(
-      "SELECT SUM(amount) as total FROM AllTransactions WHERE type = 'expense'"
+      "SELECT SUM(amount) as total FROM AllTransactions WHERE type = 'expense'",
     );
 
     return rows[0].total;
@@ -190,11 +217,10 @@ const getTotalExpenseMonthWise = async (db: SQLiteDatabase) => {
   }
 };
 
-
 const fetchOnlyExpense = async (db: SQLiteDatabase) => {
   try {
     const rows = await db.getAllAsync<{ amount: number }>(
-      "SELECT amount FROM AllTransactions WHERE type = 'expense'"
+      "SELECT amount FROM AllTransactions WHERE type = 'expense'",
     );
     return rows.map((row) => {
       return { value: row.amount };
@@ -207,7 +233,7 @@ const fetchOnlyExpense = async (db: SQLiteDatabase) => {
 const fetchOnlyIncome = async (db: SQLiteDatabase) => {
   try {
     const rows = await db.getAllAsync<{ amount: number }>(
-      "SELECT amount FROM AllTransactions WHERE type = 'income'"
+      "SELECT amount FROM AllTransactions WHERE type = 'income'",
     );
     return rows.map((row) => {
       return { value: row.amount };
@@ -287,7 +313,7 @@ const fetchAllMember_of_Group = async (db: SQLiteDatabase, groupId: number) => {
   try {
     const rows = await db.getAllAsync<{ memberId: number }>(
       "SELECT memberId FROM Group_Member WHERE groupId = ?",
-      [groupId]
+      [groupId],
     );
     return rows;
   } catch (error) {
@@ -301,7 +327,7 @@ const fetchGroupId = async (db: SQLiteDatabase, groupName: string) => {
   try {
     const rowId = await db.getFirstAsync<{ _id: number }>(
       "SELECT _id FROM GroupTable WHERE name = ? AND EXISTS (SELECT 1 FROM GroupTable WHERE name = ?) ",
-      [groupName, groupName]
+      [groupName, groupName],
     );
     return rowId;
   } catch (error) {
@@ -312,9 +338,10 @@ const fetchGroupId = async (db: SQLiteDatabase, groupName: string) => {
 
 const fetchGroupBy_id = async (db: SQLiteDatabase, id: string) => {
   try {
-    const grp: IGroup | null = await db.getFirstAsync("SELECT * FROM GroupTable WHERE _id = ?", [
-      Number(id),
-    ]);
+    const grp: IGroup | null = await db.getFirstAsync(
+      "SELECT * FROM GroupTable WHERE _id = ?",
+      [Number(id)],
+    );
     return grp;
   } catch (error) {
     console.log("Error From Fetch single Group,: ", error);
@@ -326,7 +353,7 @@ const fetchMemberBy_id = async (db: SQLiteDatabase, id: number) => {
   try {
     const member: Members | null = await db.getFirstAsync(
       "SELECT * FROM MemberTable WHERE _id = ?",
-      [id]
+      [id],
     );
     return member;
   } catch (error) {
@@ -340,7 +367,10 @@ const fetchTotalExpenseAccordingExpanse = async (db: SQLiteDatabase) => {
   const query =
     "SELECT expenseType, SUM(amount) AS total_expense FROM AllTransactions WHERE type = 'expense' GROUP BY expenseType";
   try {
-    const rows = await db.getAllAsync<{ expenseType: expenseType; total_expense: number }>(query);
+    const rows = await db.getAllAsync<{
+      expenseType: expenseType;
+      total_expense: number;
+    }>(query);
     return rows;
   } catch (error) {
     console.error("Error fetching Expense As Type: ", error);
@@ -348,70 +378,126 @@ const fetchTotalExpenseAccordingExpanse = async (db: SQLiteDatabase) => {
   }
 };
 
-
-const fetchAllBudgets =async (db: SQLiteDatabase) =>{
-  const query = "SELECT   b._id,   STRFTIME('%Y', b.date) AS year,   STRFTIME('%m', b.date) AS month,   COALESCE(b.amount, 0) AS budget_amount,   COALESCE(     SUM(       CASE         WHEN a.type = 'expense' THEN a.amount         WHEN a.type = 'income' THEN - a.amount         ELSE 0       END     ),     0   ) AS total_expense FROM   (     SELECT       _id,       DATE,       amount     FROM       BudgetTable   ) b   LEFT JOIN AllTransactions a ON STRFTIME(     '%Y-%m',     '20' || SUBSTR(a.date, 7, 2) || '-' || SUBSTR(a.date, 4, 2) || '-' || SUBSTR(a.date, 1, 2)   ) = STRFTIME('%Y-%m', b.date)   AND a.expenseType not in ('Salary','Gift','Business') GROUP BY   STRFTIME('%Y-%m', b.date) ORDER BY   STRFTIME('%Y-%m', b.date) ASC"
-
+const fetchAllBudgetsRaw = async (db: SQLiteDatabase) => {
   try {
-    const rows:Budget[] = await db.getAllAsync(query);
+    const rows = await db.getAllAsync<{
+      _id: number;
+      amount: number;
+      date: string;
+    }>("SELECT * FROM BudgetTable");
     return rows;
   } catch (error) {
-     console.error("Error fetching Budgets: ", error);
+    console.error("Error fetching raw Budgets: ", error);
     return [];
   }
-}
+};
 
-const fetchThisMonthBudget =async (db: SQLiteDatabase) =>{
-  const query = "SELECT   strftime('%m', b.date) AS month,   COALESCE(b.amount, 0) AS budget_amount,     COALESCE(     SUM(       CASE WHEN a.type = 'expense' THEN a.amount WHEN a.type = 'income'  THEN -a.amount ELSE 0 END     ), 0   ) AS total_expense FROM BudgetTable b LEFT JOIN AllTransactions a ON STRFTIME(     '%Y-%m',     '20' || SUBSTR(a.date, 7, 2) || '-' || SUBSTR(a.date, 4, 2) || '-' || SUBSTR(a.date, 1, 2)   )  = strftime('%Y-%m', b.date)   AND a.expenseType not in ('Salary','Gift','Business') WHERE strftime('%Y-%m', b.date) = strftime('%Y-%m','now','localtime') GROUP BY strftime('%Y-%m', b.date)"
+// Every group<->member link, for backup/export.
+const fetchAll_Group_Member = async (db: SQLiteDatabase) => {
+  try {
+    const rows = await db.getAllAsync<{
+      _id: number;
+      groupId: number;
+      memberId: number;
+    }>("SELECT * FROM Group_Member");
+    return rows;
+  } catch (error) {
+    console.error("Error fetching Group_Member: ", error);
+    return [];
+  }
+};
+
+const fetchAllBudgets = async (db: SQLiteDatabase) => {
+  const query =
+    "SELECT   b._id,   STRFTIME('%Y', b.date) AS year,   STRFTIME('%m', b.date) AS month,   COALESCE(b.amount, 0) AS budget_amount,   COALESCE(     SUM(       CASE         WHEN a.type = 'expense' THEN a.amount         WHEN a.type = 'income' THEN - a.amount         ELSE 0       END     ),     0   ) AS total_expense FROM   (     SELECT       _id,       DATE,       amount     FROM       BudgetTable   ) b   LEFT JOIN AllTransactions a ON STRFTIME(     '%Y-%m',     '20' || SUBSTR(a.date, 7, 2) || '-' || SUBSTR(a.date, 4, 2) || '-' || SUBSTR(a.date, 1, 2)   ) = STRFTIME('%Y-%m', b.date)   AND a.expenseType not in ('Salary','Gift','Business') GROUP BY   STRFTIME('%Y-%m', b.date) ORDER BY   STRFTIME('%Y-%m', b.date) ASC";
 
   try {
-    const rows = await db.getAllAsync<{ month:string;budget_amount:number; total_expense:number}>(query);
+    const rows: Budget[] = await db.getAllAsync(query);
+    return rows;
+  } catch (error) {
+    console.error("Error fetching Budgets: ", error);
+    return [];
+  }
+};
+
+const fetchThisMonthBudget = async (db: SQLiteDatabase) => {
+  const query =
+    "SELECT   strftime('%m', b.date) AS month,   COALESCE(b.amount, 0) AS budget_amount,     COALESCE(     SUM(       CASE WHEN a.type = 'expense' THEN a.amount WHEN a.type = 'income'  THEN -a.amount ELSE 0 END     ), 0   ) AS total_expense FROM BudgetTable b LEFT JOIN AllTransactions a ON STRFTIME(     '%Y-%m',     '20' || SUBSTR(a.date, 7, 2) || '-' || SUBSTR(a.date, 4, 2) || '-' || SUBSTR(a.date, 1, 2)   )  = strftime('%Y-%m', b.date)   AND a.expenseType not in ('Salary','Gift','Business') WHERE strftime('%Y-%m', b.date) = strftime('%Y-%m','now','localtime') GROUP BY strftime('%Y-%m', b.date)";
+
+  try {
+    const rows = await db.getAllAsync<{
+      month: string;
+      budget_amount: number;
+      total_expense: number;
+    }>(query);
     return rows[0];
   } catch (error) {
-     console.error("Error fetching Budgets: ", error);
+    console.error("Error fetching Budgets: ", error);
     return null;
   }
-}
+};
 
-const isBudgetHave =async (db: SQLiteDatabase) =>{
-  const query = "SELECT _id from BudgetTable LIMIT 1"
+const isBudgetHave = async (db: SQLiteDatabase) => {
+  const query = "SELECT _id from BudgetTable LIMIT 1";
 
   try {
     const rows = await db.getAllAsync(query);
     return rows;
   } catch (error) {
-     console.error("Error fetching Budgets: ", error);
+    console.error("Error fetching Budgets: ", error);
     return [];
   }
-}
+};
 
-// Fetch according Date
+// All udhar entries for one member, newest first.
+
+const fetchUdharBy_MemberUserId = async (
+  db: SQLiteDatabase,
+  userId: number | undefined,
+) => {
+  if (!userId) return [];
+  try {
+    const rows = await db.getAllAsync<IUdahar>(
+      "SELECT * FROM UdharTransactions WHERE memberId = ? ORDER BY _id DESC",
+      [userId],
+    );
+    return rows;
+  } catch (error) {
+    console.error("Error fetching member udhar: ", error);
+    return [];
+  }
+};
+
+//^ Fetch according Date
 
 //member
 
 // update any member's due amount
 const addDueAmount_of_Member = async (
   db: SQLiteDatabase,
-  data: { userName: string; amount: number }
+  data: { _id: number; amount: number },
 ) => {
   try {
-    await db.runAsync("UPDATE MemberTable SET dueAmount = dueAmount + ? WHERE userName = ?", [
-      data.amount,
-      data.userName,
-    ]);
+    const result = await db.runAsync(
+      "UPDATE MemberTable SET dueAmount = dueAmount + ? WHERE _id = ?",
+      [data.amount, data._id],
+    );
+    if (result.changes === 0) {
+      console.warn("addDueAmount_of_Member: no member matched _id", data._id);
+    }
   } catch (error) {
     console.error("Error updating dueAmount in MemberTable: ", error);
   }
 };
 const removeDueAmount_of_Member = async (
   db: SQLiteDatabase,
-  data: { userName: string; amount: number }
+  data: { _id: number; amount: number },
 ) => {
   try {
-    await db.runAsync("UPDATE MemberTable SET dueAmount = dueAmount - ? WHERE userName = ?", [
-      data.amount,
-      data.userName,
-    ]);
+    await db.runAsync(
+      "UPDATE MemberTable SET dueAmount = dueAmount - ? WHERE _id = ?",
+      [data.amount, data._id],
+    );
   } catch (error) {
     console.error("Error updating dueAmount in MemberTable: ", error);
   }
@@ -420,42 +506,55 @@ const removeDueAmount_of_Member = async (
 // update any member's owned amount
 const addOweAmount_of_Member = async (
   db: SQLiteDatabase,
-  data: { userName: string; amount: number }
+  data: { _id: number; amount: number },
 ) => {
   try {
-    await db.runAsync("UPDATE MemberTable SET owedAmount = owedAmount + ? WHERE userName = ?", [
-      data.amount,
-      data.userName,
-    ]);
+    await db.runAsync(
+      "UPDATE MemberTable SET owedAmount = owedAmount + ? WHERE _id = ?",
+      [data.amount, data._id],
+    );
   } catch (error) {
-    console.error("Error updating dueAmount in MemberTable: ", error);
+    console.error("Error updating owedAmount in MemberTable: ", error);
   }
 };
 const removeOweAmount_of_Member = async (
   db: SQLiteDatabase,
-  data: { userName: string; amount: number }
+  data: { _id: number; amount: number },
 ) => {
   try {
-    await db.runAsync("UPDATE MemberTable SET owedAmount = owedAmount - ? WHERE userName = ?", [
-      data.amount,
-      data.userName,
-    ]);
+    await db.runAsync(
+      "UPDATE MemberTable SET owedAmount = owedAmount - ? WHERE _id = ?",
+      [data.amount, data._id],
+    );
   } catch (error) {
-    console.error("Error updating dueAmount in MemberTable: ", error);
+    console.error("Error updating owedAmount in MemberTable: ", error);
   }
 };
 
 // update any member's details
 const updateMember = async (
   db: SQLiteDatabase,
-  data: { _id?: number; userName: string; imgUrl: string }
+  data: { _id?: number; userName: string; imgUrl: string },
 ) => {
   try {
     if (!data._id) {
       throw new Error("Member Id not provided");
     }
-    await db.runAsync("UPDATE MemberTable SET userName = ?, imgUrl = ? WHERE _id = ?", [
-      data.userName,
+    await db.runAsync(
+      "UPDATE MemberTable SET userName = ?, imgUrl = ? WHERE _id = ?",
+      [data.userName, data.imgUrl, data._id],
+    );
+  } catch (error) {
+    console.error("Error updating MemberTable: ", error);
+  }
+};
+
+const updateImage_of_Member = async (
+  db: SQLiteDatabase,
+  data: { _id: number; imgUrl: string },
+) => {
+  try {
+    await db.runAsync("UPDATE MemberTable SET imgUrl = ? WHERE _id = ?", [
       data.imgUrl,
       data._id,
     ]);
@@ -463,17 +562,9 @@ const updateMember = async (
     console.error("Error updating MemberTable: ", error);
   }
 };
-
-const updateImage_of_Member = async (db: SQLiteDatabase, data: { _id: number; imgUrl: string }) => {
-  try {
-    await db.runAsync("UPDATE MemberTable SET imgUrl = ? WHERE _id = ?", [data.imgUrl, data._id]);
-  } catch (error) {
-    console.error("Error updating MemberTable: ", error);
-  }
-};
 const updateName_of_Member = async (
   db: SQLiteDatabase,
-  data: { _id: number; userName: string }
+  data: { _id: number; userName: string },
 ) => {
   try {
     await db.runAsync("UPDATE MemberTable SET userName = ? WHERE _id = ?", [
@@ -492,12 +583,10 @@ const updateGroup = async (db: SQLiteDatabase, data: IGroup) => {
     if (!data._id) {
       throw new Error("Group Id not provided");
     }
-    await db.runAsync("UPDATE GroupTable SET name = ?, logo = ?, imgUrl = ? WHERE _id = ?", [
-      data.name,
-      data.logo,
-      data.imgUrl,
-      data._id,
-    ]);
+    await db.runAsync(
+      "UPDATE GroupTable SET name = ?, logo = ?, imgUrl = ? WHERE _id = ?",
+      [data.name, data.logo, data.imgUrl, data._id],
+    );
   } catch (error) {
     console.error("Error updating GroupTable: ", error);
   }
@@ -505,45 +594,46 @@ const updateGroup = async (db: SQLiteDatabase, data: IGroup) => {
 
 const updateGroupMember3 = async (
   db: SQLiteDatabase,
-  data: { groupId: number; memberId: number; action: "add" | "remove" }
+  data: { groupId: number; memberId: number; action: "add" | "remove" },
 ) => {
   try {
     if (data.action === "add") {
       // Attempt to add the member to the group
-      await db.runAsync("INSERT INTO Group_Member (groupId, memberId) VALUES (?, ?)", [
-        data.groupId,
-        data.memberId,
-      ]);
+      await db.runAsync(
+        "INSERT INTO Group_Member (groupId, memberId) VALUES (?, ?)",
+        [data.groupId, data.memberId],
+      );
     } else if (data.action === "remove") {
       // Attempt to remove the member from the group
-      await db.runAsync("DELETE FROM Group_Member WHERE groupId = ? AND memberId = ?", [
-        data.groupId,
-        data.memberId,
-      ]);
+      await db.runAsync(
+        "DELETE FROM Group_Member WHERE groupId = ? AND memberId = ?",
+        [data.groupId, data.memberId],
+      );
     } else {
       throw new Error("Invalid action specified. Use 'add' or 'remove'.");
     }
   } catch (error) {
-    console.error("From updateGroupMember \nError While Updating Group Member: ", error);
+    console.error(
+      "From updateGroupMember \nError While Updating Group Member: ",
+      error,
+    );
     throw new Error("Error While Updating Group Member");
   }
 };
 
 const addBudget = async (
   db: SQLiteDatabase,
-  data: { date: string; amount: number }
+  data: { date: string; amount: number },
 ) => {
   try {
-    await db.runAsync("INSERT INTO BudgetTable (amount, date) SELECT ?, ? WHERE NOT EXISTS (   SELECT 1 FROM BudgetTable   WHERE strftime('%Y-%m', date) = strftime('%Y-%m', ?) )", [
-      data.amount,
-      data.date,
-      data.date
-    ]);
+    await db.runAsync(
+      "INSERT INTO BudgetTable (amount, date) SELECT ?, ? WHERE NOT EXISTS (   SELECT 1 FROM BudgetTable   WHERE strftime('%Y-%m', date) = strftime('%Y-%m', ?) )",
+      [data.amount, data.date, data.date],
+    );
   } catch (error) {
     console.error("Error - Insert budget : ", error);
   }
 };
-
 
 // ! DATA DELETING - DELETION ---->
 
@@ -596,7 +686,7 @@ const deleteMember = async (db: SQLiteDatabase, memberId: number) => {
     await db.runAsync("DELETE FROM MemberTable WHERE _id = ?", [memberId]);
   } catch (error) {
     console.error("Error deleting Member: ", error);
-    throw new Error("Some Terrible Happens from Delete members ");
+    throw new Error("This member not settle all Debts!!!");
   }
 };
 
@@ -610,7 +700,10 @@ const deleteGroup = async (db: SQLiteDatabase, groupId: number) => {
   }
 };
 
-const deleteGroupMember_ON_grpDelete = async (db: SQLiteDatabase, groupId: number) => {
+const deleteGroupMember_ON_grpDelete = async (
+  db: SQLiteDatabase,
+  groupId: number,
+) => {
   try {
     await db.runAsync("DELETE FROM Group_Member WHERE groupId = ? ", [groupId]);
   } catch (error) {
@@ -618,17 +711,27 @@ const deleteGroupMember_ON_grpDelete = async (db: SQLiteDatabase, groupId: numbe
     throw new Error("Some Terrible Happens On mem Delete for  Group");
   }
 };
-const deleteGroupMember_ON_memDelete = async (db: SQLiteDatabase, memberId: number) => {
+const deleteGroupMember_ON_memDelete = async (
+  db: SQLiteDatabase,
+  memberId: number,
+) => {
   try {
-    await db.runAsync("DELETE FROM Group_Member WHERE memberId = ? ", [memberId]);
+    await db.runAsync("DELETE FROM Group_Member WHERE memberId = ? ", [
+      memberId,
+    ]);
   } catch (error) {
     console.error("Error deleting Group-Member on MemberDelete: ", error);
   }
 };
 
-const deleteSingleTransaction = async (db: SQLiteDatabase, transactionId: string) => {
+const deleteSingleTransaction = async (
+  db: SQLiteDatabase,
+  transactionId: string,
+) => {
   try {
-    await db.runAsync("DELETE FROM UdharTransactions WHERE _id = ?", [transactionId]);
+    await db.runAsync("DELETE FROM UdharTransactions WHERE _id = ?", [
+      transactionId,
+    ]);
   } catch (error) {
     console.error("Error deleting Transaction: ", error);
     throw new Error("Some Terrible Happens AT Transaction Delete");
@@ -649,7 +752,9 @@ const deleteTransaction_from_AllTransaction = async (
   transactionId: string,
 ) => {
   try {
-    await db.runAsync("DELETE FROM AllTransactions WHERE _id = ?", [transactionId]);
+    await db.runAsync("DELETE FROM AllTransactions WHERE _id = ?", [
+      transactionId,
+    ]);
   } catch (error) {
     console.error("Error deleting AllTransaction row: ", error);
     throw new Error("Some Terrible Happens AT AllTransaction Delete");
@@ -659,10 +764,10 @@ const deleteTransaction_from_AllTransaction = async (
 const resetDb = async (db: SQLiteDatabase) => {
   try {
     await clearGroup_MemberTable(db);
-    await clearGroupTable(db);
-    await clearMemberTable(db);
     await clearAllTransactionTable(db);
     await clearUdharTransactionTable(db);
+    await clearGroupTable(db);
+    await clearMemberTable(db);
     await clearBudgetTable(db);
   } catch (error) {
     console.error("Error clearing GroupTable table:", error);
@@ -699,6 +804,9 @@ export {
   fetchMonthlyExpense,
   fetchMonthlyIncome,
   fetchThisMonthBudget,
+  fetchUdharBy_MemberUserId,
+  fetchAllBudgetsRaw,
+  fetchAll_Group_Member,
   // Update
   addDueAmount_of_Member,
   addOweAmount_of_Member,

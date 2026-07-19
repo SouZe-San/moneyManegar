@@ -40,7 +40,7 @@ export interface IUdahar {
   date: string;
   toWhom: string;
   expanseDesc: string;
-  memberId: string | null;
+  memberId: number | null;
 }
 
 export type mainTransactionType = "income" | "expense";
@@ -53,11 +53,11 @@ export interface ITransaction {
   date: string;
   expanseDesc: string;
   toWhom?: string;
-  memberId?: string;
+  memberId?: number | null;
 }
 
 export type Members = {
-  _id?: number;
+  _id?: number ;
   userName: string;
   userId: string | null;
   owedAmount?: number;

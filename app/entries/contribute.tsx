@@ -31,7 +31,13 @@ import { ThemedView } from "@/components/ThemedView";
 
 // icons
 import { MoneyBagIcon, BagIcon, UserIcon } from "@/assets/icons/SVG/InputIcons";
-import { expenseType, IGroup, IUdahar, Members, transactionCategory } from "@/types/expanse";
+import {
+  expenseType,
+  IGroup,
+  IUdahar,
+  Members,
+  transactionCategory,
+} from "@/types/expanse";
 
 // hooks
 import {
@@ -52,7 +58,9 @@ export function contribute() {
   const [amount, setAmount] = useState("");
   const [expenseType, setExpenseType] = useState("");
   const [expanseReason, setExpanseReason] = useState("");
-  const [singlePersonName, setSinglePersonName] = useState<Members | null>(null);
+  const [singlePersonName, setSinglePersonName] = useState<Members | null>(
+    null,
+  );
   const [selectedGroup, setGroup] = useState<IGroup | null>(null);
   const [splitInGroups, setInGroups] = useState(false);
   const [date, setDate] = useState(dayjs());
@@ -63,9 +71,13 @@ export function contribute() {
   const iconColor = useThemeColorWithName("inputIcon");
   const horain = useThemeColorWithName("navBg");
   const toggleButton = useThemeColorWithName("button");
-  const unSelectedToggleButton = useColorScheme() === "light" ? useThemeColorWithName("blurBg") : useThemeColorWithName("toggleButton");
+  const unSelectedToggleButton =
+    useColorScheme() === "light"
+      ? useThemeColorWithName("blurBg")
+      : useThemeColorWithName("toggleButton");
   const thumbColor = useColorScheme() === "light" ? "#8c8c8c" : "#ECEDEE";
-  const selectedThumbColor = useColorScheme() === "light" ? "#dff169" : "#030f0e";
+  const selectedThumbColor =
+    useColorScheme() === "light" ? "#dff169" : "#030f0e";
   const backgroundColor = useThemeColorWithName("background");
   const surface = useThemeColorWithName("surface");
   const cardBorder = useThemeColorWithName("cardBorder");
@@ -134,7 +146,10 @@ export function contribute() {
       if (!singlePersonName) {
         // Show an alert or feedback to the user
         console.warn("Single Person Name is empty");
-        EasyAlert("Person's Name is empty", "Please enter the Reason to continue");
+        EasyAlert(
+          "Person's Name is empty",
+          "Please enter the Reason to continue",
+        );
         return;
       }
     } else {
@@ -142,7 +157,10 @@ export function contribute() {
       if (selectedGroup === null) {
         // Show an alert or feedback to the user
         console.warn("Group is not selected");
-        EasyAlert("Group is Not Selected", "Type should be selected to continue");
+        EasyAlert(
+          "Group is Not Selected",
+          "Type should be selected to continue",
+        );
         return;
       }
     }
@@ -150,15 +168,14 @@ export function contribute() {
     // All Checks Pass
     // Submit the data to the server
 
-
-    // It out from wallet so money reduce
-         await addData_in_AllTransaction(sqlDb, {
-           amount: parseFloat(amount),
-           type: "expense",
-           expenseType: expenseType as transactionCategory,
-           date: date.format("DD/MM/YY"),
-           expanseDesc: expanseReason,
-         });
+    // It out from wallet so money reduce -- add on OWN name
+    await addData_in_AllTransaction(sqlDb, {
+      amount: parseFloat(amount),
+      type: "expense",
+      expenseType: expenseType as transactionCategory,
+      date: date.format("DD/MM/YY"),
+      expanseDesc: expanseReason,
+    });
 
     if (!splitInGroups) {
       // Submit the data for single person
@@ -169,12 +186,15 @@ export function contribute() {
         expenseType: expenseType as expenseType,
         toWhom: singlePersonName?.userName!,
         type: "owned",
-        memberId: singlePersonName?.userId!,
+        memberId: singlePersonName?._id!,
       };
 
       try {
         await add_udhar(sqlDb, data);
-      await addOweAmount_of_Member(sqlDb, { amount: data.amount, userName: data.toWhom });
+        await addOweAmount_of_Member(sqlDb, {
+          amount: data.amount,
+          _id: data.memberId!,
+        });
         Alert.alert(
           "Success",
           "Contri Successfully Added",
@@ -186,7 +206,7 @@ export function contribute() {
           ],
           {
             cancelable: false,
-          }
+          },
         );
       } catch (error) {
         EasyAlert("Failed", "Some Error Occurred, Tyr Again");
@@ -199,7 +219,10 @@ export function contribute() {
 
       try {
         // @ Need - member's Id
-        const memberIds = await fetchAllMember_of_Group(sqlDb, selectedGroup._id);
+        const memberIds = await fetchAllMember_of_Group(
+          sqlDb,
+          selectedGroup._id,
+        );
         const memberCount = memberIds.length;
         const eachContri = Number(amount) / (memberCount + 1);
         const allList: IUdahar[] = [];
@@ -219,14 +242,17 @@ export function contribute() {
             expenseType: expenseType as expenseType,
             toWhom: member.userName,
             type: "owned",
-            memberId: member.userId,
+            memberId: member._id!,
           });
         });
         await Promise.all(allList.map((item) => add_udhar(sqlDb, item)));
         await Promise.all(
           members.map(async (item) => {
-            await addOweAmount_of_Member(sqlDb, { amount: eachContri, userName: item.userName });
-          })
+            await addOweAmount_of_Member(sqlDb, {
+              amount: eachContri,
+              _id:item._id!
+            });
+          }),
         );
 
         showToast("CONTRI");

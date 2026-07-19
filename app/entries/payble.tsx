@@ -108,7 +108,7 @@ export function payble() {
       expenseType: expenseType as expenseType,
       toWhom: toWhom!,
       type: "debt",
-      memberId: member?.userId!,
+      memberId: member?._id!,
     };
     try {
       if (!member?.userName) {
@@ -118,7 +118,7 @@ export function payble() {
       await add_udhar(sqlDb, data);
       await addDueAmount_of_Member(sqlDb, {
         amount: parseFloat(amount),
-        userName: member?.userName,
+        _id: member?._id!,
       });
       router.push("/(tabs)");
       showToast("DEBT");

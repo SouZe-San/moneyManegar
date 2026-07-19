@@ -22,7 +22,7 @@ import { addData_in_AllTransaction } from "@/hooks/useQueries";
 import { useThemeColorWithName } from "@/hooks/useThemeColor";
 
 // icons
-import { MoneyBagIcon, BagIcon, DescIcon } from "@/assets/icons/SVG/InputIcons";
+import { MoneyBagIcon, DescIcon } from "@/assets/icons/SVG/InputIcons";
 import { showToast, showToastWithMsg } from "@/hooks/useFunc";
 
 const incomeExpanseType = ["Salary", "Business", "Gift", "Others"];

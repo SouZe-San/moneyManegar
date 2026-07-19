@@ -22,7 +22,15 @@ type TransactionProps = {
   transactionId: number;
   expanseAmount: number;
   transactionType: "debt" | "owned";
-  expanseType: "Food" | "Fuel" | "Shopping" | "Recharge" | "Travels" | "Others" | "Rent" | "Bill";
+  expanseType:
+    | "Food"
+    | "Fuel"
+    | "Shopping"
+    | "Recharge"
+    | "Travels"
+    | "Others"
+    | "Rent"
+    | "Bill";
   expanseDescription: string;
   expanseData: string;
   toWhom?: string;
@@ -30,6 +38,7 @@ type TransactionProps = {
   onSwipeableWillClose: (id: string) => void;
   removeTransaction: (transactionId: string) => void;
   openedItem: null | string;
+  memberId:number | null;
 };
 
 const TransactionRow = ({
@@ -44,28 +53,28 @@ const TransactionRow = ({
   onSwipeableWillClose,
   removeTransaction,
   openedItem,
+  memberId,
 }: TransactionProps) => {
-  
   const scheme = useColorScheme() ?? "dark";
   const surface = useThemeColorWithName("surface");
   const cardBorder = useThemeColorWithName("cardBorder");
   const textMuted = useThemeColorWithName("textMuted");
   const income = useThemeColorWithName("income");
   const expense = useThemeColorWithName("expense");
-  
-   const isIncome = transactionType === "owned";
-  
-   // category color, with a fallback for income categories (Salary/Gift/…) and unknowns
-   const categoryColor =
-     (ColorMapping[scheme] as Record<string, string>)[expanseType]?.trim() ||
-     (isIncome ? income : "#6B7280");
-  
-   const amountColor = isIncome ? income : expense;
-   const sign = isIncome ? "+" : "−";
-    const formatted = Number(expanseAmount).toLocaleString("en-IN", {
-      minimumFractionDigits: Number.isInteger(expanseAmount) ? 0 : 2,
-      maximumFractionDigits: 2,
-    });
+
+  const isIncome = transactionType === "owned";
+
+  // category color, with a fallback for income categories (Salary/Gift/…) and unknowns
+  const categoryColor =
+    (ColorMapping[scheme] as Record<string, string>)[expanseType]?.trim() ||
+    (isIncome ? income : "#6B7280");
+
+  const amountColor = isIncome ? income : expense;
+  const sign = isIncome ? "+" : "−";
+  const formatted = Number(expanseAmount).toLocaleString("en-IN", {
+    minimumFractionDigits: Number.isInteger(expanseAmount) ? 0 : 2,
+    maximumFractionDigits: 2,
+  });
 
   const swipeableRef = useRef<SwipeableMethods | null>(null);
   const sqlite = useSQLiteContext();
@@ -87,18 +96,22 @@ const TransactionRow = ({
     return `${Nday}/${Nmonth}/${year.toString().slice(-2)}`;
   };
 
-  const removeData = async (amount: number, type: "debt" | "owned", transactionId: number) => {
+  const removeData = async (
+    amount: number,
+    type: "debt" | "owned",
+    transactionId: number,
+  ) => {
     if (type === "debt") {
-      await removeDueAmount_of_Member(sqlite, { amount, userName: toWhom });
+      await removeDueAmount_of_Member(sqlite, { amount, _id: memberId! });
     } else {
-      await removeOweAmount_of_Member(sqlite, { amount, userName: toWhom });
+      await removeOweAmount_of_Member(sqlite, { amount, _id: memberId! });
     }
     removeTransaction(transactionId.toString());
   };
   const addTransactionAmount = async (
     amount: number,
     type: "debt" | "owned",
-    transactionId: number
+    transactionId: number,
   ) => {
     try {
       await add_Transaction_In_AllTransaction(sqlite, {
@@ -108,6 +121,7 @@ const TransactionRow = ({
         expanseDesc: expanseDescription,
         expenseType: expanseType,
         toWhom,
+        memberId,
       });
 
       removeData(amount, type, transactionId);
@@ -125,7 +139,11 @@ const TransactionRow = ({
   }, [openedItem]);
 
   //^ Pay tab
-  const RightActions = (amount: number, type: "debt" | "owned", transactionId: number) => {
+  const RightActions = (
+    amount: number,
+    type: "debt" | "owned",
+    transactionId: number,
+  ) => {
     return (
       <TouchableOpacity
         onPress={() => addTransactionAmount(amount, type, transactionId)}
@@ -162,7 +180,7 @@ const TransactionRow = ({
   const LeftActions = (
     amount: number,
     type: "debt" | "owned",
-    transactionId: number
+    transactionId: number,
   ): React.JSX.Element => {
     return (
       <TouchableOpacity onPress={() => removeData(amount, type, transactionId)}>
@@ -199,7 +217,7 @@ const TransactionRow = ({
       colors={[expense + "20", income + "20"]}
       start={{ x: 0, y: 0.5 }}
       end={{ x: 1, y: 0.5 }}
-      locations={ [0.5, 0.5] }
+      locations={[0.5, 0.5]}
       style={{
         borderRadius: 14,
         marginVertical: 5,

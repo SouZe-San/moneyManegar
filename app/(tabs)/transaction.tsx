@@ -91,7 +91,9 @@ export default function Transaction() {
   }
   return (
     <GestureHandlerRootView style={{ flex: 1 }}>
-      <AnimateTabView style={[globalStyles.container, { paddingBottom: "20%" }]}>
+      <AnimateTabView
+        style={[globalStyles.container, { paddingBottom: "20%" }]}
+      >
         <ThemedText type="title">Pauna-Gonda</ThemedText>
 
         <FlatList
@@ -105,10 +107,16 @@ export default function Transaction() {
           onViewableItemsChanged={({ viewableItems: vItems }) => {
             viewableItems.value = vItems;
           }}
-          refreshControl={<RefreshControl refreshing={loading} onRefresh={fetchData} />}
-          renderItem={({ item ,index}) => (
+          refreshControl={
+            <RefreshControl refreshing={loading} onRefresh={fetchData} />
+          }
+          renderItem={({ item, index }) => (
             <Animated.View>
-              <AnimatedListItem item={item} index={index} viewableItems={viewableItems}>
+              <AnimatedListItem
+                item={item}
+                index={index}
+                viewableItems={viewableItems}
+              >
                 <TransactionRow
                   transactionId={item._id!}
                   expanseDescription={item.expanseDesc}
@@ -121,6 +129,7 @@ export default function Transaction() {
                   onSwipeableWillClose={handleSwipeableWillClose}
                   openedItem={openedItem}
                   removeTransaction={removeTransaction}
+                  memberId={item.memberId!}
                 />
               </AnimatedListItem>
             </Animated.View>
