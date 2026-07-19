@@ -4,37 +4,61 @@ import Animated, {
   useSharedValue,
   useAnimatedStyle,
   withTiming,
-  withSpring,
+  cancelAnimation,
 } from "react-native-reanimated";
 import { useCallback } from "react";
 import { useThemeColorWithName } from "@/hooks/useThemeColor";
 import { useFocusEffect } from "expo-router";
 
+const FROM_SCALE = 0.5;
+const FROM_OPACITY = 0;
+
+
 const AnimatedStackView = ({ style, ...otherProps }: ViewProps) => {
-  const scale = useSharedValue(0);
+  const scale = useSharedValue(FROM_SCALE);
+  const opacity = useSharedValue(FROM_OPACITY);
+
+  const backgroundColor = useThemeColorWithName("background");
 
   //   const translateY = useSharedValue(30);
   const animatedStyle = useAnimatedStyle(() => {
     return {
+      opacity: opacity.value,
       transform: [{ scale: scale.value }],
-      zIndex: 1,
     };
   });
-  const backgroundColor = useThemeColorWithName("background");
 
   useFocusEffect(
     useCallback(() => {
-      scale.value = withTiming(1, { duration: 500, easing: Easing.out(Easing.exp) });
+      cancelAnimation(scale);
+      cancelAnimation(opacity);
+      scale.value = FROM_SCALE;
+      opacity.value = FROM_OPACITY;
 
-      //   translateY.value = withTiming(0, { duration: 300 });
+      scale.value = withTiming(1, {
+        duration: 500,
+        easing: Easing.out(Easing.exp),
+      });
+      opacity.value = withTiming(1, {
+        duration: 350,
+        easing: Easing.out(Easing.quad),
+      });
 
       return () => {
-        scale.value = withTiming(0, { duration: 600 });
-        // translateY.value = withTiming(30, { duration: 300 });
+        // scale.value = withTiming(0, { duration: 600 });
+        cancelAnimation(scale);
+        cancelAnimation(opacity);
+        scale.value = FROM_SCALE;
+        opacity.value = FROM_OPACITY;
       };
-    }, [])
+    }, [scale, opacity]),
   );
-  return <Animated.View style={[{ backgroundColor }, animatedStyle, style]} {...otherProps} />;
+  return (
+    <Animated.View
+      style={[{ backgroundColor, zIndex: 1 }, animatedStyle, style]}
+      {...otherProps}
+    />
+  );
 };
 
 export default AnimatedStackView;

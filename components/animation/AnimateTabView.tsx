@@ -4,7 +4,7 @@ import Animated, {
   useSharedValue,
   useAnimatedStyle,
   withTiming,
-  withSpring,
+  cancelAnimation,
 } from "react-native-reanimated";
 import { useCallback } from "react";
 import { useThemeColorWithName } from "@/hooks/useThemeColor";
@@ -15,32 +15,51 @@ export type ThemedViewProps = ViewProps & {
   darkColor?: string;
 };
 
-const AnimateTabView = ({ style, lightColor, darkColor, ...otherProps }: ThemedViewProps) => {
+const AnimateTabView = ({
+  style,
+  lightColor,
+  darkColor,
+  ...otherProps
+}: ThemedViewProps) => {
+  // animate Values
   const scale = useSharedValue(1.2);
-
   const translateY = useSharedValue(30);
+
+  // colors
+  const backgroundColor = useThemeColorWithName("background");
+
   const animatedStyle = useAnimatedStyle(() => {
     return {
       transform: [{ scale: scale.value }, { translateY: translateY.value }],
     };
   });
 
-  const backgroundColor = useThemeColorWithName("background");
-
   useFocusEffect(
     useCallback(() => {
-      scale.value = withTiming(1, { duration: 300, easing: Easing.out(Easing.exp) });
+      cancelAnimation(scale);
+      cancelAnimation(translateY);
 
+      scale.value = withTiming(1, {
+        duration: 300,
+        easing: Easing.out(Easing.exp),
+      });
       translateY.value = withTiming(0, { duration: 300 });
 
       return () => {
-        scale.value = withTiming(1.2, { duration: 300 });
-        translateY.value = withTiming(30, { duration: 300 });
+        cancelAnimation(scale);
+        cancelAnimation(translateY);
+        scale.value = 1.2;
+        translateY.value = 30;
       };
-    }, [])
+    }, []),
   );
 
-  return <Animated.View style={[{ backgroundColor }, animatedStyle, style]} {...otherProps} />;
+  return (
+    <Animated.View
+      style={[{ backgroundColor }, animatedStyle, style]}
+      {...otherProps}
+    />
+  );
 };
 
 export default AnimateTabView;
