@@ -46,12 +46,18 @@ export default function RootLayout() {
     <ThemeProvider value={colorScheme === "dark" ? DarkTheme : DefaultTheme}>
       <Suspense
         fallback={
-          <ThemedView style={{ flex: 1, justifyContent: "center", alignItems: "center" }}>
+          <ThemedView
+            style={{ flex: 1, justifyContent: "center", alignItems: "center" }}
+          >
             <ActivityIndicator size="large" color={high} />
           </ThemedView>
         }
       >
-        <SQLiteProvider databaseName="test.db" onInit={migrateDbIfNeeded} useSuspense>
+        <SQLiteProvider
+          databaseName="test.db"
+          onInit={migrateDbIfNeeded}
+          useSuspense
+        >
           <ExpenseProvider>
             <StatusBar
               translucent
@@ -201,6 +207,18 @@ export default function RootLayout() {
                   headerTintColor: headerTextColor,
                 }}
               />
+              <Stack.Screen
+                name="startingEntry"
+                options={{
+                  title: "",
+                  headerShadowVisible: false,
+                  headerLargeTitle: true,
+                  headerTransparent: true,
+                  headerBackVisible: false,
+                  headerTintColor: headerTextColor,
+                }}
+              />
+
               <Stack.Screen
                 name="onboarding"
                 options={{

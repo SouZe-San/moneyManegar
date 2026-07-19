@@ -42,7 +42,7 @@ const login = () => {
       }
       await SecureStore.setItemAsync("onboarding", "True");
       // replace, not push — otherwise back returns to this screen
-      router.replace("/(tabs)");
+      router.replace("/startingEntry");
     } catch (error) {
       console.log("Login save error:", error);
       showToastWithMsg("Could not save, try again");
@@ -54,7 +54,11 @@ const login = () => {
     useCallback(() => {
       (async () => {
         const result = await SecureStore.getItemAsync("onboarding");
-        if (result) router.replace("/(tabs)");
+                if (result) {
+                  const balanceDone = await SecureStore.getItemAsync("balanceSetup");
+                  router.replace(balanceDone ? "/(tabs)" : "/startingEntry");
+                }
+
       })();
     }, []),
   );

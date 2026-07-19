@@ -55,9 +55,9 @@ export const ExpenseProvider: React.FC<{ children: React.ReactNode }> = ({
 }) => {
   const [totalIncome, setTotalIncome] = useState<number>(0);
   const [totalExpense, setTotalExpense] = useState<number>(0);
+  const [openingBalance, setOpeningBalance] = useState<number>(0);
   const [totalIncomeMonthWise, setTotalIncomeMonthWise] = useState<number>(0);
   const [totalExpenseMonthWise, setTotalExpenseMonthWise] = useState<number>(0);
-  // const [allTransaction, setAllTransaction] = useState<IUdahar[]>([]);
   const [groups, setGroups] = useState<IGroup[]>([]);
   const [userName, setUserName] = useState<string | null>(null);
   const [email, setEmail] = useState<string | null>(null);
@@ -67,7 +67,7 @@ export const ExpenseProvider: React.FC<{ children: React.ReactNode }> = ({
   >([]);
   const [expenseInMonth, setExpenseInMonth] = useState<boolean>(false);
   const [refresh, setRefresh] = useState<boolean>(false);
-  let leftBalance: number = totalIncome - totalExpense;
+  let leftBalance: number = openingBalance + totalIncome - totalExpense;
   const db = useSQLiteContext();
 
   const theme = useColorScheme() ?? "light";
@@ -106,6 +106,9 @@ export const ExpenseProvider: React.FC<{ children: React.ReactNode }> = ({
       setUserName(useName);
       const resE = await SecureStore.getItemAsync("email");
       setEmail(resE);
+      const resOb = await SecureStore.getItemAsync("openingBalance");
+      setOpeningBalance(resOb ? parseFloat(resOb) || 0 : 0);
+
       const resExpeTy = await SecureStore.getItemAsync("durationType");
       const isMonth = resExpeTy === "true";
       setExpenseInMonth(isMonth);
@@ -116,19 +119,6 @@ export const ExpenseProvider: React.FC<{ children: React.ReactNode }> = ({
   useEffect(() => {
     fetchData();
   }, []);
-
-  // const aggregateExpenses = async () => {
-  //   const data: {
-  //     expenseType: expenseType;
-  //     total_expense: number;
-  //   }[] = await fetchTotalExpenseAccordingExpanse(db);
-
-  //   return data.map(({ total_expense, expenseType }) => ({
-  //     text: expenseType,
-  //     value: total_expense,
-  //     color: useThemeColorMapping(theme, expenseType),
-  //   }));
-  // };
 
   const aggregateExpenses = async () => {
     const raw: { expenseType: expenseType; total_expense: number }[] =
@@ -168,14 +158,6 @@ export const ExpenseProvider: React.FC<{ children: React.ReactNode }> = ({
 
     fetchData();
   }, []);
-
-  // const removeTransaction = useCallback((transactionId: string) => {
-  //   setAllTransaction((prev) =>
-  //     prev.filter(
-  //       (transaction) => transaction._id?.toString() !== transactionId,
-  //     ),
-  //   );
-  // }, []);
 
   const totalBudget = [
     {
