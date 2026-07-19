@@ -91,7 +91,7 @@ const setting = () => {
       if (!summary) return; // user cancelled the picker
       onRefresh(); // refresh dashboard totals with the imported data
       showToastWithMsg(
-        `Imported ✅ ${summary.expenses + summary.udhar} trans · ${summary.members} members · ${summary.groups} groups`,
+        `Imported ✅ ${summary.expenses + summary.udhar} trans · ${summary.members} members · ${summary.groups} groups · ${summary.budgets} budgets`,
       );
     } catch (error) {
       showToastWithMsg("😹 Import Failed !!");

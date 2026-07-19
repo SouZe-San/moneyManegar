@@ -25,6 +25,8 @@ import {
   fetchAllMember,
   fetchAllTransaction,
   fetchAllUnPaidTransaction,
+  fetchAllBudgetsRaw,
+  fetchAll_Group_Member,
 } from "./useQueries";
 
 enum ToastType {
@@ -124,11 +126,15 @@ export const exportExpensesToCSV = async (
     const allUdhar = await fetchAllUnPaidTransaction(db);
     const allMember = await fetchAllMember(db);
     const allGroups = await fetchAllGroup(db);
+    const allBudgets = await fetchAllBudgetsRaw(db);
+    const allGroupMembers = await fetchAll_Group_Member(db);
     if (
       allExpenses.length === 0 &&
       allUdhar.length === 0 &&
       allMember.length === 0 &&
-      allGroups.length === 0
+      allGroups.length === 0 &&
+      allBudgets.length === 0 &&
+      allGroupMembers.length === 0
     ) {
       alert("No data found to export!");
       return;
@@ -140,6 +146,8 @@ export const exportExpensesToCSV = async (
     const csvString_allUdhar = convertToCSV(allUdhar);
     const csvString_allMember = convertToCSV(allMember);
     const csvString_allGroups = convertToCSV(allGroups);
+    const csvString_allBudgets = convertToCSV(allBudgets);
+    const csvString_allGroupMembers = convertToCSV(allGroupMembers);
 
     setProgress(40);
 
@@ -151,6 +159,9 @@ export const exportExpensesToCSV = async (
     if (csvString_allUdhar) zip.file("MM_Udhar.csv", csvString_allUdhar);
     if (csvString_allMember) zip.file("MM_Members.csv", csvString_allMember);
     if (csvString_allGroups) zip.file("MM_Groups.csv", csvString_allGroups);
+    if (csvString_allBudgets) zip.file("MM_Budgets.csv", csvString_allBudgets);
+    if (csvString_allGroupMembers)
+      zip.file("MM_GroupMembers.csv", csvString_allGroupMembers);
 
     setProgress(60);
     // D. Generate the zip file as a Base64 string
@@ -187,9 +198,6 @@ export const exportExpensesToCSV = async (
   }
 };
 
-
-
-
 // ---- CSV parsing (reverses convertToCSV) ----
 const parseCSV = (text: string): Record<string, string>[] => {
   const s = text.replace(/\r\n/g, "\n").replace(/\r/g, "\n");
@@ -202,17 +210,29 @@ const parseCSV = (text: string): Record<string, string>[] => {
     const c = s[i];
     if (inQuotes) {
       if (c === '"') {
-        if (s[i + 1] === '"') { field += '"'; i++; } // escaped ""
+        if (s[i + 1] === '"') {
+          field += '"';
+          i++;
+        } // escaped ""
         else inQuotes = false;
       } else field += c;
     } else {
       if (c === '"') inQuotes = true;
-      else if (c === ",") { row.push(field); field = ""; }
-      else if (c === "\n") { row.push(field); rows.push(row); row = []; field = ""; }
-      else field += c;
+      else if (c === ",") {
+        row.push(field);
+        field = "";
+      } else if (c === "\n") {
+        row.push(field);
+        rows.push(row);
+        row = [];
+        field = "";
+      } else field += c;
     }
   }
-  if (field.length > 0 || row.length > 0) { row.push(field); rows.push(row); }
+  if (field.length > 0 || row.length > 0) {
+    row.push(field);
+    rows.push(row);
+  }
   if (rows.length === 0) return [];
 
   const headers = rows[0];
@@ -229,13 +249,19 @@ const num = (v?: string) => {
 const orNull = (v?: string) => (v == null || v === "" ? null : v);
 
 export type ImportSummary = {
-  expenses: number; udhar: number; members: number; groups: number; skipped: number;
+  expenses: number;
+  udhar: number;
+  members: number;
+  groups: number;
+  budgets: number;
+  groupMembers: number;
+  skipped: number;
 };
 
 // ---- Main import function ----
 export const importDataFromZip = async (
   db: SQLiteDatabase,
-  setProgress: (n: number) => void
+  setProgress: (n: number) => void,
 ): Promise<ImportSummary | null> => {
   setProgress(0);
 
@@ -264,9 +290,25 @@ export const importDataFromZip = async (
   const udhar = await readCsv("MM_Udhar.csv");
   const members = await readCsv("MM_Members.csv");
   const groups = await readCsv("MM_Groups.csv");
+  const budgets = await readCsv("MM_Budgets.csv");
+  const groupMembers = await readCsv("MM_GroupMembers.csv");
   setProgress(55);
 
-  const summary: ImportSummary = { expenses: 0, udhar: 0, members: 0, groups: 0, skipped: 0 };
+  const summary: ImportSummary = {
+    expenses: 0,
+    udhar: 0,
+    members: 0,
+    groups: 0,
+    budgets: 0,
+    groupMembers: 0,
+    skipped: 0,
+  };
+
+  // Group_Member stores real _id values, but OR IGNORE means rows get NEW ids
+  // on this device (or match an existing row). Without remapping, restored
+  // groups would point at the wrong people. old _id -> id on this device.
+  const memberIdMap = new Map<string, number>();
+  const groupIdMap = new Map<string, number>();
 
   // C. Insert. One transaction = fast + safe. Per-row try/catch so one bad
   //    row (constraint violation) is skipped instead of aborting everything.
@@ -276,10 +318,31 @@ export const importDataFromZip = async (
         // UNIQUE(userName) -> OR IGNORE skips members you already have
         const r = await db.runAsync(
           "INSERT OR IGNORE INTO MemberTable (userName, owedAmount, dueAmount, userId, imgUrl) VALUES (?,?,?,?,?)",
-          [orNull(m.userName), num(m.owedAmount), num(m.dueAmount), orNull(m.userId), orNull(m.imgUrl)]
+          [
+            orNull(m.userName),
+            num(m.owedAmount),
+            num(m.dueAmount),
+            orNull(m.userId),
+            orNull(m.imgUrl),
+          ],
         );
-        r.changes > 0 ? summary.members++ : summary.skipped++;
-      } catch { summary.skipped++; }
+        let newId: number | null = null;
+        if (r.changes > 0) {
+          newId = r.lastInsertRowId;
+          summary.members++;
+        } else {
+          // already present (UNIQUE userName) — reuse the existing row's id
+          const found = await db.getFirstAsync<{ _id: number }>(
+            "SELECT _id FROM MemberTable WHERE userName = ?",
+            [orNull(m.userName)],
+          );
+          newId = found?._id ?? null;
+          summary.skipped++;
+        }
+        if (m._id && newId) memberIdMap.set(String(m._id), newId);
+      } catch {
+        summary.skipped++;
+      }
     }
 
     for (const g of groups) {
@@ -287,32 +350,104 @@ export const importDataFromZip = async (
         // UNIQUE(name) -> OR IGNORE
         const r = await db.runAsync(
           "INSERT OR IGNORE INTO GroupTable (name, logo, imgUrl) VALUES (?,?,?)",
-          [orNull(g.name), orNull(g.logo), orNull(g.imgUrl)]
+          [orNull(g.name), orNull(g.logo), orNull(g.imgUrl)],
         );
-        r.changes > 0 ? summary.groups++ : summary.skipped++;
-      } catch { summary.skipped++; }
+        let newId: number | null = null;
+        if (r.changes > 0) {
+          newId = r.lastInsertRowId;
+          summary.groups++;
+        } else {
+          const found = await db.getFirstAsync<{ _id: number }>(
+            "SELECT _id FROM GroupTable WHERE name = ?",
+            [orNull(g.name)],
+          );
+          newId = found?._id ?? null;
+          summary.skipped++;
+        }
+        if (g._id && newId) groupIdMap.set(String(g._id), newId);
+      } catch {
+        summary.skipped++;
+      }
+    }
+
+    // group <-> member links, using the remapped ids
+    for (const gm of groupMembers) {
+      try {
+        const gid = groupIdMap.get(String(gm.groupId));
+        const mid = memberIdMap.get(String(gm.memberId));
+        if (!gid || !mid) {
+          summary.skipped++;
+          continue;
+        }
+        const r = await db.runAsync(
+          "INSERT OR IGNORE INTO Group_Member (groupId, memberId) VALUES (?,?)",
+          [gid, mid],
+        );
+        r.changes > 0 ? summary.groupMembers++ : summary.skipped++;
+      } catch {
+        summary.skipped++;
+      }
+    }
+
+    // budgets — no UNIQUE on date, so de-dupe by month or a re-import doubles them
+    for (const b of budgets) {
+      try {
+        const exists = await db.getFirstAsync<{ _id: number }>(
+          "SELECT _id FROM BudgetTable WHERE date = ?",
+          [orNull(b.date)],
+        );
+        if (exists) {
+          summary.skipped++;
+          continue;
+        }
+        await db.runAsync(
+          "INSERT INTO BudgetTable (amount, date) VALUES (?,?)",
+          [num(b.amount), orNull(b.date)],
+        );
+        summary.budgets++;
+      } catch {
+        summary.skipped++;
+      }
     }
 
     for (const t of expenses) {
       try {
         await db.runAsync(
           "INSERT INTO AllTransactions (amount, type, expenseType, date, toWhom, expanseDesc, memberId) VALUES (?,?,?,?,?,?,?)",
-          [num(t.amount), orNull(t.type), orNull(t.expenseType) ?? "Others",
-           orNull(t.date), orNull(t.toWhom) ?? "Own", orNull(t.expanseDesc) ?? "", orNull(t.memberId)]
+          [
+            num(t.amount),
+            orNull(t.type),
+            orNull(t.expenseType) ?? "Others",
+            orNull(t.date),
+            orNull(t.toWhom) ?? "Own",
+            orNull(t.expanseDesc) ?? "",
+            orNull(t.memberId),
+          ],
         );
         summary.expenses++;
-      } catch { summary.skipped++; }
+      } catch {
+        summary.skipped++;
+      }
     }
 
     for (const u of udhar) {
       try {
         await db.runAsync(
           "INSERT INTO UdharTransactions (amount, type, expenseType, date, toWhom, expanseDesc, memberId) VALUES (?,?,?,?,?,?,?)",
-          [num(u.amount), orNull(u.type), orNull(u.expenseType),
-           orNull(u.date), orNull(u.toWhom), orNull(u.expanseDesc) ?? "", orNull(u.memberId)]
+          [
+            num(u.amount),
+            orNull(u.type),
+            orNull(u.expenseType),
+            orNull(u.date),
+            orNull(u.toWhom),
+            orNull(u.expanseDesc) ?? "",
+            orNull(u.memberId),
+          ],
         );
         summary.udhar++;
-      } catch { summary.skipped++; }
+      } catch {
+        summary.skipped++;
+      }
     }
   });
 
