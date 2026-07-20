@@ -14,7 +14,7 @@ import { ThemedText } from "@/components/ThemedText";
 import { ThemedView } from "@/components/ThemedView";
 
 // hooks
-import { addMember_in_Group, fetchGroupId, groupCreate } from "@/hooks/useQueries";
+import { addMember_in_Group, fetchGroupId, groupCreate } from "@/hooks/queries/group";
 import { useThemeColorWithName } from "@/hooks/useThemeColor";
 
 import { IGroup, Members } from "@/types/expanse";

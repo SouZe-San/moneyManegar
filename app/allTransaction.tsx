@@ -20,7 +20,7 @@ import TransactionItem from "@/components/transaction/TransactionItem";
 import {
   fetchAllTransaction,
   deleteTransaction_from_AllTransaction,
-} from "@/hooks/useQueries";
+} from "@/hooks/queries/transaction";
 import { ITransaction } from "@/types/expanse";
 import { SectionList } from "react-native";
 import dayjs from "dayjs";

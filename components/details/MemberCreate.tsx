@@ -4,7 +4,7 @@ import { useSQLiteContext } from "expo-sqlite";
 import * as ImagePicker from "expo-image-picker";
 import { useState } from "react";
 
-import { memberCreate } from "@/hooks/useQueries";
+import { memberCreate } from "@/hooks/queries/member";
 import { ThemedView } from "../ThemedView";
 import { ThemedText } from "../ThemedText";
 import SearchProfileSection from "../comp/SearchProfileSection";

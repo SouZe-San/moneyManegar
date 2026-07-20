@@ -10,12 +10,9 @@ import EasyAlert from "@/components/comp/EasyAlert";
 
 import { useThemeColorWithName } from "@/hooks/useThemeColor";
 import { showToast } from "@/hooks/useFunc";
-import {
-  add_udhar,
-  addDueAmount_of_Member,
-  addOweAmount_of_Member,
-  addData_in_AllTransaction,
-} from "@/hooks/useQueries";
+import { add_udhar } from "@/hooks/queries/udhar";
+import { addDueAmount_of_Member, addOweAmount_of_Member } from "@/hooks/queries/member";
+import { addData_in_AllTransaction } from "@/hooks/queries/transaction";
 
 import { MoneyBagIcon, BagIcon } from "@/assets/icons/SVG/InputIcons";
 import { IUdahar, Members, expenseType } from "@/types/expanse";

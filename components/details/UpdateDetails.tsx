@@ -6,7 +6,7 @@ import {
   updateImage_of_Member,
   updateMember,
   updateName_of_Member,
-} from "@/hooks/useQueries";
+} from "@/hooks/queries/member";
 import { useSQLiteContext } from "expo-sqlite";
 
 import { useThemeColorWithName } from "@/hooks/useThemeColor";

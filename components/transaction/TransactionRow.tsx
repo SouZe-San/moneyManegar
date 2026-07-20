@@ -9,9 +9,11 @@ import ReanimatedSwipeable, {
 } from "react-native-gesture-handler/ReanimatedSwipeable";
 import {
   add_Transaction_In_AllTransaction,
+} from "@/hooks/queries/udhar";
+import {
   removeDueAmount_of_Member,
   removeOweAmount_of_Member,
-} from "@/hooks/useQueries";
+} from "@/hooks/queries/member";
 import { useSQLiteContext } from "expo-sqlite";
 import EasyAlert from "../comp/EasyAlert";
 import { ColorMapping } from "@/constants/Colors";

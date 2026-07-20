@@ -19,10 +19,10 @@ import {
   deleteGroup,
   fetchAllMember_of_Group,
   fetchGroupBy_id,
-  fetchMemberBy_id,
   updateGroup,
   updateGroupMember3,
-} from "@/hooks/useQueries";
+} from "@/hooks/queries/group";
+import { fetchMemberBy_id } from "@/hooks/queries/member";
 import { photoUpload, showToast, showToastWithMsg } from "@/hooks/useFunc";
 import { useThemeColorWithName } from "@/hooks/useThemeColor";
 

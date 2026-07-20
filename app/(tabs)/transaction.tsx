@@ -14,7 +14,7 @@ import { globalStyles } from "@/constants/globalStyles";
 import { IUdahar } from "@/types/expanse";
 
 //hooks
-import { deleteSingleTransaction, fetchAllUnPaidTransaction } from "@/hooks/useQueries";
+import { deleteSingleTransaction, fetchAllUnPaidTransaction } from "@/hooks/queries/udhar";
 import { showToast } from "@/hooks/useFunc";
 
 export default function Transaction() {

@@ -40,13 +40,13 @@ import {
 } from "@/types/expanse";
 
 // hooks
+import { add_udhar } from "@/hooks/queries/udhar";
+import { fetchAllMember_of_Group } from "@/hooks/queries/group";
 import {
-  add_udhar,
-  fetchAllMember_of_Group,
   fetchMemberBy_id,
   addOweAmount_of_Member,
-  addData_in_AllTransaction,
-} from "@/hooks/useQueries";
+} from "@/hooks/queries/member";
+import { addData_in_AllTransaction } from "@/hooks/queries/transaction";
 import { showToast } from "@/hooks/useFunc";
 import { useThemeColorWithName } from "@/hooks/useThemeColor";
 

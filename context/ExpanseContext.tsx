@@ -4,23 +4,24 @@ import {
   useContext,
   useCallback,
   useEffect,
+  useMemo,
 } from "react";
 import * as SecureStore from "expo-secure-store";
 import { useColorScheme } from "react-native";
 import { useSQLiteContext } from "expo-sqlite";
 
-import type { Members, IGroup, IUdahar, expenseType } from "@/types/expanse";
+import type { Members, IGroup, expenseType } from "@/types/expanse";
 
 import {
-  fetchAllGroup,
-  fetchAllMember,
   fetchTotalExpenseAccordingExpanse,
   getTotalExpense,
   getTotalIncome,
   getTotalExpenseMonthWise,
   getTotalIncomeMonthWise,
-} from "@/hooks/useQueries";
-import { useThemeColorMapping } from "@/hooks/useThemeColor";
+} from "@/hooks/queries/transaction";
+import { fetchAllMember } from "@/hooks/queries/member";
+import { fetchAllGroup } from "@/hooks/queries/group";
+import { getThemeColorMapping } from "@/hooks/useThemeColor";
 import { showToastWithMsg } from "@/hooks/useFunc";
 
 export interface ExpenseContextType {
@@ -34,10 +35,8 @@ export interface ExpenseContextType {
   firstRefresh: () => Promise<void>;
   groups: IGroup[];
   members: Members[];
-  // allTransaction: IUdahar[];
   onRefresh: () => void;
   refresh: boolean;
-  // removeTransaction: (transactionId: string) => void;
   totalBudget: {
     label: string;
     value: number;
@@ -67,40 +66,107 @@ export const ExpenseProvider: React.FC<{ children: React.ReactNode }> = ({
   >([]);
   const [expenseInMonth, setExpenseInMonth] = useState<boolean>(false);
   const [refresh, setRefresh] = useState<boolean>(false);
-  let leftBalance: number = openingBalance + totalIncome - totalExpense;
   const db = useSQLiteContext();
 
   const theme = useColorScheme() ?? "light";
 
-  const fetchData = async () => {
+  const aggregateExpenses = useCallback(async () => {
+    const raw: { expenseType: expenseType; total_expense: number }[] =
+      await fetchTotalExpenseAccordingExpanse(db);
+
+    const mapped = raw
+      .filter((d) => d.total_expense > 0)
+      .sort((a, b) => b.total_expense - a.total_expense);
+
+    const TOP = 6;
+    const result = mapped
+      .slice(0, TOP)
+      .map(({ total_expense, expenseType }) => ({
+        text: expenseType,
+        value: total_expense,
+        color: getThemeColorMapping(theme, expenseType),
+      }));
+
+    const rest = mapped.slice(TOP);
+    if (rest.length) {
+      const othersTotal = rest.reduce((s, d) => s + d.total_expense, 0);
+      const existing = result.find((r) => r.text === "Others");
+      if (existing) existing.value += othersTotal;
+      else
+        result.push({
+          text: "Others" as expenseType,
+          value: othersTotal,
+          color: getThemeColorMapping(theme, "Others" as expenseType),
+        });
+    }
+
+    return result;
+  }, [db, theme]);
+
+  const fetchData = useCallback(async () => {
     try {
-      const members = await fetchAllMember(db);
+       const [
+         members,
+         groups,
+         income,
+         incomeThisMonth,
+         expense,
+         expenseThisMonth,
+         data,
+       ] = await Promise.all([
+         fetchAllMember(db),
+         fetchAllGroup(db),
+         getTotalIncome(db),
+         getTotalIncomeMonthWise(db),
+         getTotalExpense(db),
+         getTotalExpenseMonthWise(db),
+         aggregateExpenses(),
+       ]);
+
+      
       setMember(members);
-      const groups = await fetchAllGroup(db);
       setGroups(groups);
-      const income = await getTotalIncome(db);
-      const incomeThisMonth = await getTotalIncomeMonthWise(db);
-      const expense = await getTotalExpense(db);
-      const expenseThisMonth = await getTotalExpenseMonthWise(db);
-
-      setTotalIncomeMonthWise(incomeThisMonth ?? 0);
-      setTotalExpenseMonthWise(expenseThisMonth ?? 0);
-
       setTotalIncome(income ?? 0);
+      setTotalIncomeMonthWise(incomeThisMonth ?? 0);
       setTotalExpense(expense ?? 0);
-
-      const data = await aggregateExpenses();
+      setTotalExpenseMonthWise(expenseThisMonth ?? 0);
       setExpenseTypeData(data);
     } catch (error) {
+
       showToastWithMsg("Data fetching Failed !!");
       console.error("Error fetching data: ", error);
-      // Handle error state if needed
     } finally {
       setRefresh(false);
     }
-  };
+  }, [db, aggregateExpenses]);
 
-  const firstRefresh = async () => {
+  const onRefresh = useCallback(() => {
+    setRefresh(true);
+    fetchData();
+  }, [fetchData]);
+
+  const leftBalance = useMemo(
+    () => openingBalance + totalIncome - totalExpense,
+    [openingBalance, totalIncome, totalExpense],
+  );
+
+  const totalBudget = useMemo(
+    () => [
+      {
+        label: "Income",
+        value: totalIncome,
+        frontColor: "#b3df43",
+      },
+      {
+        label: "Expense",
+        value: totalExpense,
+        frontColor: "#f33933",
+      },
+    ],
+    [totalIncome, totalExpense],
+  );
+
+  const firstRefresh = useCallback(async () => {
     try {
       const useName = await SecureStore.getItemAsync("user");
       setUserName(useName);
@@ -115,92 +181,56 @@ export const ExpenseProvider: React.FC<{ children: React.ReactNode }> = ({
     } catch (error) {
       console.log("Error in ExpenseProvider: ", error);
     }
-  };
+  }, []);
+
   useEffect(() => {
+firstRefresh(); 
     fetchData();
-  }, []);
+  }, [firstRefresh,fetchData]);
 
-  const aggregateExpenses = async () => {
-    const raw: { expenseType: expenseType; total_expense: number }[] =
-      await fetchTotalExpenseAccordingExpanse(db);
+const value = useMemo(
+  () => ({
+    totalIncome,
+    totalIncomeMonthWise,
+    totalExpense,
+    totalExpenseMonthWise,
+    userName,
+    email,
+    firstRefresh,
+    leftBalance,
+    refresh,
+    onRefresh,
+    groups,
+    members,
+    totalBudget,
+    expenseTypeData,
+    expenseInMonth,
+    setExpenseInMonth,
+  }),
+  [
+    totalIncome,
+    totalIncomeMonthWise,
+    totalExpense,
+    totalExpenseMonthWise,
+    userName,
+    email,
+    firstRefresh,
+    leftBalance,
+    refresh,
+    onRefresh,
+    groups,
+    members,
+    totalBudget,
+    expenseTypeData,
+    expenseInMonth,
+  ],
+);
 
-    const mapped = raw
-      .filter((d) => d.total_expense > 0)
-      .sort((a, b) => b.total_expense - a.total_expense);
-
-    const TOP = 6;
-    const result = mapped
-      .slice(0, TOP)
-      .map(({ total_expense, expenseType }) => ({
-        text: expenseType,
-        value: total_expense,
-        color: useThemeColorMapping(theme, expenseType),
-      }));
-
-    const rest = mapped.slice(TOP);
-    if (rest.length) {
-      const othersTotal = rest.reduce((s, d) => s + d.total_expense, 0);
-      const existing = result.find((r) => r.text === "Others");
-      if (existing) existing.value += othersTotal;
-      else
-        result.push({
-          text: "Others" as expenseType,
-          value: othersTotal,
-          color: useThemeColorMapping(theme, "Others" as expenseType),
-        });
-    }
-
-    return result;
-  };
-
-  const onRefresh = useCallback(() => {
-    setRefresh(true);
-
-    fetchData();
-  }, []);
-
-  const totalBudget = [
-    {
-      label: "Income",
-      value: totalIncome,
-      frontColor: "#b3df43",
-    },
-    {
-      label: "Expense",
-      value: totalExpense,
-      frontColor: "#f33933",
-    },
-  ];
-
-  return (
-    <ExpenseContext.Provider
-      value={{
-        totalIncome,
-        totalIncomeMonthWise,
-        totalExpense,
-        totalExpenseMonthWise,
-        userName,
-        email,
-        firstRefresh,
-        leftBalance,
-        // allTransaction,
-        // removeTransaction,
-        refresh,
-        onRefresh,
-        groups,
-        members,
-        totalBudget,
-        expenseTypeData,
-        expenseInMonth,
-        setExpenseInMonth,
-      }}
-    >
-      {children}
-    </ExpenseContext.Provider>
-  );
+return (
+  <ExpenseContext.Provider value={value}>{children}</ExpenseContext.Provider>
+);
 };
 
-// Custom hook to use the ExpenseContext
 export const useExpense = (): ExpenseContextType => {
   const context = useContext(ExpenseContext);
   if (context === undefined) {

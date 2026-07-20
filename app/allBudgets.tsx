@@ -4,7 +4,7 @@ import { ThemedText } from "@/components/ThemedText";
 import { ThemedView } from "@/components/ThemedView";
 import { globalStyles } from "@/constants/globalStyles";
 import { showToast } from "@/hooks/useFunc";
-import { fetchAllBudgets } from "@/hooks/useQueries";
+import { fetchAllBudgets } from "@/hooks/queries/budget";
 import { Budget } from "@/types/expanse";
 import { useSQLiteContext } from "expo-sqlite";
 import { useCallback, useMemo, useRef, useState } from "react";

@@ -17,7 +17,7 @@ import { ThemedText } from "@/components/ThemedText";
 import { ThemedView } from "@/components/ThemedView";
 
 // hooks
-import { addData_in_AllTransaction } from "@/hooks/useQueries";
+import { addData_in_AllTransaction } from "@/hooks/queries/transaction";
 import { useThemeColorWithName } from "@/hooks/useThemeColor";
 
 // icons

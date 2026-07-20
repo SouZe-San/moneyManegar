@@ -26,10 +26,12 @@ import { useThemeColorWithName } from "@/hooks/useThemeColor";
 import { useColorScheme } from "@/hooks/useColorScheme";
 import {
   deleteGroupMember_ON_memDelete,
+} from "@/hooks/queries/group";
+import {
   deleteMember,
   fetchMemberBy_id,
-  fetchUdharBy_MemberUserId,
-} from "@/hooks/useQueries";
+} from "@/hooks/queries/member";
+import { fetchUdharBy_MemberUserId } from "@/hooks/queries/udhar";
 import { showToast } from "@/hooks/useFunc";
 import { useExpense } from "@/context/ExpanseContext";
 

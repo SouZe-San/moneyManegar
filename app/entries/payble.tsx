@@ -17,7 +17,8 @@ import { ThemedView } from "@/components/ThemedView";
 import { ThemedText } from "@/components/ThemedText";
 
 // hooks
-import { add_udhar, addDueAmount_of_Member } from "@/hooks/useQueries";
+import { add_udhar } from "@/hooks/queries/udhar";
+import { addDueAmount_of_Member } from "@/hooks/queries/member";
 import { useThemeColorWithName } from "@/hooks/useThemeColor";
 
 // icons

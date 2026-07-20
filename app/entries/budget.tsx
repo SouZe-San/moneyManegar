@@ -16,7 +16,7 @@ import { useThemeColorWithName } from "@/hooks/useThemeColor";
 import { useCallback, useEffect, useRef, useState } from "react";
 import { BottomSheetRefProps } from "@/components/BottomSheetView";
 import BottomSheetModal from "@/components/BottomSheetModal";
-import { fetchThisMonthBudget, isBudgetHave } from "@/hooks/useQueries";
+import { fetchThisMonthBudget, isBudgetHave } from "@/hooks/queries/budget";
 import { useSQLiteContext } from "expo-sqlite";
 import AnimateTabView from "@/components/animation/AnimateTabView";
 import RedirectButton from "@/components/comp/RedirectButton";

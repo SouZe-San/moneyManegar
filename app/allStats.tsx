@@ -10,12 +10,12 @@ import { ThemedView } from "@/components/ThemedView";
 import { ThemedText } from "@/components/ThemedText";
 
 import {
-  fetchAllBudgets,
   fetchOnlyExpense,
   fetchOnlyIncome,
   fetchMonthlyExpense,
   fetchMonthlyIncome,
-} from "@/hooks/useQueries";
+} from "@/hooks/queries/transaction";
+import { fetchAllBudgets } from "@/hooks/queries/budget";
 import { useThemeColorWithName } from "@/hooks/useThemeColor";
 import { Budget } from "@/types/expanse";
 

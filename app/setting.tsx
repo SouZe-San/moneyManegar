@@ -7,7 +7,7 @@ import { ThemedView } from "@/components/ThemedView";
 import { globalStyles } from "@/constants/globalStyles";
 
 // hooks
-import { resetDb } from "@/hooks/useQueries";
+import { resetDb } from "@/hooks/queries";
 import { useThemeColorWithName } from "@/hooks/useThemeColor";
 
 // icons

@@ -13,7 +13,7 @@ import { InputWithIcon } from "../inputs/InputBox";
 import { useState } from "react";
 import SubmitButton from "../inputs/SubmitButton";
 import { showToast, showToastWithMsg } from "@/hooks/useFunc";
-import { addBudget } from "@/hooks/useQueries";
+import { addBudget } from "@/hooks/queries/budget";
 import { useSQLiteContext } from "expo-sqlite";
 import { useRouter } from "expo-router";
 
