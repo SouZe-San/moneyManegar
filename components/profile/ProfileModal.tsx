@@ -73,7 +73,7 @@ export default function ProfileModal({
           )}
         </View>
 
-        {/* <Link href="/notification" style={}}> */}
+
         <Pressable
           style={[
             styles.iconView,
@@ -90,7 +90,6 @@ export default function ProfileModal({
             <BellIcon color={iconColor} />
           )}
         </Pressable>
-        {/* </Link> */}
       </View>
 
       {/*  //! Second Row || photo Selected*/}

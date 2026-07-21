@@ -27,9 +27,9 @@ export function useThemeColorWithName(
 
   return Colors[theme][colorName];
 }
-export function useThemeColorMapping(
+export function getThemeColorMapping(
   theme: "light" | "dark",
-  colorName: keyof typeof ColorMapping.light & keyof typeof ColorMapping.dark
+  colorName: keyof typeof ColorMapping.light & keyof typeof ColorMapping.dark,
 ) {
   return ColorMapping[theme][colorName];
 }

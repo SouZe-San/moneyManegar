@@ -43,7 +43,6 @@ const SingleBox = ({
 export default SingleBox;
 const styles = StyleSheet.create({
   expenseTypeButton: {
-    // width: 60,
     height: 90,
     display: "flex",
     justifyContent: "center",

@@ -18,6 +18,7 @@ import ParallaxScrollView from "@/components/ParallaxScrollView";
 import { ThemedText } from "@/components/ThemedText";
 import ImageAndName from "@/components/profile/ImageAndName";
 import SingleBox from "@/components/SingleBox";
+import UpdateProfileForm from "@/components/profile/UpdateProfileForm";
 
 // hooks
 import { openBottomSheetModal } from "@/hooks/useFunc";
@@ -46,9 +47,11 @@ export default function TabTwoScreen() {
 
   // States
   const [modalVisible, setModalVisible] = useState(false);
+  const [profileVisible, setProfileVisible] = useState(false);
 
   // modal Reference
   const ref = useRef<BottomSheetRefProps>(null);
+  const profileRef = useRef<BottomSheetRefProps>(null);
 
   const { email, setExpenseInMonth, expenseInMonth } = useExpense();
 
@@ -57,6 +60,10 @@ export default function TabTwoScreen() {
   // Open Modal
   const onPress = useCallback(() => {
     openBottomSheetModal(ref, setModalVisible);
+  }, []);
+  // Long-press the e-mail row to edit name + email
+  const onEditProfile = useCallback(() => {
+    openBottomSheetModal(profileRef, setProfileVisible);
   }, []);
 
   return (
@@ -70,14 +77,19 @@ export default function TabTwoScreen() {
       <Collapsible title="Personal " iconName="userIcon">
         <View style={{ gap: 12 }}>
           <View style={[styles.infoPanel, { backgroundColor: surface + "40" }]}>
-            <View style={styles.infoRow}>
+            <Pressable
+              onLongPress={onEditProfile}
+              delayLongPress={300}
+              android_ripple={{ color: "#FFFFFF11" }}
+              style={styles.infoRow}
+            >
               <ThemedText style={styles.infoLabel} type="smallText">
                 E-mail
               </ThemedText>
               <ThemedText style={styles.infoValue}>
                 {email ?? "No Mail"}
               </ThemedText>
-            </View>
+            </Pressable>
             <View style={styles.infoRow}>
               <ThemedText style={styles.infoLabel} type="smallText">
                 Status
@@ -167,6 +179,16 @@ export default function TabTwoScreen() {
               ref={ref}
             >
               <MemberCreate setModalVisibility={setModalVisible} />
+            </BottomSheetModal>
+            <BottomSheetModal
+              isOpen={profileVisible}
+              setIsOpen={setProfileVisible}
+              ref={profileRef}
+            >
+              <UpdateProfileForm
+                onDone={() => setProfileVisible(false)}
+                onCancel={() => setProfileVisible(false)}
+              />
             </BottomSheetModal>
           </View>
         </View>
@@ -310,29 +332,31 @@ export default function TabTwoScreen() {
       </Collapsible>
 
       <Collapsible title="Terms & Conditions" iconName="termsIcon">
-            <View
+        <View
           style={[
             {
               paddingHorizontal: 6,
               paddingVertical: 14,
             },
-          ]}>
-        <ThemedText>
-          Welcome to the MoneyManager app! By using our app, you agree to comply
-          with and be bound by the following terms and conditions. Please read
-          them carefully.
-        </ThemedText>
-        <ThemedText style={{ marginTop: 10 }}>
-          {"\u2022"} No Need To Worry Their Nothing Serious.
-        </ThemedText>
-        <ThemedText type="defaultSemiBold" style={{ marginTop: 10 }}>
-          <ThemedText type="defaultSemiBold">
-            {"\u2022"} Changes to Terms:
-          </ThemedText>{" "}
-          We reserve the right to modify these Terms & Conditions at any time.
-          Your continued use of the app after any changes constitutes your
-          acceptance of the new Terms.
-        </ThemedText></View>
+          ]}
+        >
+          <ThemedText>
+            Welcome to the MoneyManager app! By using our app, you agree to
+            comply with and be bound by the following terms and conditions.
+            Please read them carefully.
+          </ThemedText>
+          <ThemedText style={{ marginTop: 10 }}>
+            {"\u2022"} No Need To Worry Their Nothing Serious.
+          </ThemedText>
+          <ThemedText type="defaultSemiBold" style={{ marginTop: 10 }}>
+            <ThemedText type="defaultSemiBold">
+              {"\u2022"} Changes to Terms:
+            </ThemedText>{" "}
+            We reserve the right to modify these Terms & Conditions at any time.
+            Your continued use of the app after any changes constitutes your
+            acceptance of the new Terms.
+          </ThemedText>
+        </View>
       </Collapsible>
       <View style={{ height: 50 }} />
     </ParallaxScrollView>

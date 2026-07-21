@@ -66,7 +66,6 @@ export default function EditEntrySheet({
       showsVerticalScrollIndicator={false}
       keyboardShouldPersistTaps="handled"
     >
-      {/* <View style={{ padding: 4, gap: 14 }}> */}
         <ThemedText type="subtitle" style={{ fontSize: 24 }}>
           Edit entry
         </ThemedText>
@@ -189,7 +188,6 @@ export default function EditEntrySheet({
             </ThemedText>
           </Pressable>
         </View>
-      {/* </View> */}
     </ScrollView>
   );
 }

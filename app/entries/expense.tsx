@@ -21,7 +21,7 @@ import { addData_in_AllTransaction } from "@/hooks/queries/transaction";
 import { useThemeColorWithName } from "@/hooks/useThemeColor";
 
 // icons
-import { BagIcon, MoneyBagIcon } from "@/assets/icons/SVG/InputIcons";
+import { DescIcon, MoneyBagIcon } from "@/assets/icons/SVG/InputIcons";
 import {  ITransaction, transactionCategory } from "@/types/expanse";
 import { showToast, showToastWithMsg } from "@/hooks/useFunc";
 
@@ -108,7 +108,7 @@ export function expense() {
             </View>
             <View>
               <InputWithIcon
-                icon={<BagIcon color={iconColor} />}
+                icon={<DescIcon color={iconColor} />}
                 placeholder="Description..."
                 value={description}
                 setValue={setDescription}

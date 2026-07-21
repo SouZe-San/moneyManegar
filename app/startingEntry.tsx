@@ -14,7 +14,7 @@ import * as SecureStore from "expo-secure-store";
  
 import { ThemedView } from "@/components/ThemedView";
 import { ThemedText } from "@/components/ThemedText";
-// import Glow from "@/components/comp/Glow";
+
  
 import { useThemeColorWithName } from "@/hooks/useThemeColor";
 import { showToastWithMsg } from "@/hooks/useFunc";
@@ -59,7 +59,6 @@ const startingEntry = () => {
     save(parsed);
   };
 
-  // Already done? don't show this again.
   useFocusEffect(
     useCallback(() => {
       (async () => {
@@ -86,7 +85,6 @@ const startingEntry = () => {
               position: "absolute",
               top:200,
               left: -20,
-            //   right: -20,
               alignItems: "center",
             }}
           >

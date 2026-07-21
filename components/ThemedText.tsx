@@ -17,7 +17,6 @@ export function ThemedText({
   colorName = "text",
   ...rest
 }: ThemedTextProps) {
-  // const color = useThemeColor({ light: lightColor, dark: darkColor }, 'text');
   const color = useThemeColorWithName(colorName);
   useThemeColorWithName;
   return (
@@ -56,7 +55,6 @@ const styles = StyleSheet.create({
   title: {
     fontSize: 32,
     fontWeight: "bold",
-    // lineHeight: 32,
   },
   subtitle: {
     fontSize: 20,

@@ -10,8 +10,6 @@ import { ThemedView } from "@/components/ThemedView";
 import { ThemedText } from "@/components/ThemedText";
 
 import {
-  fetchOnlyExpense,
-  fetchOnlyIncome,
   fetchMonthlyExpense,
   fetchMonthlyIncome,
 } from "@/hooks/queries/transaction";
@@ -52,7 +50,7 @@ const Legend = ({ items }: { items: { c: string; t: string }[] }) => (
 
 
 export default function allStats() {
-  const imageUrl = require("@/assets/images/temp/s1.jpg");
+  const imageUrl = require("@/assets/images/temp/s2.webp");
   const headerTitle = "Statistical Analysis";
 
   const expenseColor = useThemeColorWithName("expense");
@@ -187,7 +185,6 @@ const [cardWidth, setCardWidth] = useState(0);
                 data2={incomeData}
                 height={200}
                 parentWidth={cardWidth}
-                // width={260}
                 spacing={70}
                 initialSpacing={20}
                 endSpacing={10}

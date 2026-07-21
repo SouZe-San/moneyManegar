@@ -12,11 +12,9 @@ import { useEffect, useState } from "react";
 
 import { ThemedText } from "../ThemedText";
 
-import { IGroup, Members } from "@/types/expanse";
-
 import { useThemeColorWithName } from "@/hooks/useThemeColor";
-import { getRandomFaces } from "@/hooks/useFunc";
-// import * as FileSystem from "expo-file-system";
+
+import { IGroup, Members } from "@/types/expanse";
 type SingleBoxProps = {
   icon?: string | null;
   label: string;
@@ -26,6 +24,7 @@ type SingleBoxProps = {
   viewableItems: SharedValue<ViewToken[]>;
   onPress?: () => void;
 };
+
 const GrpSelector = ({
   icon,
   label,
@@ -112,7 +111,6 @@ const GrpSelector = ({
 export default GrpSelector;
 const styles = StyleSheet.create({
   expenseTypeButton: {
-    // width: 60,
     height: 170,
     display: "flex",
     justifyContent: "center",

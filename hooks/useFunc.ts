@@ -1,5 +1,4 @@
 import * as FileSystem from "expo-file-system";
-import * as SecureStore from "expo-secure-store";
 import { BottomSheetRefProps } from "@/components/BottomSheetView";
 import * as Sharing from "expo-sharing";
 import { type SQLiteDatabase } from "expo-sqlite";
@@ -11,12 +10,6 @@ export const openBottomSheetModal = (
   setOpenedItem: React.Dispatch<React.SetStateAction<boolean>>,
 ) => {
   setOpenedItem(true);
-  // const isActive = ref?.current?.isActive();
-  // if (isActive) {
-  //   ref?.current?.scrollTo(20);
-  // } else {
-  //   ref?.current?.scrollTo(-200);
-  // }
 };
 
 import { ToastAndroid } from "react-native";
@@ -43,6 +36,7 @@ enum ToastType {
   GROUP_DELETE = "Group Delete 👾",
   DETAILS_UPDATE = "Details Updated 📝",
   BUDGET = "Budget added 📊",
+  BUDGET_DELETE = "Budget Deleted ❌",
   CLEAR = "Clean 🧹",
 }
 

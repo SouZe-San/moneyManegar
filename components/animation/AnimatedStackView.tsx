@@ -20,7 +20,6 @@ const AnimatedStackView = ({ style, ...otherProps }: ViewProps) => {
 
   const backgroundColor = useThemeColorWithName("background");
 
-  //   const translateY = useSharedValue(30);
   const animatedStyle = useAnimatedStyle(() => {
     return {
       opacity: opacity.value,
@@ -45,7 +44,6 @@ const AnimatedStackView = ({ style, ...otherProps }: ViewProps) => {
       });
 
       return () => {
-        // scale.value = withTiming(0, { duration: 600 });
         cancelAnimation(scale);
         cancelAnimation(opacity);
         scale.value = FROM_SCALE;

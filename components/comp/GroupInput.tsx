@@ -147,8 +147,6 @@ function GroupInput({
         value={groupName}
         setValue={setGroupName}
       />
-      {/* </View> */}
-      {/* placeholder="Enter logo (one character or emoji)" */}
       <View style={{ marginTop: 8 }}></View>
       <View
         style={[
@@ -335,7 +333,6 @@ const styles = StyleSheet.create({
   btn: {
     borderRadius: 10,flex:1,
     paddingVertical: 12,
-    // paddingHorizontal: 25,
     justifyContent:"center",
     alignItems:"center"
   },

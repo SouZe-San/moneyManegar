@@ -108,7 +108,6 @@ const UpdateDetails = ({
           flexDirection: "row",
           alignItems: "center",
           gap: 14,
-          // marginTop: 10,
           marginBottom: 16,
         }}
       >

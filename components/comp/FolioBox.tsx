@@ -117,7 +117,6 @@ const FolioBox = ({
 export default FolioBox;
 const styles = StyleSheet.create({
   expenseTypeButton: {
-    // width: 60,
     height: 170,
     display: "flex",
     justifyContent: "center",

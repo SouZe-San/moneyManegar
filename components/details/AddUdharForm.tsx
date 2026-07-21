@@ -1,12 +1,12 @@
+import dayjs from "dayjs";
 import { useState } from "react";
 import { View, Pressable, StyleSheet } from "react-native";
-import dayjs from "dayjs";
 import { useSQLiteContext } from "expo-sqlite";
 
-import { ThemedText } from "@/components/ThemedText";
-import { InputWithIcon } from "@/components/inputs/InputBox";
-import ExpanseType from "@/components/inputs/ExpanseType";
 import EasyAlert from "@/components/comp/EasyAlert";
+import ExpanseType from "@/components/inputs/ExpanseType";
+import { InputWithIcon } from "@/components/inputs/InputBox";
+import { ThemedText } from "@/components/ThemedText";
 
 import { useThemeColorWithName } from "@/hooks/useThemeColor";
 import { showToast } from "@/hooks/useFunc";
@@ -14,16 +14,12 @@ import { add_udhar } from "@/hooks/queries/udhar";
 import { addDueAmount_of_Member, addOweAmount_of_Member } from "@/hooks/queries/member";
 import { addData_in_AllTransaction } from "@/hooks/queries/transaction";
 
-import { MoneyBagIcon, BagIcon } from "@/assets/icons/SVG/InputIcons";
+import { MoneyBagIcon, DescIcon } from "@/assets/icons/SVG/InputIcons";
 import { IUdahar, Members, expenseType } from "@/types/expanse";
 
 export type UdharKind = "debt" | "owned";
 
-/**
- * Add a debt / contribution to a member without leaving the sheet.
- * Mirrors the payble (debt) and contribute (owned) screens exactly, so the
- * result is identical to using the full flows.
- */
+
 export default function AddUdharForm({
   member,
   initialKind = "debt",
@@ -153,7 +149,7 @@ export default function AddUdharForm({
         setValue={setAmount}
       />
       <InputWithIcon
-        icon={<BagIcon color={iconColor} />}
+        icon={<DescIcon color={iconColor} />}
         placeholder="For What ?"
         value={reason}
         setValue={setReason}

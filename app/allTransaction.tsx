@@ -1,9 +1,11 @@
+import dayjs from "dayjs";
 import {
   Dimensions,
   View,
   ViewToken,
   Pressable,
   Alert,
+  SectionList,
 } from "react-native";
 import { useSharedValue } from "react-native-reanimated";
 import { useSQLiteContext } from "expo-sqlite";
@@ -12,6 +14,7 @@ import { useCallback, useState, useRef, useMemo } from "react";
 
 import AnimatedListItem from "@/components/animation/AnimatedListItem";
 import { globalStyles } from "@/constants/globalStyles";
+import EasyAlert from "@/components/comp/EasyAlert";
 import ImageHeader from "@/components/animation/ImageHeader";
 import { ThemedView } from "@/components/ThemedView";
 import { ThemedText } from "@/components/ThemedText";
@@ -21,13 +24,10 @@ import {
   fetchAllTransaction,
   deleteTransaction_from_AllTransaction,
 } from "@/hooks/queries/transaction";
-import { ITransaction } from "@/types/expanse";
-import { SectionList } from "react-native";
-import dayjs from "dayjs";
 import { useThemeColorWithName } from "@/hooks/useThemeColor";
+import { ITransaction } from "@/types/expanse";
 import { showToast } from "@/hooks/useFunc";
 import { useExpense } from "@/context/ExpanseContext";
-import EasyAlert from "@/components/comp/EasyAlert";
 
 const groupByDate = (items: ITransaction[]) => {
   const today = dayjs().format("DD/MM/YY");
@@ -58,7 +58,6 @@ const allTransaction = () => {
   ).current;
   const viewabilityConfig = useRef({
     itemVisiblePercentThreshold: 50,
-    // minimumViewTime: 60, // debounces rapid enter/leave during fast scroll
   }).current;
 
   const [refresh, setRefresh] = useState(false);

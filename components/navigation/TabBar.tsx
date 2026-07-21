@@ -1,4 +1,4 @@
-import { View, StyleSheet, Platform, useWindowDimensions, Dimensions } from "react-native";
+import { View, StyleSheet, Platform,  Dimensions } from "react-native";
 
 import TabBarButton from "./TabBarButton";
 import { useThemeColorWithName } from "@/hooks/useThemeColor";
@@ -60,7 +60,6 @@ const tabBarStyle = StyleSheet.create({
     position: "absolute",
     bottom: ScreeHeight - windowHeight - 20,
     flexDirection: "row",
-    // width: 300,
     justifyContent: "space-between",
     alignItems: "center",
     marginHorizontal: Platform.OS === "web" ? 0 : 30,

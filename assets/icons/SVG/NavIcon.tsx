@@ -88,7 +88,6 @@ export const WalletIcon = ({ color, isFocused, ...props }: SvgProps & SVGProps) 
       stroke="currentColor"
       strokeLinecap="round"
       strokeLinejoin="round"
-      //
       strokeWidth={1.5}
       d="M3 12V6c2.105.621 6.576 1.427 12.004 1.803 2.921.202 4.382.303 5.189 1.174.807.87.807 2.273.807 5.078v2.013c0 2.889 0 4.333-.984 5.232-.983.899-2.324.768-5.005.506a61.504 61.504 0 0 1-2.011-.23"
     />

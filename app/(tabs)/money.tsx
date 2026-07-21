@@ -93,8 +93,7 @@ const linkBtns: LinkBtn[] = [
 ];
 
 export default function MoneyManager() {
-  const borderColor = useThemeColorWithName("borderColor");
-  const bg = useThemeColorWithName("blurBg");
+
     const surface = useThemeColorWithName("surface");
     const cardBorder = useThemeColorWithName("cardBorder");
     const textMuted = useThemeColorWithName("textMuted");

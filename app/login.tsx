@@ -1,16 +1,19 @@
+import { TouchableOpacity, View } from "react-native";
+import { useCallback, useState } from "react";
+import * as SecureStore from "expo-secure-store";
+import { useFocusEffect, useRouter } from "expo-router";
+
+import { ThemedView } from "@/components/ThemedView";
 import { useThemeColorWithName } from "@/hooks/useThemeColor";
 import { UserIcon } from "@/assets/icons/SVG/InputIcons";
 import { MailIcon } from "@/assets/icons/SVG/RandomIcons";
-import * as SecureStore from "expo-secure-store";
-import { showToastWithMsg } from "@/hooks/useFunc";
-import { useCallback, useState } from "react";
-import { ThemedView } from "@/components/ThemedView";
 import { InputWithIcon } from "@/components/inputs/InputBox";
 import { ThemedText } from "@/components/ThemedText";
-import { TouchableOpacity, View, ScrollView } from "react-native";
-import { useFocusEffect, useRouter } from "expo-router";
 import ImageHeader from "@/components/comp/ImageHeader";
+
 import { globalStyles } from "@/constants/globalStyles";
+
+import { showToastWithMsg } from "@/hooks/useFunc";
 
 const login = () => {
   const iconColor = useThemeColorWithName("inputIcon");
@@ -41,7 +44,6 @@ const login = () => {
         await SecureStore.setItemAsync("email", email.trim());
       }
       await SecureStore.setItemAsync("onboarding", "True");
-      // replace, not push — otherwise back returns to this screen
       router.replace("/startingEntry");
     } catch (error) {
       console.log("Login save error:", error);
@@ -84,7 +86,6 @@ const login = () => {
         style={[
           globalStyles.inputContainer,
           {
-            // justifyContent: "",
             paddingHorizontal: 20,
             paddingVertical: 40,
             borderColor: cardBorder,

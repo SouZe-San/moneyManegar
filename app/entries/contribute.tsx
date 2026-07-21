@@ -30,7 +30,11 @@ import { ThemedText } from "@/components/ThemedText";
 import { ThemedView } from "@/components/ThemedView";
 
 // icons
-import { MoneyBagIcon, BagIcon, UserIcon } from "@/assets/icons/SVG/InputIcons";
+import {
+  MoneyBagIcon,
+  DescIcon,
+  UserIcon,
+} from "@/assets/icons/SVG/InputIcons";
 import {
   expenseType,
   IGroup,
@@ -250,7 +254,7 @@ export function contribute() {
           members.map(async (item) => {
             await addOweAmount_of_Member(sqlDb, {
               amount: eachContri,
-              _id:item._id!
+              _id: item._id!,
             });
           }),
         );
@@ -261,7 +265,6 @@ export function contribute() {
         EasyAlert("Failed", "Some Error Occurred, Tyr Again");
         console.log("Error From Multi insert Contri: ", error);
       }
-      //
     }
   }
 
@@ -309,7 +312,7 @@ export function contribute() {
             {/* // Expanse Description  */}
             <View>
               <InputWithIcon
-                icon={<BagIcon color={iconColor} />}
+                icon={<DescIcon color={iconColor} />}
                 placeholder="Why ?"
                 value={expanseReason}
                 setValue={setExpanseReason}
@@ -388,7 +391,6 @@ export function contribute() {
                   value={splitInGroups}
                   style={{
                     height: 28,
-                    // width: "100%",
                     backgroundColor: splitInGroups
                       ? toggleButton
                       : unSelectedToggleButton,

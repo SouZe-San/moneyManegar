@@ -1,7 +1,11 @@
 import { View, StyleSheet, Pressable, ScrollView } from "react-native";
 import { useSQLiteContext } from "expo-sqlite";
 import * as SecureStore from "expo-secure-store";
+import { useState } from "react";
+import { useRouter } from "expo-router";
+
 // components
+import AnimateTabView from "@/components/animation/AnimateTabView";
 import { ThemedText } from "@/components/ThemedText";
 import { ThemedView } from "@/components/ThemedView";
 import { globalStyles } from "@/constants/globalStyles";
@@ -9,6 +13,8 @@ import { globalStyles } from "@/constants/globalStyles";
 // hooks
 import { resetDb } from "@/hooks/queries";
 import { useThemeColorWithName } from "@/hooks/useThemeColor";
+import { useExpense } from "@/context/ExpanseContext";
+import { exportExpensesToCSV, showToast, showToastWithMsg,importDataFromZip } from "@/hooks/useFunc";
 
 // icons
 import {
@@ -18,12 +24,6 @@ import {
   OnlineIcon,ExportIcon,ImportIcon,
   LogoutIcon
 } from "@/assets/icons/SVG/RandomIcons";
-import { useRouter } from "expo-router";
-import { exportExpensesToCSV, showToast, showToastWithMsg,importDataFromZip } from "@/hooks/useFunc";
-import { useExpense } from "@/context/ExpanseContext";
-import { WarBonnetIcon } from "@/assets/icons/SVG/ExpanseIcons";
-import { useState } from "react";
-import AnimateTabView from "@/components/animation/AnimateTabView";
 
 const setting = () => {
   // Colors
@@ -321,12 +321,12 @@ const setting = () => {
           {/* Log Out  */}
           <View style={styles.buttonContainer}>
             <Pressable
-              android_ripple={{ color: "#8A9B96" + "22" }}
+              android_ripple={{ color: "#414a4762"  }}
               style={({ pressed }) => [
                 styles.btn,
                 {
                   backgroundColor: surface,
-                  borderColor: pressed ? "#8A9B96" + "55" : cardBorder,
+                  borderColor:cardBorder,
                   opacity: pressed ? 0.94 : 1,
                 },
               ]}

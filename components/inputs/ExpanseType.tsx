@@ -1,7 +1,3 @@
-import { View, StyleSheet, Pressable, FlatList, ViewToken, useColorScheme } from "react-native";
-import { ThemedText } from "../ThemedText";
-import { useThemeColorWithName } from "@/hooks/useThemeColor";
-
 import Animated, {
   useSharedValue,
   useAnimatedStyle,
@@ -11,9 +7,15 @@ import Animated, {
   withSpring,
   ReduceMotion,
 } from "react-native-reanimated";
+import { View, StyleSheet, Pressable, FlatList, ViewToken, useColorScheme } from "react-native";
+
+import { ThemedText } from "../ThemedText";
 import CategoryIcon from "../comp/CategoryIcon";
-import { expenseType } from "@/types/expanse";
+
+import { useThemeColorWithName } from "@/hooks/useThemeColor";
 import { ColorMapping } from "@/constants/Colors";
+
+import { expenseType } from "@/types/expanse";
 type ExpanseTypeProps = {
   value: string | undefined;
   setValue: (value: string) => void;
@@ -119,13 +121,11 @@ export default function ExpanseType(props: ExpanseTypeProps) {
 
 const styles = StyleSheet.create({
   expanseTypeContainer: {
-    // gap: 10,
     flexGrow: 0,
     marginVertical: 5,
     paddingVertical: 5,
   },
   expenseTypeButton: {
-    // width: 60,
     height: 90,
     display: "flex",
     justifyContent: "center",

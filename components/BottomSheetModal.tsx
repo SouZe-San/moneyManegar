@@ -34,7 +34,6 @@ const BottomSheetModal = React.forwardRef<BottomSheetRefProps, PropsInterface>(
               justifyContent: "flex-end",
               flex: 1,
               position: "relative",
-              // alignItems: "center",
             }}
           >
             <BottomSheetView ref={ref}>{children}</BottomSheetView>

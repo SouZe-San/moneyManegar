@@ -25,7 +25,6 @@ import { globalStyles } from "@/constants/globalStyles";
 import RedirectButton from "@/components/comp/RedirectButton";
 import ColorLabeling from "@/components/comp/ColorLabeling";
 
-// import { expenseTypeData } from "@/constants/tempVar";
 // Hooks
 import { useThemeColorWithName } from "@/hooks/useThemeColor";
 import { useExpense } from "@/context/ExpanseContext";
@@ -50,7 +49,6 @@ export default function HomeScreen() {
   const balanceBg = useThemeColorWithName("highLightBackground");
   const surface = useThemeColorWithName("surface");
   const cardBorder = useThemeColorWithName("cardBorder");
-
 
   // States
   const [modalVisible, setModalVisible] = useState(false);
@@ -435,11 +433,10 @@ export default function HomeScreen() {
             <ThemedText type="subtitle" style={{ marginBottom: 10 }}>
               {new Date().toLocaleString("default", { month: "long" })}
             </ThemedText>
-            {/* <PieChartPro textSize={0} radius={50} innerRadius={35} donut data={totalBudget} /> */}
+
             <BarChart
               data={totalBudget}
               barWidth={12}
-              // hideAxesAndRules
               maxValue={
                 Math.max(totalBudget[0].value, totalBudget[1].value) * 1.15
               }
@@ -449,7 +446,6 @@ export default function HomeScreen() {
               noOfSections={3}
               frontColor="lightgray"
               spacing={25}
-              // initialSpacing={40}
               endSpacing={10}
               roundedTop
               roundedBottom
@@ -507,7 +503,6 @@ const styles = StyleSheet.create({
     borderRadius: 10,
     borderColor: "transparent",
     justifyContent: "space-between",
-    // justifyContent: "flex-end",
     paddingBottom: 15,
     height: 100,
     padding: 10,

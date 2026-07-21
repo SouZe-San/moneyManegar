@@ -58,16 +58,7 @@ const StatsIcon = ({ color, ...props }: SvgPropWithColor) => (
     />
   </Svg>
 );
-const DownIcon = ({ color, ...props }: SvgPropWithColor) => (
-  <Svg width={24} height={24} viewBox="0 0 24 24" {...props} color={color || "#f1f2f6"}>
-    <Path fill="none" stroke="currentColor" d="M12 4v16m0 0-3-3m3 3 3-3m-6-5 3 3 3-3" />
-  </Svg>
-);
-const UpIcon = ({ color, ...props }: SvgPropWithColor) => (
-  <Svg width={24} height={24} viewBox="0 0 24 24" {...props} color={color || "#f1f2f6"}>
-    <Path fill="none" stroke="currentColor" d="M12 20V4m0 0L9 7m3-3 3 3m-6 5 3-3 3 3" />
-  </Svg>
-);
+
 const HelpIcon = ({ color, isFocused, ...props }: SvgPropWithColor) => (
   <Svg width={24} height={24} viewBox="0 0 24 24" {...props} color={color || "#f1f2f6"}>
     {!isFocused ? (
@@ -156,7 +147,6 @@ const ProCamIcon = ({ color, ...props }: SvgPropWithColor) => (
   <Svg
     width={28}
     height={28}
-    // viewBox="0 0 24 24"
     viewBox="-2 -4 24 24"
     {...props}
     color={color || "#f1f2f6"}
@@ -287,8 +277,6 @@ export {
   SettingIcon,
   DeleteIcon,
   PayIcon,
-  DownIcon,
-  UpIcon,
   ResetIcon,
   LeftRightArrowIcon,
   OnlineIcon,

@@ -22,7 +22,11 @@ import { addDueAmount_of_Member } from "@/hooks/queries/member";
 import { useThemeColorWithName } from "@/hooks/useThemeColor";
 
 // icons
-import { MoneyBagIcon, UserIcon, BagIcon } from "@/assets/icons/SVG/InputIcons";
+import {
+  MoneyBagIcon,
+  UserIcon,
+  DescIcon,
+} from "@/assets/icons/SVG/InputIcons";
 
 import { expenseType, IUdahar, Members } from "@/types/expanse";
 import SearchProfileSection from "@/components/comp/SearchProfileSection";
@@ -144,7 +148,6 @@ export function payble() {
         }}
       >
         I owe Others ರ⁠╭⁠╮⁠ರ
-        {/* I owe Others &#59;&#41; */}
       </ThemedText>
 
       <View style={[globalStyles.inputContainer, { backgroundColor }]}>
@@ -209,7 +212,7 @@ export function payble() {
             </View>
             <View>
               <InputWithIcon
-                icon={<BagIcon color={iconColor} />}
+                icon={<DescIcon color={iconColor} />}
                 placeholder="For What ?"
                 value={expanseReason}
                 setValue={setExpanseReason}

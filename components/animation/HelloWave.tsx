@@ -1,4 +1,3 @@
-import { StyleSheet } from "react-native";
 import Animated, {
   useSharedValue,
   useAnimatedStyle,
@@ -6,14 +5,15 @@ import Animated, {
   withRepeat,
   withSequence,
 } from "react-native-reanimated";
+import { StyleSheet } from "react-native";
+import { useFocusEffect } from "expo-router";
+import { useCallback } from "react";
 
 import { ThemedText } from "@/components/ThemedText";
-import { useCallback } from "react";
-import { useFocusEffect } from "expo-router";
 export function HelloWave() {
   const rotationAnimation = useSharedValue(0);
 
-  // // Function to start the animation
+  // Function to start the animation
   const startAnimation = () => {
     rotationAnimation.value = withRepeat(
       withSequence(withTiming(25, { duration: 150 }), withTiming(0, { duration: 150 })),
@@ -21,7 +21,7 @@ export function HelloWave() {
     );
   };
 
-  // Use useFocusEffect to start the animation when the tab is focused
+  // Using useFocusEffect to start the animation when the tab is focused
   useFocusEffect(
     useCallback(() => {
       startAnimation(); // Start the animation when focused
@@ -42,8 +42,6 @@ export function HelloWave() {
 const styles = StyleSheet.create({
   text: {
     fontSize: 20,
-    // lineHeight: 30,
-
     marginLeft: 5,
   },
 });
