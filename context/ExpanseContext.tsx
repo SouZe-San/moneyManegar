@@ -74,20 +74,14 @@ export const ExpenseProvider: React.FC<{ children: React.ReactNode }> = ({
     const raw: { expenseType: expenseType; total_expense: number }[] =
       await fetchTotalExpenseAccordingExpanse(db);
 
-    const mapped = raw
-      .filter((d) => d.total_expense > 0)
-      .sort((a, b) => b.total_expense - a.total_expense);
-
     const TOP = 6;
-    const result = mapped
-      .slice(0, TOP)
-      .map(({ total_expense, expenseType }) => ({
-        text: expenseType,
-        value: total_expense,
-        color: getThemeColorMapping(theme, expenseType),
-      }));
+    const result = raw.slice(0, TOP).map(({ total_expense, expenseType }) => ({
+      text: expenseType,
+      value: total_expense,
+      color: getThemeColorMapping(theme, expenseType),
+    }));
 
-    const rest = mapped.slice(TOP);
+    const rest = raw.slice(TOP);
     if (rest.length) {
       const othersTotal = rest.reduce((s, d) => s + d.total_expense, 0);
       const existing = result.find((r) => r.text === "Others");
@@ -105,25 +99,24 @@ export const ExpenseProvider: React.FC<{ children: React.ReactNode }> = ({
 
   const fetchData = useCallback(async () => {
     try {
-       const [
-         members,
-         groups,
-         income,
-         incomeThisMonth,
-         expense,
-         expenseThisMonth,
-         data,
-       ] = await Promise.all([
-         fetchAllMember(db),
-         fetchAllGroup(db),
-         getTotalIncome(db),
-         getTotalIncomeMonthWise(db),
-         getTotalExpense(db),
-         getTotalExpenseMonthWise(db),
-         aggregateExpenses(),
-       ]);
+      const [
+        members,
+        groups,
+        income,
+        incomeThisMonth,
+        expense,
+        expenseThisMonth,
+        data,
+      ] = await Promise.all([
+        fetchAllMember(db),
+        fetchAllGroup(db),
+        getTotalIncome(db),
+        getTotalIncomeMonthWise(db),
+        getTotalExpense(db),
+        getTotalExpenseMonthWise(db),
+        aggregateExpenses(),
+      ]);
 
-      
       setMember(members);
       setGroups(groups);
       setTotalIncome(income ?? 0);
@@ -132,7 +125,6 @@ export const ExpenseProvider: React.FC<{ children: React.ReactNode }> = ({
       setTotalExpenseMonthWise(expenseThisMonth ?? 0);
       setExpenseTypeData(data);
     } catch (error) {
-
       showToastWithMsg("Data fetching Failed !!");
       console.error("Error fetching data: ", error);
     } finally {
@@ -184,51 +176,51 @@ export const ExpenseProvider: React.FC<{ children: React.ReactNode }> = ({
   }, []);
 
   useEffect(() => {
-firstRefresh(); 
+    firstRefresh();
     fetchData();
-  }, [firstRefresh,fetchData]);
+  }, [firstRefresh, fetchData]);
 
-const value = useMemo(
-  () => ({
-    totalIncome,
-    totalIncomeMonthWise,
-    totalExpense,
-    totalExpenseMonthWise,
-    userName,
-    email,
-    firstRefresh,
-    leftBalance,
-    refresh,
-    onRefresh,
-    groups,
-    members,
-    totalBudget,
-    expenseTypeData,
-    expenseInMonth,
-    setExpenseInMonth,
-  }),
-  [
-    totalIncome,
-    totalIncomeMonthWise,
-    totalExpense,
-    totalExpenseMonthWise,
-    userName,
-    email,
-    firstRefresh,
-    leftBalance,
-    refresh,
-    onRefresh,
-    groups,
-    members,
-    totalBudget,
-    expenseTypeData,
-    expenseInMonth,
-  ],
-);
+  const value = useMemo(
+    () => ({
+      totalIncome,
+      totalIncomeMonthWise,
+      totalExpense,
+      totalExpenseMonthWise,
+      userName,
+      email,
+      firstRefresh,
+      leftBalance,
+      refresh,
+      onRefresh,
+      groups,
+      members,
+      totalBudget,
+      expenseTypeData,
+      expenseInMonth,
+      setExpenseInMonth,
+    }),
+    [
+      totalIncome,
+      totalIncomeMonthWise,
+      totalExpense,
+      totalExpenseMonthWise,
+      userName,
+      email,
+      firstRefresh,
+      leftBalance,
+      refresh,
+      onRefresh,
+      groups,
+      members,
+      totalBudget,
+      expenseTypeData,
+      expenseInMonth,
+    ],
+  );
 
-return (
-  <ExpenseContext.Provider value={value}>{children}</ExpenseContext.Provider>
-);
+  return (
+    <ExpenseContext.Provider value={value}>{children}</ExpenseContext.Provider>
+  );
 };
 
 export const useExpense = (): ExpenseContextType => {

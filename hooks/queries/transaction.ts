@@ -25,7 +25,8 @@ export const addData_in_AllTransaction = async (
 export const fetchAllTransaction = async (db: SQLiteDatabase) => {
   try {
     const rows: ITransaction[] = await db.getAllAsync(
-      "SELECT * FROM AllTransactions",
+      `SELECT * FROM AllTransactions
+       ORDER BY ${isoFromTxnDate("date")} DESC, _id DESC`,
     );
     return rows;
   } catch (error) {
@@ -157,8 +158,14 @@ export const fetchMonthlyIncome = async (db: SQLiteDatabase) => {
 };
 
 export const fetchTotalExpenseAccordingExpanse = async (db: SQLiteDatabase) => {
-  const query =
-    "SELECT expenseType, SUM(amount) AS total_expense FROM AllTransactions WHERE type = 'expense' GROUP BY expenseType";
+  const query = `
+    SELECT expenseType, SUM(amount) AS total_expense
+    FROM AllTransactions
+    WHERE type = 'expense'
+    GROUP BY expenseType
+    HAVING total_expense > 0
+    ORDER BY total_expense DESC
+  `;
   try {
     const rows = await db.getAllAsync<{
       expenseType: expenseType;

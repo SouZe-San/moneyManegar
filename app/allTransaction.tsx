@@ -114,9 +114,6 @@ const allTransaction = () => {
       try {
         setRefresh(true);
         const data = await fetchAllTransaction(sqlDb);
-        data.sort((a, b) => {
-          return b._id! - a._id!;
-        });
         setAllTransaction(data);
       } catch (error) {
         console.log("ERROR :", error);

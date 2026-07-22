@@ -41,7 +41,6 @@ export default function Transaction() {
     setLoading(true);
     try {
       const rows: IUdahar[] = await fetchAllUnPaidTransaction(db);
-      rows.sort((a, b) => b._id! - a._id!);
       setAllRows(rows);
     } catch (error) {
       showToast("ERROR");

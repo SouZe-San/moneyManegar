@@ -27,7 +27,7 @@ export const add_udhar = async (db: SQLiteDatabase, data: IUdahar) => {
 export const fetchAllUnPaidTransaction = async (db: SQLiteDatabase) => {
   try {
     const rows: IUdahar[] = await db.getAllAsync(
-      "SELECT * FROM UdharTransactions",
+      "SELECT * FROM UdharTransactions order by _id desc",
     );
     return rows;
   } catch (error) {
