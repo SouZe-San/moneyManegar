@@ -1,3 +1,4 @@
+import dayjs from "dayjs";
 import {
   View,
   TextInput,
@@ -7,13 +8,19 @@ import {
   Dimensions,
 } from "react-native";
 import { useState } from "react";
+
+import DateView from "../inputs/DateView";
 import { ThemedText } from "@/components/ThemedText";
 import CategoryIcon, { CategoryName } from "@/components/comp/CategoryIcon";
-import { useThemeColorWithName } from "@/hooks/useThemeColor";
+
 import { ColorMapping } from "@/constants/Colors";
-import { useColorScheme } from "@/hooks/useColorScheme";
 import type { ParsedEntry } from "@/hooks/expanseParser";
+import { parseAppDate, toAppDate } from "@/constants/dateUtils";
+import { useThemeColorWithName } from "@/hooks/useThemeColor";
+import { useColorScheme } from "@/hooks/useColorScheme";
+
 const { height: SCREEN_HEIGHT } = Dimensions.get("window");
+
 const CATS: CategoryName[] = [
   "Food",
   "Fuel",
@@ -30,12 +37,14 @@ const CATS: CategoryName[] = [
 
 export default function EditEntrySheet({
   initial,
+  createdAt,
   onSave,
   onClose,
 }: {
   initial: ParsedEntry;
   onSave: (p: ParsedEntry) => void;
   onClose: () => void;
+  createdAt?: string;
 }) {
   const scheme = useColorScheme() ?? "dark";
   const surface = useThemeColorWithName("surface");
@@ -49,6 +58,15 @@ export default function EditEntrySheet({
   const [cat, setCat] = useState<CategoryName>(
     initial.category as CategoryName,
   );
+  const [date, setDate] = useState(() => {
+    if (initial.date) return parseAppDate(initial.date);
+    if (createdAt)
+      return dayjs(createdAt).subtract(
+        Math.max(0, initial.dateOffsetDays ?? 0),
+        "day",
+      );
+    return dayjs();
+  });
 
   const save = () =>
     onSave({
@@ -57,6 +75,7 @@ export default function EditEntrySheet({
       description: desc.trim() || cat,
       type,
       category: cat as any,
+      date: toAppDate(date),
     });
 
   return (
@@ -66,128 +85,132 @@ export default function EditEntrySheet({
       showsVerticalScrollIndicator={false}
       keyboardShouldPersistTaps="handled"
     >
-        <ThemedText type="subtitle" style={{ fontSize: 24 }}>
-          Edit entry
-        </ThemedText>
+      <ThemedText type="subtitle" style={{ fontSize: 24 }}>
+        Edit entry
+      </ThemedText>
 
-        <View>
-          <ThemedText style={styles.lbl}>AMOUNT</ThemedText>
-          <TextInput
-            value={amount}
-            onChangeText={setAmount}
-            keyboardType="numeric"
-            style={[
-              styles.input,
-              { backgroundColor: surface, borderColor: cardBorder },
-            ]}
-            placeholderTextColor={textMuted}
-          />
-        </View>
+      <View>
+        <ThemedText style={styles.lbl}>AMOUNT</ThemedText>
+        <TextInput
+          value={amount}
+          onChangeText={setAmount}
+          keyboardType="numeric"
+          style={[
+            styles.input,
+            { backgroundColor: surface, borderColor: cardBorder },
+          ]}
+          placeholderTextColor={textMuted}
+        />
+      </View>
 
-        <View>
-          <ThemedText style={styles.lbl}>DESCRIPTION</ThemedText>
-          <TextInput
-            value={desc}
-            onChangeText={setDesc}
-            style={[
-              styles.input,
-              { backgroundColor: surface, borderColor: cardBorder },
-            ]}
-            placeholderTextColor={textMuted}
-          />
-        </View>
+      <View>
+        <ThemedText style={styles.lbl}>DESCRIPTION</ThemedText>
+        <TextInput
+          value={desc}
+          onChangeText={setDesc}
+          style={[
+            styles.input,
+            { backgroundColor: surface, borderColor: cardBorder },
+          ]}
+          placeholderTextColor={textMuted}
+        />
+      </View>
+      <View>
+        <ThemedText style={styles.lbl}>DATE</ThemedText>
+        <DateView date={date} setDate={setDate} />
+      </View>
 
-        <View>
-          <ThemedText style={styles.lbl}>TYPE</ThemedText>
-          <View style={{ flexDirection: "row", gap: 10 }}>
-            {(["expense", "income"] as const).map((t) => (
-              <Pressable
-                key={t}
-                onPress={() => setType(t)}
-                style={[
-                  styles.pill,
-                  {
-                    borderColor: type === t ? accent : cardBorder,
-                    backgroundColor: type === t ? accent + "22" : surface,
-                  },
-                ]}
+      <View>
+        <ThemedText style={styles.lbl}>TYPE</ThemedText>
+        <View style={{ flexDirection: "row", gap: 10 }}>
+          {(["expense", "income"] as const).map((t) => (
+            <Pressable
+              key={t}
+              onPress={() => setType(t)}
+              style={[
+                styles.pill,
+                {
+                  borderColor: type === t ? accent : cardBorder,
+                  backgroundColor: type === t ? accent + "22" : surface,
+                },
+              ]}
+            >
+              <ThemedText
+                style={{
+                  color: type === t ? accent : textMuted,
+                  fontSize: 13,
+                  fontWeight: "600",
+                }}
               >
-                <ThemedText
-                  style={{
-                    color: type === t ? accent : textMuted,
-                    fontSize: 13,
-                    fontWeight: "600",
-                  }}
+                {t}
+              </ThemedText>
+            </Pressable>
+          ))}
+        </View>
+      </View>
+
+      <View>
+        <ThemedText style={styles.lbl}>CATEGORY</ThemedText>
+        <ScrollView
+          horizontal
+          showsHorizontalScrollIndicator={false}
+          contentContainerStyle={{ gap: 10 }}
+          keyboardShouldPersistTaps="handled"
+        >
+          {CATS.map((c) => {
+            const col =
+              (ColorMapping[scheme] as Record<string, string>)[c]?.trim() ||
+              "#6B7280";
+            const on = cat === c;
+            return (
+              <Pressable
+                key={c}
+                onPress={() => setCat(c)}
+                style={{ alignItems: "center", gap: 4 }}
+              >
+                <View
+                  style={[
+                    styles.chip,
+                    {
+                      backgroundColor: on ? col + "22" : surface,
+                      borderColor: on ? col : cardBorder,
+                      borderWidth: on ? 1.5 : 1,
+                    },
+                  ]}
                 >
-                  {t}
+                  <CategoryIcon
+                    type={c}
+                    color={on ? col : textMuted}
+                    size={22}
+                  />
+                </View>
+                <ThemedText
+                  style={{ fontSize: 10, color: on ? col : textMuted }}
+                >
+                  {c}
                 </ThemedText>
               </Pressable>
-            ))}
-          </View>
-        </View>
+            );
+          })}
+        </ScrollView>
+      </View>
 
-        <View>
-          <ThemedText style={styles.lbl}>CATEGORY</ThemedText>
-          <ScrollView
-            horizontal
-            showsHorizontalScrollIndicator={false}
-            contentContainerStyle={{ gap: 10 }}
-            keyboardShouldPersistTaps="handled"
-          >
-            {CATS.map((c) => {
-              const col =
-                (ColorMapping[scheme] as Record<string, string>)[c]?.trim() ||
-                "#6B7280";
-              const on = cat === c;
-              return (
-                <Pressable
-                  key={c}
-                  onPress={() => setCat(c)}
-                  style={{ alignItems: "center", gap: 4 }}
-                >
-                  <View
-                    style={[
-                      styles.chip,
-                      {
-                        backgroundColor: on ? col + "22" : surface,
-                        borderColor: on ? col : cardBorder,
-                        borderWidth: on ? 1.5 : 1,
-                      },
-                    ]}
-                  >
-                    <CategoryIcon
-                      type={c}
-                      color={on ? col : textMuted}
-                      size={22}
-                    />
-                  </View>
-                  <ThemedText
-                    style={{ fontSize: 10, color: on ? col : textMuted }}
-                  >
-                    {c}
-                  </ThemedText>
-                </Pressable>
-              );
-            })}
-          </ScrollView>
-        </View>
-
-        <View style={{ flexDirection: "row", gap: 10, marginTop: 6 }}>
-          <Pressable
-            onPress={onClose}
-            style={[styles.btn, { borderWidth: 1, borderColor: cardBorder }]}
-          >
-            <ThemedText style={{ color: textMuted }}>Cancel</ThemedText>
-          </Pressable>
-          <Pressable
-            onPress={save}
-            style={[styles.btn, { backgroundColor: accent }]}
-          >
-            <ThemedText style={{ color: "#071311", fontWeight: "700" }}>
-              Save
-            </ThemedText>
-          </Pressable>
-        </View>
+      <View style={{ flexDirection: "row", gap: 10, marginTop: 6 }}>
+        <Pressable
+          onPress={onClose}
+          style={[styles.btn, { borderWidth: 1, borderColor: cardBorder }]}
+        >
+          <ThemedText style={{ color: textMuted }}>Cancel</ThemedText>
+        </Pressable>
+        <Pressable
+          onPress={save}
+          style={[styles.btn, { backgroundColor: accent }]}
+        >
+          <ThemedText style={{ color: "#071311", fontWeight: "700" }}>
+            Save
+          </ThemedText>
+        </Pressable>
+      </View>
     </ScrollView>
   );
 }

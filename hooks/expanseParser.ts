@@ -7,6 +7,8 @@ export type ParsedEntry = {
   description: string;
   confidence: number;
   isLending?: boolean; // true => candidate for UdharTransactions routing
+  dateOffsetDays?: number; // days BEFORE the capture date (0 = capture day)
+  date?: string;
 };
 
 
@@ -112,9 +114,11 @@ const STOPWORDS = new Set(
     "i we my me a an the of for on at to is was were be been bought buy brought paid pay spent spend cost costs " +
     "total get got gotten received recieved add today yesterday eve evening morning night rs rupees ruppes inr " +
     "way go going went out outside whole and then just some around about approx approximately please note need " +
-    "as order repaire repair someone which witch back form from this months month"
+    "as order repaire repair someone which witch back form from this months month " +
+    "ago earlier prior day days week weeks din hafta hafte"
   ).split(" "),
 );
+
 
 function makeDescription(text: string, category: string): string {
   const words = text
@@ -133,38 +137,82 @@ function makeDescription(text: string, category: string): string {
   return desc.charAt(0).toUpperCase() + desc.slice(1);
 }
 
+
+// ─────────────────────────────────────────────────────────────
+// Date extraction — RELATIVE only.
+// ─────────────────────────────────────────────────────────────
+
+export function extractDate(text: string): {
+  offsetDays: number;
+  matched?: string;
+} {
+  const t = text.toLowerCase();
+  let m: RegExpMatchArray | null;
+
+  if ((m = t.match(/\b(?:day before yesterday|before yesterday|parso)\b/)))
+    return { offsetDays: 2, matched: m[0] };
+  if ((m = t.match(/\b(?:yesterday|yday|ydy|yest|last night)\b/)))
+    return { offsetDays: 1, matched: m[0] };
+  if (
+    (m = t.match(
+      /\b(\d{1,3})\s*(?:days?|din)\s*(?:ago|back|before|earlier|prior)\b/,
+    ))
+  )
+    return { offsetDays: Math.min(365, parseInt(m[1], 10)), matched: m[0] };
+  if ((m = t.match(/\b(\d{1,2})\s*(?:weeks?|hafte?)\s*(?:ago|back|before)\b/)))
+    return { offsetDays: Math.min(365, parseInt(m[1], 10) * 7), matched: m[0] };
+  if ((m = t.match(/\b(?:last week|a week ago|week ago)\b/)))
+    return { offsetDays: 7, matched: m[0] };
+  if ((m = t.match(/\b(?:today|just now|abhi|aaj)\b/)))
+    return { offsetDays: 0, matched: m[0] };
+
+  return { offsetDays: 0 };
+}
+
+ 
+
+
 // ─────────────────────────────────────────────────────────────
 // Path B — pure on-device rules
 // ─────────────────────────────────────────────────────────────
 
 export function parseLocally(raw: string): ParsedEntry {
   const text = raw.trim();
-  const { amount, conf: amountConf } = extractAmount(text);
+
+  const { offsetDays, matched: dateMatch } = extractDate(text);
+  const cleaned = dateMatch
+    ? text.replace(
+        new RegExp(dateMatch.replace(/[.*+?^${}()|[\]\\]/g, "\\$&"), "i"),
+        " ",
+      )
+    : text;
+
+  const { amount, conf: amountConf } = extractAmount(cleaned);
 
   let type: "income" | "expense";
-  let category: expenseType | "Salary" | "Gift" | "Business";
+  let category: transactionCategory;
   let catConf: number;
   let isLending = false;
 
-  if (LENDING_WORDS.test(text)) {
+  if (LENDING_WORDS.test(cleaned)) {
     // Lending / repayment -> Business, direction inferred
     isLending = true;
     category = "Business";
     catConf = 0.7;
-    type = MONEY_IN.test(text)
+    type = MONEY_IN.test(cleaned)
       ? "income"
-      : MONEY_OUT.test(text)
+      : MONEY_OUT.test(cleaned)
         ? "expense"
         : "expense";
   } else {
     const isIncome =
-      INCOME_WORDS.test(text) &&
-      !/\b(bought|buy|brought)\b.*\bgift/i.test(text);
+      INCOME_WORDS.test(cleaned) &&
+      !/\b(bought|buy|brought)\b.*\bgift/i.test(cleaned);
     type = isIncome ? "income" : "expense";
     category = "Others";
     catConf = 0.4;
     for (const rule of CATEGORY_RULES) {
-      if (rule.re.test(text)) {
+      if (rule.re.test(cleaned)) {
         category = rule.cat;
         catConf = 0.9;
         break;
@@ -176,12 +224,21 @@ export function parseLocally(raw: string): ParsedEntry {
     }
   }
 
-  const description = makeDescription(text, category);
+  const description = makeDescription(cleaned, category);
   const confidence =
     amount > 0 ? Math.min(1, amountConf * 0.6 + catConf * 0.4) : 0.2;
 
-  return { amount, type, category, description, confidence, isLending };
+  return {
+    amount,
+    type,
+    category,
+    description,
+    confidence,
+    isLending,
+    dateOffsetDays: offsetDays,
+  };
 }
+
 
 //! ─────────────────────────────────────────────────────────────  
 // THE SEAM — the app calls this, never parseLocally directly.

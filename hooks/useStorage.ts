@@ -64,7 +64,7 @@ export const migrateDbIfNeeded = async (db: SQLiteDatabase) => {
             _id INTEGER PRIMARY KEY AUTOINCREMENT,
             raw_text TEXT NOT NULL,
             source TEXT NOT NULL DEFAULT 'text' CHECK (source IN ('text','voice','image')),
-            status TEXT NOT NULL DEFAULT 'pending' CHECK (status IN ('pending','processing','processed','failed')),
+            status TEXT NOT NULL DEFAULT 'pending' CHECK (status IN ('pending','processing','parsed','failed')),
             parsed_json TEXT,
             created_at TEXT NOT NULL
         );

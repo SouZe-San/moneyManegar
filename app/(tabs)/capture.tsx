@@ -1,4 +1,5 @@
 import AnimateTabView from "@/components/animation/AnimateTabView";
+import dayjs from "dayjs";
 import {
   View,
   TextInput,
@@ -12,15 +13,20 @@ import { useFocusEffect } from "expo-router";
 import { useSQLiteContext } from "expo-sqlite";
 import Svg, { Path, Rect, Circle } from "react-native-svg";
 
-import { ThemedText } from "@/components/ThemedText";
-import CategoryIcon, { CategoryName } from "@/components/comp/CategoryIcon";
 import BottomSheetModal from "@/components/BottomSheetModal";
 import { BottomSheetRefProps } from "@/components/BottomSheetView";
+import CategoryIcon, { CategoryName } from "@/components/comp/CategoryIcon";
 import EditEntrySheet from "@/components/capture/EditEntrySheet";
+import { ThemedText } from "@/components/ThemedText";
+import { ThemedView } from "@/components/ThemedView";
+
 import { useThemeColorWithName } from "@/hooks/useThemeColor";
-import { ColorMapping } from "@/constants/Colors";
+import { ParsedEntry } from "@/hooks/expanseParser";
 import { useColorScheme } from "@/hooks/useColorScheme";
 import { showToastWithMsg } from "@/hooks/useFunc";
+
+import { ColorMapping } from "@/constants/Colors";
+import { shortAppDate } from "@/constants/dateUtils";
 
 import {
   addInboxItem,
@@ -29,11 +35,8 @@ import {
   processPending,
   confirmInboxEntry,
   updateParsedEntry,
-  undoConfirm,
   type InboxRow,
 } from "@/hooks/useCaptureQueries";
-import { ParsedEntry } from "@/hooks/expanseParser";
-import { ThemedView } from "@/components/ThemedView";
 
 const I = (p: { d: string; c: string; w?: number; s?: number }) => (
   <Svg
@@ -114,15 +117,6 @@ export default function CaptureScreen() {
     await load();
     setBusy(false);
     showToastWithMsg(`Processed ${n} ${n === 1 ? "item" : "items"} ✨`);
-  };
-
-  const runUndo = async () => {
-    if (undoBuf.current.length === 0) return;
-    await undoConfirm(db, undoBuf.current);
-    undoBuf.current = [];
-    if (undoTimer.current) clearTimeout(undoTimer.current);
-    await load();
-    showToastWithMsg("Undone ↩️");
   };
 
   const armUndo = (undone: any[]) => {
@@ -295,11 +289,14 @@ export default function CaptureScreen() {
           <Pressable
             onPress={processAll}
             disabled={busy}
-            style={[styles.processBtn, { borderColor: accent }]}
+            style={[
+              styles.processBtn,
+              { borderColor: cardBorder, backgroundColor: surface + "40" },
+            ]}
           >
             <I d="M21 12a9 9 0 1 1-3-6.7M21 4v5h-5" c={accent} />
-            <ThemedText style={{ color: accent, fontWeight: "600" }}>
-              {busy ? "Processing…" : `Process ${pending.length} pending`}
+            <ThemedText style={{ fontWeight: "600" }} colorName="income">
+              {busy ? "Processing…" : `${pending.length} process pending`}
             </ThemedText>
           </Pressable>
         )}
@@ -352,6 +349,12 @@ export default function CaptureScreen() {
                 "#6B7280";
               const isIncome = p.type === "income";
               const lowConf = p.confidence < 0.5;
+              const dateLabel = p.date
+                ? shortAppDate(p.date)
+                : dayjs(row.created_at)
+                    .subtract(Math.max(0, p.dateOffsetDays ?? 0), "day")
+                    .format("DD MMM");
+
               return (
                 <Pressable
                   key={row._id}
@@ -391,7 +394,7 @@ export default function CaptureScreen() {
                       </ThemedText>
                     </View>
                     <ThemedText style={{ fontSize: 11, color: textMuted }}>
-                      {cat} · {isIncome ? "Income" : "Expense"} · tap to edit
+                      {cat} · {dateLabel} · tap to edit
                     </ThemedText>
                   </View>
                   <ThemedText
@@ -400,7 +403,11 @@ export default function CaptureScreen() {
                       fontWeight: "600",
                       color: isIncome ? incomeColor : expenseColor,
                     }}
-                  >₹<Text style={{ fontFamily: "SpaceGroteskBold" }}>{p.amount.toLocaleString("en-IN")}</Text>
+                  >
+                    ₹
+                    <Text style={{ fontFamily: "SpaceGroteskBold" }}>
+                      {p.amount.toLocaleString("en-IN")}
+                    </Text>
                   </ThemedText>
                   <IconBtn bg={accent + "22"} onPress={() => confirm(row)}>
                     <I d="M20 6L9 17l-5-5" c={accent} w={2.5} s={15} />
@@ -430,9 +437,7 @@ export default function CaptureScreen() {
                 ]}
               >
                 <View style={{ flex: 1 }}>
-                  <ThemedText
-                    style={{ fontSize: 14, color: "#C7D0CC" }}
-                  >
+                  <ThemedText style={{ fontSize: 14, color: "#C7D0CC" }}>
                     {row.raw_text}
                   </ThemedText>
                   {failed && (
@@ -467,6 +472,7 @@ export default function CaptureScreen() {
             {editRow?.parsed_json && (
               <EditEntrySheet
                 initial={JSON.parse(editRow.parsed_json)}
+                createdAt={editRow.created_at}
                 onSave={saveEdit}
                 onClose={() => setSheetOpen(false)}
               />
