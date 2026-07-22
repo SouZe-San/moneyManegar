@@ -1,5 +1,4 @@
 import {
-  TouchableOpacity,
   View,
   FlatList,
   Pressable,
@@ -22,13 +21,10 @@ const BudgetCreate = ({
 }: {
   setModalVisibility: (value: boolean) => void;
 }) => {
-  const buttonBgColor = useThemeColorWithName("blurBg");
   const iconColor = useThemeColorWithName("inputIcon");
-  const borderColor = useThemeColorWithName("borderColor");
   const bageBgColor = useThemeColorWithName("toggleButton");
-const surface = useThemeColorWithName("surface");
-const cardBorder = useThemeColorWithName("cardBorder");
-const textMuted = useThemeColorWithName("textMuted");
+  const surface = useThemeColorWithName("surface");
+  const cardBorder = useThemeColorWithName("cardBorder");
 
   const [amount, setAmount] = useState<string | undefined>(undefined);
   const [date, setDate] = useState<string | null>(null);
@@ -53,7 +49,6 @@ const textMuted = useThemeColorWithName("textMuted");
   ];
 
   function getFirstDayOfMonth(monthNumber: number) {
-   
     const currentYear = new Date().getFullYear();
 
     const firstDayDate = new Date(currentYear, monthNumber, 1);
@@ -144,15 +139,17 @@ const textMuted = useThemeColorWithName("textMuted");
           }}
         />
       </View>
-      <TouchableOpacity
+      <Pressable
+        android_ripple={{ color: bageBgColor + "22" }}
         onPress={() => setModalVisibility(false)}
         style={{
           width: "100%",
           height: 50,
           justifyContent: "center",
           alignItems: "center",
-          borderRadius: 10,
-          backgroundColor: buttonBgColor,
+          borderRadius: 12,
+          borderWidth: 1,
+          borderColor: cardBorder,
           alignSelf: "center",
           marginTop: 40,
           marginBottom: 5,
@@ -162,9 +159,9 @@ const textMuted = useThemeColorWithName("textMuted");
           colorName="textMuted"
           style={{ fontWeight: 400, letterSpacing: 1.5 }}
         >
-          GoBack
+          Cancel
         </ThemedText>
-      </TouchableOpacity>
+      </Pressable>
       <View
         style={{
           width: "100%",

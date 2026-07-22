@@ -169,7 +169,7 @@ export function budget() {
                 >
                   <RedirectButton
                     icon={<StatsIcon color="#38BDF8" />}
-                    label="All Budgets"
+                    label="View all"
                     redirectUrl={"/allBudgets"}
                   />
                 </View>
