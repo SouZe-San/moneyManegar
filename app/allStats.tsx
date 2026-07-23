@@ -16,6 +16,7 @@ import {
 import { fetchAllBudgets } from "@/hooks/queries/budget";
 import { useThemeColorWithName } from "@/hooks/useThemeColor";
 import { Budget } from "@/types/expanse";
+import { useHeaderImage } from "@/context/HeaderImageContext";
 
 type Pt = { value: number; label?: string };
 type Bar = {
@@ -50,7 +51,7 @@ const Legend = ({ items }: { items: { c: string; t: string }[] }) => (
 
 
 export default function allStats() {
-  const imageUrl = require("@/assets/images/temp/s2.webp");
+  const imageUrl = useHeaderImage("allStats");
   const headerTitle = "Statistical Analysis";
 
   const expenseColor = useThemeColorWithName("expense");

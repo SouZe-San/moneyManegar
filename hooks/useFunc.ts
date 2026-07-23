@@ -71,15 +71,6 @@ const arrayOfFaces = [
 export const getRandomFaces = () =>
   arrayOfFaces[Math.floor(Math.random() * arrayOfFaces.length)];
 
-export const photoUpload = async (
-  URL: string,
-  fileName: string | null | undefined,
-) => {
-  const filename = fileName ?? URL.split("/").pop()!;
-  const docuDir = FileSystem.documentDirectory + filename;
-  await FileSystem.copyAsync({ from: URL, to: docuDir });
-  return docuDir;
-};
 
 // 1. Helper function to convert JSON/Array data to CSV format
 const convertToCSV = (data: any) => {
@@ -108,7 +99,7 @@ const convertToCSV = (data: any) => {
   return [headers, ...rows].join("\n");
 };
 
-// 2. Main Export Function
+// ---===================== Main Export Function =====================---
 export const exportExpensesToCSV = async (
   db: SQLiteDatabase,
   setProgress: (num: number) => void,
@@ -252,7 +243,7 @@ export type ImportSummary = {
   skipped: number;
 };
 
-// ---- Main import function ----
+// ----==================== Main import function =====================----
 export const importDataFromZip = async (
   db: SQLiteDatabase,
   setProgress: (n: number) => void,
@@ -447,4 +438,44 @@ export const importDataFromZip = async (
 
   setProgress(100);
   return summary;
+};
+// ----==================== END function =====================----
+
+export const photoUpload = async (
+  URL: string,
+  fileName: string | null | undefined,
+) => {
+  const filename = fileName ?? URL.split("/").pop() ?? `img_${Date.now()}.jpg`;
+  const docuDir = FileSystem.documentDirectory + filename;
+  await FileSystem.copyAsync({ from: URL, to: docuDir });
+  return docuDir;
+};
+
+const isAppFile = (uri?: string | null) => {
+  const dir = FileSystem.documentDirectory;
+  return Boolean(uri && dir && uri.startsWith(dir));
+};
+ 
+export const deleteAppFile = async (uri?: string | null) => {
+  if (!isAppFile(uri)) return;
+  try {
+    await FileSystem.deleteAsync(uri!, { idempotent: true });
+  } catch (error) {
+    console.log("File cleanup failed:", error);
+  }
+};
+
+export const savePickedImage = async (
+  pickedUri: string,
+  prefix: string,
+  previousUri?: string | null,
+) => {
+  const rawExt = (pickedUri.split(".").pop() ?? "").split("?")[0].toLowerCase();
+  const ext = /^(jpg|jpeg|png|webp|gif|heic)$/.test(rawExt) ? rawExt : "jpg";
+  const dest = `${FileSystem.documentDirectory}${prefix}_${Date.now()}.${ext}`;
+
+  // copy first — if this throws, the previous image is still intact
+  await FileSystem.copyAsync({ from: pickedUri, to: dest });
+  if (previousUri && previousUri !== dest) await deleteAppFile(previousUri);
+  return dest;
 };

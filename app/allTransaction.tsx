@@ -28,6 +28,7 @@ import { useThemeColorWithName } from "@/hooks/useThemeColor";
 import { ITransaction } from "@/types/expanse";
 import { showToast } from "@/hooks/useFunc";
 import { useExpense } from "@/context/ExpanseContext";
+import { useHeaderImage } from "@/context/HeaderImageContext";
 
 const groupByDate = (items: ITransaction[]) => {
   const today = dayjs().format("DD/MM/YY");
@@ -46,7 +47,7 @@ const groupByDate = (items: ITransaction[]) => {
 const { width: SCREEN_Width, height: SCREEN_HEIGHT } = Dimensions.get("screen");
 
 const allTransaction = () => {
-  const imgUrl = require("@/assets/images/temp/green.jpg");
+  const imgUrl = useHeaderImage("allTransaction");
   const headerTitle = "All Wastes ಠ⁠_⁠ಠ";
   const mutedColor = useThemeColorWithName("textMuted");
 

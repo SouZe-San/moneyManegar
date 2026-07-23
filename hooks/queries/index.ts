@@ -4,6 +4,7 @@ import { clearGroup_MemberTable, clearGroupTable } from "./group";
 import { clearBudgetTable } from "./budget";
 import { clearUdharTransactionTable } from "./udhar";
 import type { SQLiteDatabase } from "expo-sqlite";
+import { resetAllHeaderImages } from "./image";
 
 export {
   addData_in_AllTransaction,
@@ -72,6 +73,10 @@ export {
   clearUdharTransactionTable,
 } from "./udhar";
 
+export {
+fetchHeaderImages,resetAllHeaderImages,resetHeaderImage,setHeaderImage
+} from "./image";
+
 export const resetDb = async (db: SQLiteDatabase) => {
   try {
     await clearGroup_MemberTable(db);
@@ -80,6 +85,7 @@ export const resetDb = async (db: SQLiteDatabase) => {
     await clearGroupTable(db);
     await clearMemberTable(db);
     await clearBudgetTable(db);
+    await resetAllHeaderImages(db);
   } catch (error) {
     console.error("Error clearing tables:", error);
     throw new Error("KILL KIL KILL KILL");

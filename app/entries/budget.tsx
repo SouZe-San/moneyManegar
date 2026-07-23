@@ -1,13 +1,17 @@
 import { View } from "react-native";
 
 // components
+import AnimatedStackView from "@/components/animation/AnimatedStackView";
+import AnimateTabView from "@/components/animation/AnimateTabView";
+import BudgetCreate from "@/components/budget/BudgetCreate";
+import BudgetSummaryCard from "@/components/budget/BudgetSummaryCard";
+import BottomSheetModal from "@/components/BottomSheetModal";
 import { globalStyles } from "@/constants/globalStyles";
 import ImageHeader from "@/components/comp/ImageHeader";
 import { ThemedText } from "@/components/ThemedText";
 import { ThemedView } from "@/components/ThemedView";
+import RedirectButton from "@/components/comp/RedirectButton";
 import SubmitButton from "@/components/inputs/SubmitButton";
-import BudgetCreate from "@/components/budget/BudgetCreate";
-import BudgetSummaryCard from "@/components/budget/BudgetSummaryCard";
 
 // hooks
 import { openBottomSheetModal, showToast } from "@/hooks/useFunc";
@@ -15,13 +19,10 @@ import { openBottomSheetModal, showToast } from "@/hooks/useFunc";
 import { useThemeColorWithName } from "@/hooks/useThemeColor";
 import { useCallback, useEffect, useRef, useState } from "react";
 import { BottomSheetRefProps } from "@/components/BottomSheetView";
-import BottomSheetModal from "@/components/BottomSheetModal";
 import { fetchThisMonthBudget, isBudgetHave } from "@/hooks/queries/budget";
 import { useSQLiteContext } from "expo-sqlite";
-import AnimateTabView from "@/components/animation/AnimateTabView";
-import RedirectButton from "@/components/comp/RedirectButton";
 import { StatsIcon } from "@/assets/icons/SVG/RandomIcons";
-import AnimatedStackView from "@/components/animation/AnimatedStackView";
+import { useHeaderImage } from "@/context/HeaderImageContext";
 
 type Budget = {
   month: string;
@@ -35,7 +36,7 @@ export function budget() {
   const [loading, setLoading] = useState(false);
   const [budget, setBudget] = useState<Budget>(null);
   const [isHaveManyBudget, setManyBudget] = useState(false);
-
+const headerImg = useHeaderImage("budget");
   // modal Reference
   const ref = useRef<BottomSheetRefProps>(null);
 
@@ -86,7 +87,7 @@ export function budget() {
 
   return (
     <ThemedView style={globalStyles.entriesViewContainer}>
-      <ImageHeader url={require("@/assets/images/entries/mony.webp")} />
+      <ImageHeader url={headerImg} />
       <ThemedText
         type="title"
         style={{

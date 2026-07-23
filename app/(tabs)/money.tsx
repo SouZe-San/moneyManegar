@@ -8,6 +8,7 @@ import { useThemeColorWithName } from "@/hooks/useThemeColor";
 // components
 import AnimateTabView from "@/components/animation/AnimateTabView";
 import ImageHeader from "@/components/animation/ImageHeader";
+import { useHeaderImage } from "@/context/HeaderImageContext";
 
 type LinkBtn = {
   linkLabel: string;
@@ -98,6 +99,7 @@ export default function MoneyManager() {
     const cardBorder = useThemeColorWithName("cardBorder");
     const textMuted = useThemeColorWithName("textMuted");
     const router = useRouter();
+    const headerImg = useHeaderImage("money");
 
   return (
     <AnimateTabView
@@ -110,7 +112,7 @@ export default function MoneyManager() {
     >
       <View style={[styles.headContainer, {}]}>
         <ImageHeader
-          imgUrl={require("@/assets/images/hero/bg.jpg")}
+          imgUrl={headerImg}
           title="Wallet Hub"
           textStyle={{
             bottom: 50,
@@ -139,7 +141,9 @@ export default function MoneyManager() {
                 },
               ]}
             >
-              <View style={[styles.chip, { backgroundColor: linkBtn.color + "22" }]}>
+              <View
+                style={[styles.chip, { backgroundColor: linkBtn.color + "22" }]}
+              >
                 {linkBtn.icon}
               </View>
 

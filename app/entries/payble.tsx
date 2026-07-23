@@ -32,6 +32,7 @@ import { expenseType, IUdahar, Members } from "@/types/expanse";
 import SearchProfileSection from "@/components/comp/SearchProfileSection";
 import { getInfoAsync } from "expo-file-system";
 import { showToast, showToastWithMsg } from "@/hooks/useFunc";
+import { useHeaderImage } from "@/context/HeaderImageContext";
 
 //! TO whom I have to pay
 export function payble() {
@@ -48,9 +49,9 @@ export function payble() {
   const backgroundColor = useThemeColorWithName("background");
   const horain = useThemeColorWithName("navBg");
   const iconColor = useThemeColorWithName("inputIcon");
-  const borderColor = useThemeColorWithName("borderColor");
   const surface = useThemeColorWithName("surface");
   const cardBorder = useThemeColorWithName("cardBorder");
+  const headerImg = useHeaderImage("payble");
 
   // Routes
   const router = useRouter();
@@ -100,7 +101,10 @@ export function payble() {
     if (toWhom && toWhom.trim() === "") {
       // Show an alert or feedback to the user
       console.log("Person's is empty");
-      EasyAlert("Name Missing", "Owned Person's Name should be selected to continue");
+      EasyAlert(
+        "Name Missing",
+        "Owned Person's Name should be selected to continue",
+      );
       return;
     }
 
@@ -135,7 +139,7 @@ export function payble() {
 
   return (
     <ThemedView style={globalStyles.entriesViewContainer}>
-      <ImageHeader url={require("@/assets/images/entries/debt.webp")} />
+      <ImageHeader url={headerImg} />
       <ThemedText
         type="tabTitle"
         style={{
@@ -243,25 +247,20 @@ export function payble() {
             }}
           ></View>
           {/* All Debt */}
-          <ThemedText type="subtitle" style={{ marginTop: 20 }}>
-            Debt Listed {".⁠·⁠´⁠¯⁠⁠(⁠>⁠▂⁠<⁠)⁠´⁠¯⁠⁠·⁠."}
+          <ThemedText
+            type="subtitle"
+            style={{ marginTop: 20, opacity:.6 }}
+            colorName="textMuted"
+          >
+            Debt Debt and Debt {".⁠·⁠´⁠¯⁠⁠(⁠>⁠▂⁠<⁠)⁠´⁠¯⁠⁠·⁠."}
           </ThemedText>
           <ScrollView
             style={{
               paddingVertical: 10,
               flex: 1,
-
               width: "100%",
             }}
-          >
-            <View
-              style={{
-                flex: 1,
-                justifyContent: "center",
-                alignItems: "center",
-              }}
-            ></View>
-          </ScrollView>
+          ></ScrollView>
 
           {/* Submit Button */}
           <View style={globalStyles.submit_btn_container}>

@@ -55,6 +55,7 @@ import { showToast } from "@/hooks/useFunc";
 import { useThemeColorWithName } from "@/hooks/useThemeColor";
 
 import { useExpense } from "@/context/ExpanseContext";
+import { useHeaderImage } from "@/context/HeaderImageContext";
 
 // ! who are you to ask for money &&& { can take full expense and divide in in some numbers}
 export function contribute() {
@@ -87,6 +88,7 @@ export function contribute() {
   const cardBorder = useThemeColorWithName("cardBorder");
 
   const viewableItems = useSharedValue<ViewToken[]>([]);
+  const headerImg = useHeaderImage("contribute");
 
   const router = useRouter();
   const sqlDb = useSQLiteContext();
@@ -272,7 +274,7 @@ export function contribute() {
     <ThemedView
       style={[globalStyles.entriesViewContainer, { position: "relative" }]}
     >
-      <ImageHeader url={require("@/assets/images/entries/moneyGive.webp")} />
+      <ImageHeader url={headerImg} />
 
       <ThemedText
         type="tabTitle"
@@ -449,7 +451,7 @@ export function contribute() {
             }}
           ></View>
           {/* List of transaction where user will get money */}
-          <ThemedText type="subtitle" style={{ marginTop: 10 }}>
+          <ThemedText type="subtitle" colorName="textMuted" style={{ marginTop: 10, opacity:.6 }}>
             Coming Paisa @_@
           </ThemedText>
           <ScrollView
@@ -461,13 +463,7 @@ export function contribute() {
               width: "100%",
             }}
           >
-            <View
-              style={{
-                flex: 1,
-                justifyContent: "center",
-                alignItems: "center",
-              }}
-            ></View>
+           
           </ScrollView>
 
           {/* Submit Button */}

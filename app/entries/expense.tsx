@@ -22,8 +22,9 @@ import { useThemeColorWithName } from "@/hooks/useThemeColor";
 
 // icons
 import { DescIcon, MoneyBagIcon } from "@/assets/icons/SVG/InputIcons";
-import {  ITransaction, transactionCategory } from "@/types/expanse";
+import { ITransaction, transactionCategory } from "@/types/expanse";
 import { showToast, showToastWithMsg } from "@/hooks/useFunc";
+import { useHeaderImage } from "@/context/HeaderImageContext";
 
 export function expense() {
   // States
@@ -35,7 +36,7 @@ export function expense() {
   // Colors
   const iconColor = useThemeColorWithName("inputIcon");
   const backgroundColor = useThemeColorWithName("background");
-
+  const headerImg = useHeaderImage("expense");
   // Routers
   const router = useRouter();
   const sqlDb = useSQLiteContext();
@@ -75,7 +76,7 @@ export function expense() {
 
   return (
     <ThemedView style={globalStyles.entriesViewContainer}>
-      <ImageHeader url={require("@/assets/images/entries/expanse.gif")} />
+      <ImageHeader url={headerImg} />
       <ThemedText
         type="title"
         style={{

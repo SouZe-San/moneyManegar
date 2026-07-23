@@ -8,6 +8,7 @@ import { SQLiteProvider } from "expo-sqlite";
 import { useColorScheme } from "@/hooks/useColorScheme";
 import { useThemeColorWithName } from "@/hooks/useThemeColor";
 import { ExpenseProvider } from "@/context/ExpanseContext";
+import { HeaderImageProvider } from "@/context/HeaderImageContext";
 
 // Prevent the splash screen from auto-hiding before asset loading is complete.
 SplashScreen.preventAutoHideAsync();
@@ -46,9 +47,7 @@ export default function RootLayout() {
     <ThemeProvider value={colorScheme === "dark" ? DarkTheme : DefaultTheme}>
       <Suspense
         fallback={
-          <ThemedView
-            style={{ flex: 1, justifyContent: "center", alignItems: "center" }}
-          >
+          <ThemedView style={{ flex: 1, justifyContent: "center", alignItems: "center" }}>
             <ActivityIndicator size="large" color={high} />
           </ThemedView>
         }
@@ -58,180 +57,191 @@ export default function RootLayout() {
           onInit={migrateDbIfNeeded}
           useSuspense
         >
-          <ExpenseProvider>
-            <StatusBar
-              translucent
-              hideTransitionAnimation="fade"
-              hidden={true}
-              backgroundColor="transparent"
-              // hidden
-              networkActivityIndicatorVisible
-            />
-            <Stack>
-              <Stack.Screen name="(tabs)" options={{ headerShown: false }} />
-              <Stack.Screen name="+not-found" />
-              <Stack.Screen
-                name="entries/income"
-                options={{
-                  title: "",
-                  headerShadowVisible: false,
-                  headerTransparent: true,
-                  headerBackVisible: false,
-                  headerTintColor: headerTextColor,
-                }}
+          <HeaderImageProvider>
+            <ExpenseProvider>
+              <StatusBar
+                translucent
+                hideTransitionAnimation="fade"
+                hidden={true}
+                backgroundColor="transparent"
+                networkActivityIndicatorVisible
               />
-              <Stack.Screen
-                name="entries/expense"
-                options={{
-                  title: "",
-                  headerShadowVisible: false,
-                  headerTransparent: true,
-                  headerBackVisible: false,
-                  headerTintColor: headerTextColor,
-                }}
-              />
-              <Stack.Screen
-                name="entries/contribute"
-                options={{
-                  title: "",
-                  // title: "Contribute: Kon kon paisa dega  ",
-                  headerShadowVisible: false,
-                  headerTransparent: true,
-                  headerBackVisible: false,
-                  headerTintColor: headerTextColor,
-                }}
-              />
-              <Stack.Screen
-                name="entries/payble"
-                options={{
-                  title: "",
-                  headerShadowVisible: false,
-                  headerTransparent: true,
-                  headerBackVisible: false,
-                  headerTintColor: headerTextColor,
-                }}
-              />
-              <Stack.Screen
-                name="entries/budget"
-                options={{
-                  title: "",
-                  headerShadowVisible: false,
-                  headerTransparent: true,
-                  headerBackVisible: false,
-                  headerTintColor: headerTextColor,
-                }}
-              />
-              <Stack.Screen
-                name="setting"
-                options={{
-                  title: "",
-                  headerShadowVisible: false,
-                  headerLargeTitle: true,
-                  headerTransparent: true,
-                  headerBackVisible: false,
-                  headerTintColor: headerTextColor,
-                }}
-              />
-              <Stack.Screen
-                name="allBudgets"
-                options={{
-                  title: "",
-                  headerShadowVisible: false,
-                  headerLargeTitle: true,
-                  headerTransparent: true,
-                  headerBackVisible: false,
-                  headerTintColor: headerTextColor,
-                }}
-              />
-              <Stack.Screen
-                name="allStats"
-                options={{
-                  title: "",
-                  headerShadowVisible: false,
-                  headerLargeTitle: true,
-                  headerTransparent: true,
-                  headerBackVisible: false,
-                  headerTintColor: headerTextColor,
-                }}
-              />
-              <Stack.Screen
-                name="allTransaction"
-                options={{
-                  title: "",
-                  headerShadowVisible: false,
-                  headerLargeTitle: true,
-                  headerTransparent: true,
-                  headerBackVisible: false,
-                  headerTintColor: headerTextColor,
-                }}
-              />
-              <Stack.Screen
-                name="groups/[groupId]"
-                options={{
-                  title: "",
-                  headerShadowVisible: false,
-                  headerLargeTitle: true,
-                  headerTransparent: true,
-                  headerBackVisible: false,
-                  headerTintColor: headerTextColor,
-                }}
-              />
-              <Stack.Screen
-                name="groups/create"
-                options={{
-                  title: "",
-                  headerShadowVisible: false,
-                  headerLargeTitle: true,
-                  headerTransparent: true,
-                  headerBackVisible: false,
-                  headerTintColor: headerTextColor,
-                }}
-              />
-              <Stack.Screen
-                name="notification"
-                options={{
-                  title: "",
-                  headerShadowVisible: false,
-                  headerTransparent: true,
-                  headerTintColor: headerTextColor,
-                }}
-              />
-              <Stack.Screen
-                name="login"
-                options={{
-                  title: "",
-                  headerShadowVisible: false,
-                  headerLargeTitle: true,
-                  headerTransparent: true,
-                  headerBackVisible: false,
-                  headerTintColor: headerTextColor,
-                }}
-              />
-              <Stack.Screen
-                name="startingEntry"
-                options={{
-                  title: "",
-                  headerShadowVisible: false,
-                  headerLargeTitle: true,
-                  headerTransparent: true,
-                  headerBackVisible: false,
-                  headerTintColor: headerTextColor,
-                }}
-              />
+              <Stack>
+                <Stack.Screen name="(tabs)" options={{ headerShown: false }} />
+                <Stack.Screen name="+not-found" />
+                <Stack.Screen
+                  name="entries/income"
+                  options={{
+                    title: "",
+                    headerShadowVisible: false,
+                    headerTransparent: true,
+                    headerBackVisible: false,
+                    headerTintColor: headerTextColor,
+                  }}
+                />
+                <Stack.Screen
+                  name="entries/expense"
+                  options={{
+                    title: "",
+                    headerShadowVisible: false,
+                    headerTransparent: true,
+                    headerBackVisible: false,
+                    headerTintColor: headerTextColor,
+                  }}
+                />
+                <Stack.Screen
+                  name="entries/contribute"
+                  options={{
+                    title: "",
+                    headerShadowVisible: false,
+                    headerTransparent: true,
+                    headerBackVisible: false,
+                    headerTintColor: headerTextColor,
+                  }}
+                />
+                <Stack.Screen
+                  name="entries/payble"
+                  options={{
+                    title: "",
+                    headerShadowVisible: false,
+                    headerTransparent: true,
+                    headerBackVisible: false,
+                    headerTintColor: headerTextColor,
+                  }}
+                />
+                <Stack.Screen
+                  name="entries/budget"
+                  options={{
+                    title: "",
+                    headerShadowVisible: false,
+                    headerTransparent: true,
+                    headerBackVisible: false,
+                    headerTintColor: headerTextColor,
+                  }}
+                />
+                <Stack.Screen
+                  name="setting"
+                  options={{
+                    title: "",
+                    headerShadowVisible: false,
+                    headerLargeTitle: true,
+                    headerTransparent: true,
+                    headerBackVisible: false,
+                    headerTintColor: headerTextColor,
+                  }}
+                />
+                <Stack.Screen
+                  name="headerImages"
+                  options={{
+                    title: "",
+                    headerShadowVisible: false,
+                    headerLargeTitle: true,
+                    headerTransparent: true,
+                    headerBackVisible: false,
+                    headerTintColor: headerTextColor,
+                  }}
+                />
+                <Stack.Screen
+                  name="allBudgets"
+                  options={{
+                    title: "",
+                    headerShadowVisible: false,
+                    headerLargeTitle: true,
+                    headerTransparent: true,
+                    headerBackVisible: false,
+                    headerTintColor: headerTextColor,
+                  }}
+                />
+                <Stack.Screen
+                  name="allStats"
+                  options={{
+                    title: "",
+                    headerShadowVisible: false,
+                    headerLargeTitle: true,
+                    headerTransparent: true,
+                    headerBackVisible: false,
+                    headerTintColor: headerTextColor,
+                  }}
+                />
+                <Stack.Screen
+                  name="allTransaction"
+                  options={{
+                    title: "",
+                    headerShadowVisible: false,
+                    headerLargeTitle: true,
+                    headerTransparent: true,
+                    headerBackVisible: false,
+                    headerTintColor: headerTextColor,
+                  }}
+                />
+                <Stack.Screen
+                  name="groups/[groupId]"
+                  options={{
+                    title: "",
+                    headerShadowVisible: false,
+                    headerLargeTitle: true,
+                    headerTransparent: true,
+                    headerBackVisible: false,
+                    headerTintColor: headerTextColor,
+                  }}
+                />
+                <Stack.Screen
+                  name="groups/create"
+                  options={{
+                    title: "",
+                    headerShadowVisible: false,
+                    headerLargeTitle: true,
+                    headerTransparent: true,
+                    headerBackVisible: false,
+                    headerTintColor: headerTextColor,
+                  }}
+                />
+                <Stack.Screen
+                  name="notification"
+                  options={{
+                    title: "",
+                    headerShadowVisible: false,
+                    headerTransparent: true,
+                    headerTintColor: headerTextColor,
+                  }}
+                />
+                <Stack.Screen
+                  name="login"
+                  options={{
+                    title: "",
+                    headerShadowVisible: false,
+                    headerLargeTitle: true,
+                    headerTransparent: true,
+                    headerBackVisible: false,
+                    headerTintColor: headerTextColor,
+                  }}
+                />
+                <Stack.Screen
+                  name="startingEntry"
+                  options={{
+                    title: "",
+                    headerShadowVisible: false,
+                    headerLargeTitle: true,
+                    headerTransparent: true,
+                    headerBackVisible: false,
+                    headerTintColor: headerTextColor,
+                  }}
+                />
 
-              <Stack.Screen
-                name="onboarding"
-                options={{
-                  title: "",
-                  headerShadowVisible: false,
-                  headerLargeTitle: true,
-                  headerTransparent: true,
-                  headerBackVisible: false,
-                  headerTintColor: headerTextColor,
-                }}
-              />
-            </Stack>
-          </ExpenseProvider>
+                <Stack.Screen
+                  name="onboarding"
+                  options={{
+                    title: "",
+                    headerShadowVisible: false,
+                    headerLargeTitle: true,
+                    headerTransparent: true,
+                    headerBackVisible: false,
+                    headerTintColor: headerTextColor,
+                  }}
+                />
+              </Stack>
+            </ExpenseProvider>
+          </HeaderImageProvider>
         </SQLiteProvider>
       </Suspense>
     </ThemeProvider>

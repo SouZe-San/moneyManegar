@@ -20,7 +20,7 @@ import { useThemeColorWithName } from "@/hooks/useThemeColor";
 import { IGroup, Members } from "@/types/expanse";
 // icons
 import { ProCamIcon } from "@/assets/icons/SVG/RandomIcons";
-import { photoUpload, showToast } from "@/hooks/useFunc";
+import { savePickedImage, showToast } from "@/hooks/useFunc";
 
 export default function create() {
   // States
@@ -33,7 +33,6 @@ export default function create() {
   const bg = useThemeColorWithName("blurBg");
   const surface = useThemeColorWithName("surface");
   const cardBorder = useThemeColorWithName("cardBorder");
-  const textMuted = useThemeColorWithName("textMuted");
   const iconColor = useThemeColorWithName("icon");
 
   const router = useRouter();
@@ -79,25 +78,30 @@ export default function create() {
     setMembers([]);
 
     // Show Success Alert
+    showToast("GROUP")
   };
 
   //! Image Picking logic
-  const pickImage = async () => {
-    // No permissions request is necessary for launching the image library
-    let result = await ImagePicker.launchImageLibraryAsync({
-      mediaTypes: ["images"],
-      allowsEditing: true,
-      aspect: [1, 1],
-      quality: 1,
-    });
+   const pickImage = async () => {
+     let result = await ImagePicker.launchImageLibraryAsync({
+       mediaTypes: ["images"],
+       allowsEditing: true,
+       aspect: [1, 1],
+       quality: 1,
+     });
 
-    if (!result.canceled) {
-      const url = await photoUpload(result.assets[0].uri, result.assets[0].fileName);
-      setSelectedImage(url);
-      return;
-    }
-    setSelectedImage(null);
-  };
+     if (!result.canceled) {
+       const url = await savePickedImage(
+         result.assets[0].uri,
+         "group",
+         selectedImage,
+       );
+       setSelectedImage(url);
+       return;
+     }
+     setSelectedImage(null);
+   };
+
 
   return (
     <ThemedView style={[globalStyles.mainContainer]}>

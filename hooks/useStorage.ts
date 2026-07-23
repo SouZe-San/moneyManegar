@@ -69,6 +69,12 @@ export const migrateDbIfNeeded = async (db: SQLiteDatabase) => {
             created_at TEXT NOT NULL
         );
 
+        CREATE TABLE IF NOT EXISTS HeaderImages (
+            screenKey TEXT PRIMARY KEY,
+            imgUri TEXT NOT NULL
+        );
+
+
         CREATE INDEX IF NOT EXISTS idx_alltx_date ON AllTransactions(date);
         CREATE INDEX IF NOT EXISTS idx_alltx_expenseType ON AllTransactions(expenseType);
         CREATE INDEX IF NOT EXISTS idx_alltx_memberId ON AllTransactions(memberId);

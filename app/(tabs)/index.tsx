@@ -12,7 +12,7 @@ import {
 import { useRouter } from "expo-router";
 import { useState, useRef, useCallback} from "react";
 import { BarChart, PieChartPro } from "react-native-gifted-charts";
-// import { useSQLiteContext } from "expo-sqlite";
+// import { openDatabaseSync } from "expo-sqlite";
 // import { useDrizzleStudio } from "expo-drizzle-studio-plugin";
 
 // Components
@@ -30,7 +30,7 @@ import { useThemeColorWithName } from "@/hooks/useThemeColor";
 import { useExpense } from "@/context/ExpanseContext";
 
 // Icons
-import { DbIcon, ExpanseDownIcon, StatsIcon } from "@/assets/icons/SVG/RandomIcons";
+import { DbIcon, StatsIcon } from "@/assets/icons/SVG/RandomIcons";
 
 // Modal
 import BottomSheetModal from "@/components/BottomSheetModal";
@@ -58,7 +58,7 @@ export default function HomeScreen() {
   const ref = useRef<BottomSheetRefProps>(null);
 
   // ** Using To visualize the db
-  // const db = useSQLiteContext();
+  // const db = openDatabaseSync("test");
   // useDrizzleStudio(db);
 
   const {

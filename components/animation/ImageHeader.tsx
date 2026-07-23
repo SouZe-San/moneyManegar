@@ -1,3 +1,10 @@
+import {
+  StyleProp,
+  TextStyle,
+  useWindowDimensions,
+  type ImageSourcePropType,
+} from "react-native";
+
 import Animated, {
   Easing,
   useSharedValue,
@@ -6,27 +13,26 @@ import Animated, {
   withTiming,
   ReduceMotion,
 } from "react-native-reanimated";
-import { StyleProp, TextStyle, useWindowDimensions, type ImageURISource } from "react-native";
-import { useCallback } from "react";
-import { useFocusEffect } from "expo-router";
-import { LinearGradient } from "expo-linear-gradient";
 
+import { useThemeColorWithName } from "@/hooks/useThemeColor";
+import { LinearGradient } from "expo-linear-gradient";
+import { useEffect, useCallback } from "react";
+import { useFocusEffect } from "expo-router";
 import { ThemedView } from "../ThemedView";
 import { ThemedText } from "../ThemedText";
 
-import { useThemeColorWithName } from "@/hooks/useThemeColor";
-
 interface imageProps {
   title: string;
-  imgUrl: ImageURISource | undefined;
+  imgUrl: ImageSourcePropType | undefined;
   textStyle?: StyleProp<TextStyle>;
 }
 
 const ImageHeader = ({ imgUrl, title, textStyle = {} }: imageProps) => {
-
-  const { width: SCREEN_WIDTH, height: SCREEN_HEIGHT } = useWindowDimensions();  
+  const { width: SCREEN_WIDTH, height: SCREEN_HEIGHT } = useWindowDimensions();
+  const translateX = useSharedValue(SCREEN_WIDTH / 2);
   const scale = useSharedValue(1);
   const background = useThemeColorWithName("background");
+
   const easing = Easing.bezier(0.33, -0.01, 0.68, 1.01);
 
   useFocusEffect(
@@ -39,9 +45,9 @@ const ImageHeader = ({ imgUrl, title, textStyle = {} }: imageProps) => {
         -1,
         true,
         () => {},
-        ReduceMotion.System
+        ReduceMotion.System,
       );
-    }, [])
+    }, []),
   );
 
   const animatedStyle = useAnimatedStyle(() => {

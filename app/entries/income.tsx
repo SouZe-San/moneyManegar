@@ -24,6 +24,7 @@ import { useThemeColorWithName } from "@/hooks/useThemeColor";
 // icons
 import { MoneyBagIcon, DescIcon } from "@/assets/icons/SVG/InputIcons";
 import { showToast, showToastWithMsg } from "@/hooks/useFunc";
+import { useHeaderImage } from "@/context/HeaderImageContext";
 
 const incomeExpanseType = ["Salary", "Business", "Gift", "Others"];
 
@@ -37,6 +38,7 @@ export function income() {
   // Colors
   const backgroundColor = useThemeColorWithName("background");
   const iconColor = useThemeColorWithName("inputIcon");
+  const headerImg = useHeaderImage("income");
 
   // Hooks
   const db = useSQLiteContext();
@@ -59,11 +61,12 @@ export function income() {
 
     try {
       await addData_in_AllTransaction(db, newData);
-      router.push("/(tabs)");
+      showToast("INCOME");
+      // reset all inputs
       setAmount("");
       setDescription("");
       setDate(dayjs());
-      showToast("INCOME");
+      router.push("/(tabs)");
     } catch (error) {
       showToastWithMsg("Income Adding Failed");
       console.log("Error form Insert : ", error);
@@ -85,7 +88,7 @@ export function income() {
 
   return (
     <ThemedView style={globalStyles.entriesViewContainer}>
-      <ImageHeader url={require("@/assets/images/entries/income.webp")} />
+      <ImageHeader url={headerImg} />
       <ThemedText
         type="tabTitle"
         style={{

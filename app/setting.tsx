@@ -24,6 +24,7 @@ import {
   OnlineIcon,ExportIcon,ImportIcon,
   LogoutIcon
 } from "@/assets/icons/SVG/RandomIcons";
+import { PenIcon } from "@/assets/icons/SVG/InputIcons";
 
 const setting = () => {
   // Colors
@@ -151,7 +152,7 @@ const setting = () => {
       </ThemedText>
       <ScrollView
         showsVerticalScrollIndicator={false}
-        contentContainerStyle={{ gap: 24, paddingBottom: 120, paddingTop: 10 }}
+        contentContainerStyle={{ gap: 24, paddingBottom: 100, paddingTop: 10 }}
       >
         <View>
           <SectionTitle text="Go Online & Sync" />
@@ -280,6 +281,38 @@ const setting = () => {
           </View>
         </View>
         <View>
+          <SectionTitle text="Personalize" />
+          <Desc text="Swap the banner image on any screen for one of your own 🖼️" />
+
+          <View style={styles.buttonContainer}>
+            <Pressable
+              android_ripple={{ color: "#38BDF8" + "22" }}
+              onPress={() => router.push("/headerImages")}
+              style={({ pressed }) => [
+                styles.btn,
+                {
+                  backgroundColor: surface,
+                  borderColor: pressed ? "#38BDF8" + "55" : cardBorder,
+                  opacity: pressed ? 0.94 : 1,
+                },
+              ]}
+            >
+              <View
+                style={[styles.chip, { backgroundColor: "#38BDF8" + "22" }]}
+              >
+                <PenIcon color={"#38BDF8" + "22"} outline="#38BDF8" />
+              </View>
+              <ThemedText
+                type="defaultSemiBold"
+                style={{ flex: 1, fontSize: 15, color: "#ced1d0" }}
+              >
+                Banners
+              </ThemedText>
+            </Pressable>
+          </View>
+        </View>
+
+        <View>
           <SectionTitle text="Reset" />
           <Desc text="Clear all transactions and start fresh. No strings attached 😎" />
 
@@ -321,12 +354,12 @@ const setting = () => {
           {/* Log Out  */}
           <View style={styles.buttonContainer}>
             <Pressable
-              android_ripple={{ color: "#414a4762"  }}
+              android_ripple={{ color: "#414a4762" }}
               style={({ pressed }) => [
                 styles.btn,
                 {
                   backgroundColor: surface,
-                  borderColor:cardBorder,
+                  borderColor: cardBorder,
                   opacity: pressed ? 0.94 : 1,
                 },
               ]}
