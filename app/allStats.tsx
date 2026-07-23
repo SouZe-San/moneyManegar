@@ -146,8 +146,8 @@ const [cardWidth, setCardWidth] = useState(0);
         {empty ? (
           <ThemedText
             type="title"
-            colorName="tabIconDefault"
-            style={{ textAlign: "center", marginTop: 100 }}
+            colorName="textMuted"
+            style={{ textAlign: "center", marginTop: 100, opacity:.6 }}
           >
             Paisa Nehi hai Kya ~_* !!!
           </ThemedText>

@@ -98,7 +98,7 @@ export default function HomeScreen() {
     <AnimateTabView
       style={[
         globalStyles.container,
-        { paddingBottom: 100, paddingHorizontal: 0 },
+        { paddingBottom: 90, paddingHorizontal: 0 },
       ]}
     >
       <ScrollView

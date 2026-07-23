@@ -178,9 +178,8 @@ export default function CaptureScreen() {
   );
 
   return (
-    <ThemedView style={{ flex: 1 }}>
       <AnimateTabView
-        style={{ flex: 1, paddingHorizontal: "5%", paddingTop: 60 }}
+        style={{ flex: 1, paddingHorizontal: "5%", paddingTop: 60 , paddingBottom:90}}
       >
         {/* title row + confirm-all */}
         <View
@@ -480,7 +479,7 @@ export default function CaptureScreen() {
           </BottomSheetModal>
         </View>
       </AnimateTabView>
-    </ThemedView>
+  
   );
 }
 

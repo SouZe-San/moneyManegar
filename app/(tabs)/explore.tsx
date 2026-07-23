@@ -300,16 +300,9 @@ export default function TabTwoScreen() {
       </Collapsible>
 
       {/* // Legal info - Add Some web page link and details */}
-      <View
-        style={[
-          {
-            paddingHorizontal: 6,
-            paddingVertical: 14,
-          },
-        ]}
-      >
-        <ThemedText type="subtitle">Legal Information</ThemedText>
-      </View>
+
+      <ThemedText type="subtitle">Legal Information</ThemedText>
+
       <Collapsible title="Privacy And Policy" iconName="privacyIcon">
         <View
           style={[

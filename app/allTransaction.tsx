@@ -140,8 +140,7 @@ const allTransaction = () => {
         {allTransactions.length === 0 && (
           <ThemedText
             type="title"
-            colorName="tabIconDefault"
-            style={{ textAlign: "center", marginTop: 100 }}
+            style={{ textAlign: "center", marginTop: 100, color: mutedColor + "75" }}
           >
             Itne Jema Karke Kya kare Ga !!!
           </ThemedText>

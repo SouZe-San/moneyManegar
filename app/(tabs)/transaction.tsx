@@ -91,7 +91,7 @@ export default function Transaction() {
   return (
     <GestureHandlerRootView style={{ flex: 1 }}>
       <AnimateTabView
-        style={[globalStyles.container, { paddingBottom: "20%" }]}
+        style={[globalStyles.container, { paddingBottom: 90 }]}
       >
         <ThemedText type="title">Pauna-Gonda</ThemedText>
 
