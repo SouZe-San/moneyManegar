@@ -1,4 +1,7 @@
-import { View } from "react-native";
+import { Pressable, Text, View } from "react-native";
+import { useSQLiteContext } from "expo-sqlite";
+import {  useRouter } from "expo-router";
+import { useCallback, useEffect, useRef, useState } from "react";
 
 // components
 import AnimatedStackView from "@/components/animation/AnimatedStackView";
@@ -10,18 +13,14 @@ import { globalStyles } from "@/constants/globalStyles";
 import ImageHeader from "@/components/comp/ImageHeader";
 import { ThemedText } from "@/components/ThemedText";
 import { ThemedView } from "@/components/ThemedView";
-import RedirectButton from "@/components/comp/RedirectButton";
 import SubmitButton from "@/components/inputs/SubmitButton";
 
 // hooks
 import { openBottomSheetModal, showToast } from "@/hooks/useFunc";
 
 import { useThemeColorWithName } from "@/hooks/useThemeColor";
-import { useCallback, useEffect, useRef, useState } from "react";
 import { BottomSheetRefProps } from "@/components/BottomSheetView";
 import { fetchThisMonthBudget, isBudgetHave } from "@/hooks/queries/budget";
-import { useSQLiteContext } from "expo-sqlite";
-import { StatsIcon } from "@/assets/icons/SVG/RandomIcons";
 import { useHeaderImage } from "@/context/HeaderImageContext";
 
 type Budget = {
@@ -36,14 +35,18 @@ export function budget() {
   const [loading, setLoading] = useState(false);
   const [budget, setBudget] = useState<Budget>(null);
   const [isHaveManyBudget, setManyBudget] = useState(false);
-const headerImg = useHeaderImage("budget");
+  const headerImg = useHeaderImage("budget");
+
   // modal Reference
   const ref = useRef<BottomSheetRefProps>(null);
 
   const db = useSQLiteContext();
-
+    const router = useRouter();
   // Colors
   const backgroundColor = useThemeColorWithName("background");
+  const textMuted = useThemeColorWithName("textMuted");
+  const surface = useThemeColorWithName("surface");
+  const cardBorder = useThemeColorWithName("cardBorder");
 
   const createNew = useCallback(() => {
     openBottomSheetModal(ref, setModalVisible);
@@ -104,7 +107,12 @@ const headerImg = useHeaderImage("budget");
       >
         Tight Life {"(⁠￣⁠ヘ⁠￣⁠)⁠ "}
       </ThemedText>
-      <View style={[globalStyles.inputContainer, { backgroundColor }]}>
+      <View
+        style={[
+          globalStyles.inputContainer,
+          { justifyContent: "center", alignItems: "center", backgroundColor },
+        ]}
+      >
         <AnimatedStackView style={globalStyles.animated_stackContainer}>
           <View
             style={{
@@ -123,18 +131,28 @@ const headerImg = useHeaderImage("budget");
                   justifyContent: "center",
                 }}
               >
-                <ThemedText type="subtitle" style={{ textAlign: "center" }}>
+                <ThemedText
+                  type="subtitle"
+                  style={{
+                    color: textMuted + "70",
+                    textAlign: "center",
+                  }}
+                >
                   No budgets yet
                 </ThemedText>
                 <ThemedText
-                  colorName="textMuted"
-                  style={{ textAlign: "center", fontSize: 13, marginTop: 6 }}
+                  style={{
+                    fontSize: 15,
+                    color: textMuted + "50",
+                    textAlign: "center",
+                    marginTop: 4,
+                  }}
                 >
                   Set a budget for your wallet or your month.
                 </ThemedText>
               </View>
             ) : (
-              <View style={{ width: "100%", gap: 10 }}>
+              <View style={{ width: "100%", gap: 10, flex: 1 }}>
                 {!budget ? (
                   <View
                     style={{
@@ -143,17 +161,24 @@ const headerImg = useHeaderImage("budget");
                       alignItems: "center",
                       justifyContent: "center",
                       gap: 6,
+                      flex: 1,
                     }}
                   >
-                    <ThemedText type="subtitle" style={{ textAlign: "center" }}>
-                      No budget this month
-                    </ThemedText>
                     <ThemedText
                       colorName="textMuted"
-                      style={{ textAlign: "center", fontSize: 13 }}
+                      style={{ textAlign: "center" }}
+                    >
+                      No budget this month
+                    </ThemedText>
+                    <Text
+                      style={{
+                        textAlign: "center",
+                        fontSize: 13,
+                        color: textMuted + "70",
+                      }}
                     >
                       Set one and track it as you spend.
-                    </ThemedText>
+                    </Text>
                   </View>
                 ) : (
                   <BudgetSummaryCard
@@ -162,26 +187,46 @@ const headerImg = useHeaderImage("budget");
                     total_expense={budget.total_expense}
                   />
                 )}
-                <View
-                  style={{
-                    width: "100%",
-                    marginTop: 15,
-                  }}
-                >
-                  <RedirectButton
-                    icon={<StatsIcon color="#38BDF8" />}
-                    label="View all"
-                    redirectUrl={"/allBudgets"}
-                  />
-                </View>
               </View>
             )}
-
-            <View style={[globalStyles.submit_btn_container]}>
-              <SubmitButton button_label="New Budget" onPress={createNew} />
-            </View>
           </View>
         </AnimatedStackView>
+        <View
+          style={[
+            globalStyles.submit_btn_container,
+            {
+              gap: 10,
+              zIndex: 7,
+            },
+          ]}
+        >
+          {isHaveManyBudget && (
+            <Pressable
+              android_ripple={{ color: "#38BDF8" + "22" }}
+              onPress={() => router.push("/allBudgets")}
+              style={({ pressed }) => ({
+                width: "100%",
+                height: 50,
+                justifyContent: "center",
+                alignItems: "center",
+                borderRadius: 12,
+                borderWidth: 1,
+                borderColor: cardBorder,
+                alignSelf: "center",
+                backgroundColor: pressed ? surface + "70" : surface + "10",
+                opacity: pressed ? 0.92 : 1,
+              })}
+            >
+              <ThemedText
+                colorName="text"
+                style={{ fontWeight: 400, letterSpacing: 1.5 }}
+              >
+                View all
+              </ThemedText>
+            </Pressable>
+          )}
+          <SubmitButton button_label="New Budget" onPress={createNew} />
+        </View>
         <View style={{ position: "relative" }}>
           <BottomSheetModal
             isOpen={modalVisible}
