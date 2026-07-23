@@ -199,16 +199,6 @@ export const totalBudget = [
   },
 ];
 
-// const colorMapping = {
-//   Food: "#fd3a7b", // Adjusted color for Food
-//   Fuel: "#2377ff", // Adjusted color for Fuel
-//   Shopping: "#ffe056", // Color for Shopping
-//   Recharge: "#20bcbc", // Color for Recharge
-//   Travels: "#952efb", // Color for Travels
-//   Others: "#bbb9b7", // Color for Others
-//   Rent: "#33ffda", // Added color for Rent
-//   Bill: "#4c00c7", // Added color for Bill
-// };
 const colorMapping = {
   Food: "#FF6B6B", // Vibrant Red - great for Food category
   Fuel: "#3B82F6", // Calm Blue - Fuel

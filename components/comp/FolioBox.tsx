@@ -16,7 +16,7 @@ import { IGroup, Members } from "@/types/expanse";
 
 import { useThemeColorWithName } from "@/hooks/useThemeColor";
 import { getRandomFaces } from "@/hooks/useFunc";
-// import * as FileSystem from "expo-file-system";
+
 type SingleBoxProps = {
   icon?: string | null;
   label: string;
@@ -40,7 +40,7 @@ const FolioBox = ({
   const cardBg = useThemeColorWithName("surface");
   const cardBorder = useThemeColorWithName("cardBorder");
   const [isFile, setIsFile] = useState(false);
-
+  const [face] = useState(() => getRandomFaces());
   useEffect(() => {
     if (imgUrl) {
       try {
@@ -99,9 +99,7 @@ const FolioBox = ({
               style={{ objectFit: "cover", width: "100%", height: "100%" }}
             />
           ) : isMem ? (
-            <ThemedText type="title">
-              {getRandomFaces()}
-            </ThemedText>
+            <ThemedText type="title">{face}</ThemedText>
           ) : (
             <ThemedText style={styles.buttonLabel}>{icon}</ThemedText>
           )}

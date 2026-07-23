@@ -24,7 +24,6 @@ import { Budget, ITransaction, IUdahar } from "@/types/expanse";
 const FROM_SCALE = 0.3;
 
 const ROW_STAGGER = 22; // ms between neighbouring rows, first reveal only
-// Set ROW_STAGGER = 0 to remove the cascade entirely (fastest, still reveals)
 const ROWS_PER_SCREEN = 9; // caps worst-case delay at 5 * ROW_STAGGER
 
 const SPRING = {

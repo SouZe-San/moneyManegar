@@ -1,4 +1,4 @@
-import { View, TouchableOpacity, StyleSheet, FlatList, Alert } from "react-native";
+import { View, TouchableOpacity, StyleSheet, FlatList } from "react-native";
 import { UserIcon } from "@/assets/icons/SVG/InputIcons";
 import { useThemeColorWithName } from "@/hooks/useThemeColor";
 import { useEffect, useState } from "react";

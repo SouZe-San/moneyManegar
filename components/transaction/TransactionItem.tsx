@@ -4,7 +4,6 @@ import { ThemedText } from "../ThemedText";
 import CategoryIcon from "@/components/comp/CategoryIcon";
 import { useThemeColorWithName } from "@/hooks/useThemeColor";
 import { useColorScheme } from "@/hooks/useColorScheme";
-import { iconReturn } from "@/constants/expanseIcon";
 import { ColorMapping } from "@/constants/Colors";
 import { ITransaction } from "@/types/expanse";
 

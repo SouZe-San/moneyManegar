@@ -214,7 +214,7 @@ export default function HomeScreen() {
         </View>
 
         {/* New User Image */}
-        {(members.length === 0 || (totalIncome+ totalExpense) === 0) && (
+        {(members.length === 0 || totalIncome + totalExpense === 0) && (
           <View
             style={{
               justifyContent: "center",
@@ -374,7 +374,7 @@ export default function HomeScreen() {
             setIsOpen={setModalVisible}
             ref={ref}
           >
-            <MemberDetails id={memberId} />
+            <MemberDetails id={memberId} setModalVisibility={setModalVisible} />
           </BottomSheetModal>
         </View>
         {/*//! Two Chart */}

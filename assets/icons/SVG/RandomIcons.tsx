@@ -1,4 +1,4 @@
-import Svg, { SvgProps, Path, G, Circle } from "react-native-svg";
+import Svg, { SvgProps, Path, G} from "react-native-svg";
 interface SvgPropWithColor extends SvgProps {
   color?: string;
   isFocused?: boolean;

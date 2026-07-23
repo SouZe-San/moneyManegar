@@ -16,7 +16,7 @@ import Animated, {
 
 import { useThemeColorWithName } from "@/hooks/useThemeColor";
 import { LinearGradient } from "expo-linear-gradient";
-import { useEffect, useCallback } from "react";
+import { useCallback } from "react";
 import { useFocusEffect } from "expo-router";
 import { ThemedView } from "../ThemedView";
 import { ThemedText } from "../ThemedText";
@@ -29,7 +29,6 @@ interface imageProps {
 
 const ImageHeader = ({ imgUrl, title, textStyle = {} }: imageProps) => {
   const { width: SCREEN_WIDTH, height: SCREEN_HEIGHT } = useWindowDimensions();
-  const translateX = useSharedValue(SCREEN_WIDTH / 2);
   const scale = useSharedValue(1);
   const background = useThemeColorWithName("background");
 

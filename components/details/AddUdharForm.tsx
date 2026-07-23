@@ -34,7 +34,6 @@ export default function AddUdharForm({
   const iconColor = useThemeColorWithName("inputIcon");
   const surface = useThemeColorWithName("surface");
   const cardBorder = useThemeColorWithName("cardBorder");
-  const accent = useThemeColorWithName("button");
   const background = useThemeColorWithName("background");
   const textMuted = useThemeColorWithName("textMuted");
   const expenseColor = useThemeColorWithName("expense");

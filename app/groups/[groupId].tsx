@@ -23,7 +23,7 @@ import {
   updateGroupMember3,
 } from "@/hooks/queries/group";
 import { fetchMemberBy_id } from "@/hooks/queries/member";
-import {savePickedImage, showToast, showToastWithMsg } from "@/hooks/useFunc";
+import { savePickedImage, showToast, showToastWithMsg } from "@/hooks/useFunc";
 import { useThemeColorWithName } from "@/hooks/useThemeColor";
 
 import { Members } from "@/types/expanse";
@@ -95,7 +95,6 @@ const GroupDetails = () => {
     setSelectedImage(null);
   };
 
-
   async function onSubmit() {
     if (!groupName) {
       EasyAlert("Invalid Input", "Group Name is Required");
@@ -108,12 +107,12 @@ const GroupDetails = () => {
     }
 
     const haveToDelete = existMembers.filter(
-      (member) => !members.some((m) => m._id === member.memberId)
+      (member) => !members.some((m) => m._id === member.memberId),
     );
 
     // Find elements present in array1 but not in array2
     const haveToADD = members.filter(
-      (member) => !existMembers.some((m) => m.memberId === member._id)
+      (member) => !existMembers.some((m) => m.memberId === member._id),
     );
 
     try {
@@ -140,7 +139,7 @@ const GroupDetails = () => {
       }
 
       showToast("DETAILS_UPDATE");
-      router.push("/(tabs)");
+      router.back();
     } catch (error) {
       console.error("Error : ", error);
       showToastWithMsg("Error: Some problem occurred");
@@ -151,7 +150,7 @@ const GroupDetails = () => {
     try {
       await deleteGroup(db, Number(groupId));
       showToast("GROUP_DELETE");
-      router.push("/(tabs)");
+      router.back();
     } catch (error) {
       console.error("Error : ", error);
       showToastWithMsg("Error: Some problem occurred");
@@ -231,7 +230,15 @@ const GroupDetails = () => {
         </TouchableOpacity>
       </View>
       <GroupInput
-        {...{ groupName, groupLogo, setGroupName, members, setMembers, onSubmit, setGroupLogo }}
+        {...{
+          groupName,
+          groupLogo,
+          setGroupName,
+          members,
+          setMembers,
+          onSubmit,
+          setGroupLogo,
+        }}
       />
     </ThemedView>
   );

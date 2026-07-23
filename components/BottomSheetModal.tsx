@@ -1,6 +1,6 @@
 import BottomSheetView, { BottomSheetRefProps } from "@/components/BottomSheetView";
 
-import React, { useCallback } from "react";
+import React from "react";
 import { Dimensions, Modal, View } from "react-native";
 import { GestureHandlerRootView } from "react-native-gesture-handler";
 

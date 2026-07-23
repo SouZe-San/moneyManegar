@@ -1,5 +1,4 @@
 import { View, Image, StyleSheet, Pressable, TouchableOpacity } from "react-native";
-import * as FileSystem from "expo-file-system";
 import * as ImagePicker from "expo-image-picker";
 import * as SecureStore from "expo-secure-store";
 import { useExpense } from "@/context/ExpanseContext";
@@ -10,7 +9,7 @@ import { ThemedText } from "../ThemedText";
 
 import { BellIcon, RingBellIcon, ProCamIcon } from "@/assets/icons/SVG/RandomIcons";
 
-import { photoUpload, savePickedImage, showToastWithMsg } from "@/hooks/useFunc";
+import { savePickedImage, showToastWithMsg } from "@/hooks/useFunc";
 import { useThemeColorWithName } from "@/hooks/useThemeColor";
 
 const NOTIFICATION_COUNT = 0;

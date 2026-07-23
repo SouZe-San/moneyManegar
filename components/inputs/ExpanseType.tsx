@@ -105,7 +105,7 @@ export default function ExpanseType(props: ExpanseTypeProps) {
       onViewableItemsChanged={({ viewableItems: vItems }) => {
         viewableItems.value = vItems;
       }}
-      renderItem={({ item, index: numbers }) => {
+      renderItem={({ item }) => {
         return (
           <ExpanseButton
             item={item}

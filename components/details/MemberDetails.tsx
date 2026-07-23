@@ -47,7 +47,13 @@ const { height: SCREEN_HEIGHT } = Dimensions.get("window");
 const money = (n: number) =>
   n.toLocaleString("en-IN", { maximumFractionDigits: 2 });
 
-const MemberDetails = ({ id }: { id: string | null }) => {
+const MemberDetails = ({
+  id,
+  setModalVisibility,
+}: {
+  id: string | null;
+  setModalVisibility: (value: boolean) => void;
+}) => {
   // Colors
   const scheme = useColorScheme() ?? "dark";
   const surface = useThemeColorWithName("surface");
@@ -56,7 +62,7 @@ const MemberDetails = ({ id }: { id: string | null }) => {
   const textMuted = useThemeColorWithName("textMuted");
   const expenseColor = useThemeColorWithName("expense");
   const incomeColor = useThemeColorWithName("income");
-    const text = useThemeColorWithName("text");
+  const text = useThemeColorWithName("text");
 
   const [member, setMember] = useState<Members | null>(null);
   const [history, setHistory] = useState<IUdahar[]>([]);
@@ -73,7 +79,7 @@ const MemberDetails = ({ id }: { id: string | null }) => {
       setMember(member);
       // history is keyed by userId, so it has to come after the member load
       const rows = await fetchUdharBy_MemberUserId(sqlDb, member?._id);
-      
+
       setHistory(rows);
       if (member && member.imgUrl) {
         try {
@@ -101,6 +107,8 @@ const MemberDetails = ({ id }: { id: string | null }) => {
       await deleteGroupMember_ON_memDelete(sqlDb, Number(id));
       await deleteMember(sqlDb, Number(id));
       showToast("USER_DELETE");
+      setModalVisibility(false);
+      onRefresh()
     } catch (error) {
       console.error("ERROR: ", error);
       showToast("ERROR");
@@ -239,9 +247,7 @@ const MemberDetails = ({ id }: { id: string | null }) => {
                 ]}
               >
                 <Text style={{ fontSize: 14, color: text }}>Due Payment</Text>
-                <Text style={{ fontSize: 10, color: textMuted }}>
-                  Owes you
-                </Text>
+                <Text style={{ fontSize: 10, color: textMuted }}>Owes you</Text>
                 <ThemedText
                   type="subtitle"
                   style={{

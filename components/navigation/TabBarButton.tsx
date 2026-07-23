@@ -1,4 +1,4 @@
-import { Text, StyleSheet, Pressable } from "react-native";
+import { StyleSheet, Pressable } from "react-native";
 import { navIcons } from "@/constants/navIcons";
 
 import Animated, {

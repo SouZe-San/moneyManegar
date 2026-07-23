@@ -75,7 +75,6 @@ const BudgetCreate = ({
 
       await addBudget(db, data);
       showToast("BUDGET");
-      router.push("/(tabs)");
       setAmount(undefined);
       setDate(null);
     } catch (error) {
@@ -113,7 +112,7 @@ const BudgetCreate = ({
           showsHorizontalScrollIndicator={false}
           data={budgetMonths}
           keyExtractor={(item) => item}
-          renderItem={({ item, index: numbers }) => {
+          renderItem={({ item }) => {
             return (
               <View style={[styles.expenseTypeButton]}>
                 <Pressable

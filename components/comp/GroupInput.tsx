@@ -46,7 +46,7 @@ function GroupInput({
   setGroupLogo,
 }: GroupInputProps) {
   // states
-  const [storedMember, setStoredMember] = useState<Members[]>(
+  const [storedMember, _setStoredMember] = useState<Members[]>(
     useExpense().members,
   );
   const [searchName, setSearchName] = useState("");
@@ -55,9 +55,7 @@ function GroupInput({
   // colors
   const iconColor = useThemeColorWithName("inputIcon");
   const buttonBg = useThemeColorWithName("blurBg");
-  const borderColor = useThemeColorWithName("borderColor");
   const placeTextColor = useThemeColorWithName("textMuted");
-  const inputTextColor = useThemeColorWithName("text");
   const surface = useThemeColorWithName("surface");
   const cardBorder = useThemeColorWithName("cardBorder");
 
@@ -272,7 +270,6 @@ const MembersRow = ({ member }: { member: Members }) => {
   const surface = useThemeColorWithName("surface");
 
   const cardBorder = useThemeColorWithName("cardBorder");
-  const textMuted = useThemeColorWithName("textMuted");
 
   return (
     <View
