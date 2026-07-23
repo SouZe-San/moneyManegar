@@ -67,7 +67,7 @@ export const globalStyles = StyleSheet.create({
   input: {
     height: 40,
     fontSize: 15,
-    marginLeft: 5,
+    marginLeft: 10,
     marginVertical: 10,
     paddingHorizontal: 5,
     width: "80%",

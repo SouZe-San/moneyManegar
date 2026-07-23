@@ -311,16 +311,6 @@ export function contribute() {
                 setValue={setAmount}
               />
             </View>
-            {/* // Expanse Description  */}
-            <View>
-              <InputWithIcon
-                icon={<DescIcon color={iconColor} />}
-                placeholder="Why ?"
-                value={expanseReason}
-                setValue={setExpanseReason}
-                keyboardType="default"
-              />
-            </View>
 
             <View>
               <View
@@ -335,10 +325,11 @@ export function contribute() {
                 {isImgFile && singlePersonName?.imgUrl ? (
                   <View
                     style={{
-                      width: 50,
+                      width: 40,
                       aspectRatio: 1,
                       borderRadius: "50%",
                       overflow: "hidden",
+                      // marginVertical: 5,
                     }}
                   >
                     <Image
@@ -356,13 +347,22 @@ export function contribute() {
                 <View
                   style={[globalStyles.input, { justifyContent: "center" }]}
                 >
-                  <ThemedText colorName="textMuted" style={{ fontSize: 17 }}>
-                    {toWhom ?? "select people!!"}
+                  <ThemedText colorName="textMuted" style={{ fontSize: 15 }}>
+                    {toWhom ?? "Select user"}
                   </ThemedText>
                 </View>
               </View>
             </View>
-
+            {/* // Expanse Description  */}
+            <View>
+              <InputWithIcon
+                icon={<DescIcon color={iconColor} />}
+                placeholder="Reason desc"
+                value={expanseReason}
+                setValue={setExpanseReason}
+                keyboardType="default"
+              />
+            </View>
             {/* Data  */}
 
             <View>
@@ -451,7 +451,11 @@ export function contribute() {
             }}
           ></View>
           {/* List of transaction where user will get money */}
-          <ThemedText type="subtitle" colorName="textMuted" style={{ marginTop: 10, opacity:.6 }}>
+          <ThemedText
+            type="subtitle"
+            colorName="textMuted"
+            style={{ marginTop: 10, opacity: 0.6 }}
+          >
             Coming Paisa @_@
           </ThemedText>
           <ScrollView
@@ -462,9 +466,7 @@ export function contribute() {
 
               width: "100%",
             }}
-          >
-           
-          </ScrollView>
+          ></ScrollView>
 
           {/* Submit Button */}
           <View style={globalStyles.submit_btn_container}>

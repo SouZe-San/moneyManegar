@@ -152,7 +152,7 @@ const setting = () => {
       </ThemedText>
       <ScrollView
         showsVerticalScrollIndicator={false}
-        contentContainerStyle={{ gap: 24, paddingBottom: 100, paddingTop: 10 }}
+        contentContainerStyle={{ gap: 24, paddingBottom: 100, paddingTop: 10, paddingHorizontal:1 }}
       >
         <View>
           <SectionTitle text="Go Online & Sync" />

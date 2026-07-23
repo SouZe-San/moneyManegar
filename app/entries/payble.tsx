@@ -187,7 +187,7 @@ export function payble() {
                 {isImgFile && member?.imgUrl ? (
                   <View
                     style={{
-                      width: 50,
+                      width: 40,
                       aspectRatio: 1,
                       borderRadius: "50%",
                       overflow: "hidden",
@@ -208,8 +208,8 @@ export function payble() {
                 <View
                   style={[globalStyles.input, { justifyContent: "center" }]}
                 >
-                  <ThemedText colorName="textMuted" style={{ fontSize: 17 }}>
-                    {toWhom ?? "To whom"}
+                  <ThemedText colorName="textMuted" style={{ fontSize: 15 }}>
+                    {toWhom ?? "Select user"}
                   </ThemedText>
                 </View>
               </View>
@@ -217,7 +217,7 @@ export function payble() {
             <View>
               <InputWithIcon
                 icon={<DescIcon color={iconColor} />}
-                placeholder="For What ?"
+                placeholder="Reason desc"
                 value={expanseReason}
                 setValue={setExpanseReason}
                 keyboardType="default"
@@ -249,7 +249,7 @@ export function payble() {
           {/* All Debt */}
           <ThemedText
             type="subtitle"
-            style={{ marginTop: 20, opacity:.6 }}
+            style={{ marginTop: 20, opacity: 0.6 }}
             colorName="textMuted"
           >
             Debt Debt and Debt {".⁠·⁠´⁠¯⁠⁠(⁠>⁠▂⁠<⁠)⁠´⁠¯⁠⁠·⁠."}

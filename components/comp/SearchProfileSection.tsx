@@ -16,7 +16,7 @@ type SearchProfileSectionProps = {
 
 export default function SearchProfileSection({ member, setMember }: SearchProfileSectionProps) {
   const [searchName, setSearchName] = useState(member ? member.userName : "");
-  const [searchResult, setSearchResult] = useState<Members[]>([]);
+  const [searchResult, setSearchResult] = useState<Members[]| null>(null);
   const [storeMembers, setStoreMembers] = useState<Members[]>([]);
   const iconColor = useThemeColorWithName("inputIcon");
   const buttonBg = useThemeColorWithName("blurBg");
@@ -53,7 +53,9 @@ export default function SearchProfileSection({ member, setMember }: SearchProfil
       // Check if the member is already in the group based on userName
       setSearchName(newMember.userName);
       setMember(newMember);
-      setSearchResult(searchResult.filter((mem) => mem._id === newMember._id));
+      setSearchResult(
+        searchResult && searchResult.filter((mem) => mem._id === newMember._id),
+      );
     };
     return (
       <TouchableOpacity onPress={() => addMembers(member)}>
@@ -96,9 +98,9 @@ export default function SearchProfileSection({ member, setMember }: SearchProfil
       </View>
 
       <View style={[styles.searchMemberView]}>
-        {searchResult.length === 0 ? (
+        {searchResult!== null &&  searchResult.length === 0 ? (
           <ThemedText
-            style={{ marginTop: 5, textAlign: "center", fontSize:14 }}
+            style={{ marginTop: 5, textAlign: "center", fontSize: 14 }}
             colorName="textMuted"
           >
             Nonnnnnn

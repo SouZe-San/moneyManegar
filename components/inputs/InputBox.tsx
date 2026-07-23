@@ -1,6 +1,5 @@
 import { useThemeColorWithName } from "@/hooks/useThemeColor";
 import {
-  Text,
   View,
   StyleSheet,
   TextInput,
@@ -8,7 +7,6 @@ import {
   KeyboardAvoidingView,
   Platform,
 } from "react-native";
-import { ThemedText } from "../ThemedText";
 
 type InputBoxProps = {
   placeholder: string;

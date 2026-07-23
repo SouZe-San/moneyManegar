@@ -30,7 +30,6 @@ export default function create() {
   const [selectedImage, setSelectedImage] = useState<string | null>(null);
 
   // colors
-  const bg = useThemeColorWithName("blurBg");
   const surface = useThemeColorWithName("surface");
   const cardBorder = useThemeColorWithName("cardBorder");
   const iconColor = useThemeColorWithName("icon");
@@ -42,8 +41,8 @@ export default function create() {
     // Save the Group
 
     const group: IGroup = {
-      name: groupName,
-      logo: groupLogo,
+      name: groupName.trim(),
+      logo: groupLogo.trim(),
       imgUrl: selectedImage,
     };
     // Clear the input fields
@@ -54,7 +53,7 @@ export default function create() {
       // Find the id of the group in table
       const groupId: {
         _id: number;
-      } | null = await fetchGroupId(sqlDb, groupName);
+      } | null = await fetchGroupId(sqlDb, groupName.trim());
 
       // Add Members to the Group
       if (!groupId) {
