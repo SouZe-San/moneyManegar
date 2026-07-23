@@ -1,23 +1,31 @@
-import { View, StyleSheet, Platform,  Dimensions } from "react-native";
+import { View, StyleSheet, Platform } from "react-native";
 
 import TabBarButton from "./TabBarButton";
 import { useThemeColorWithName } from "@/hooks/useThemeColor";
+import { useSafeAreaInsets } from "react-native-safe-area-context";
 
-const { height: ScreeHeight } = Dimensions.get("screen");
-const { height: windowHeight } = Dimensions.get("window");
 export function CustomTabBar({ state, descriptors, navigation }: any) {
   const backgroundColor = useThemeColorWithName("navBg");
-
+  const insets = useSafeAreaInsets(); 
   return (
-    <View style={[tabBarStyle.tabBar, { backgroundColor }]}>
+    <View
+      style={[
+        tabBarStyle.tabBar,
+        {
+          backgroundColor,
+          borderColor: "#abcbc433",
+          bottom: insets.bottom + 12,
+        },
+      ]}
+    >
       {state.routes.map((route: any, index: number) => {
         const { options } = descriptors[route.key];
         const label =
           options.tabBarLabel !== undefined
             ? options.tabBarLabel
             : options.title !== undefined
-            ? options.title
-            : route.name;
+              ? options.title
+              : route.name;
 
         const isFocused = state.index === index;
 
@@ -58,16 +66,14 @@ export function CustomTabBar({ state, descriptors, navigation }: any) {
 const tabBarStyle = StyleSheet.create({
   tabBar: {
     position: "absolute",
-    bottom: ScreeHeight - windowHeight - 20,
     flexDirection: "row",
     justifyContent: "space-between",
     alignItems: "center",
     marginHorizontal: Platform.OS === "web" ? 0 : 30,
     left: Platform.OS === "web" ? "50%" : 0,
     transform: [{ translateX: Platform.OS === "web" ? "-50%" : 0 }],
-    borderRadius: 10,
+    borderRadius: 16,
     paddingVertical: 5,
     borderWidth: 1,
-    borderColor: "#abcbc49b",
   },
 });

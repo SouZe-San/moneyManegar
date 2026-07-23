@@ -38,7 +38,7 @@ export const Colors = {
     antiFlashWhite: "#f1f2f6",
     inputIcon: "#f1f2f6",
     background: "#030f0e",
-    navBg: "#172a299c",
+    navBg: "#172a2973",
     blurBg: "#abcbc427",
     mintGreen: "#6b8e4e",
     tint: tintColorDark,
