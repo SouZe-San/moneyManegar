@@ -12,19 +12,25 @@ import { useSQLiteContext } from "expo-sqlite";
 import { useThemeColorWithName } from "@/hooks/useThemeColor";
 import * as ImagePicker from "expo-image-picker";
 import { ProCamIcon } from "@/assets/icons/SVG/RandomIcons";
-import { showToastWithMsg, showToast, photoUpload } from "@/hooks/useFunc";
+import { showToastWithMsg, showToast, savePickedImage } from "@/hooks/useFunc";
 import { InputWithIcon } from "../inputs/InputBox";
 import { UserIcon } from "@/assets/icons/SVG/InputIcons";
 
 const UpdateDetails = ({
   setIsUpdate,
   _id,
+  currentImgUrl,
 }: {
   setIsUpdate: React.Dispatch<React.SetStateAction<boolean>>;
   _id: number;
+  /** the member's existing photo — deleted once a new one is saved */
+  currentImgUrl?: string | null;
 }) => {
   const [name, setName] = useState<string | undefined>(undefined);
-  const [selectedImage, setSelectedImage] = useState<string | null>(null);
+  // NOTE: this is the PICKER CACHE uri, not a saved file. Nothing is written
+  // to app storage until Update is pressed, so cancelling leaves no orphan.
+  const [pickedUri, setPickedUri] = useState<string | null>(null);
+  const [busy, setBusy] = useState(false);
   const sqlDb = useSQLiteContext();
 
   const surface = useThemeColorWithName("surface");
@@ -32,63 +38,61 @@ const UpdateDetails = ({
   const textMuted = useThemeColorWithName("textMuted");
   const iconColor = useThemeColorWithName("icon");
   const accent = useThemeColorWithName("highLightBackground");
+  const background = useThemeColorWithName("background");
 
   const update = async () => {
-    try {
-      if (!name && !selectedImage) {
-        showToastWithMsg("No Input Is Not GIven");
-        return;
-      } else if (name && !selectedImage) {
-        await updateName_of_Member(sqlDb, {
-          _id,
-          userName: name,
-        });
-        showToast("DETAILS_UPDATE");
-        setIsUpdate(false);
-      } else if (!name && selectedImage) {
-        await updateImage_of_Member(sqlDb, {
-          _id,
-          imgUrl: selectedImage,
-        });
-        showToast("DETAILS_UPDATE");
-        setIsUpdate(false);
-      } else {
-        if (name && selectedImage) {
-          await updateMember(sqlDb, {
-            _id,
-            userName: name,
-            imgUrl: selectedImage,
-          });
-          showToast("DETAILS_UPDATE");
-          setIsUpdate(false);
-        }
-      }
-    } catch (error) {
-      console.log("Error From Member Create :", error);
-      showToast("ERROR");
-    }
-  };
-
-  // Image Picking logic
-  const pickImage = async () => {
-    // No permissions request is necessary for launching the image library
-    let result = await ImagePicker.launchImageLibraryAsync({
-      mediaTypes: ["images"],
-      allowsEditing: true,
-      aspect: [1, 1],
-      quality: 1,
-    });
-    if (!result.canceled) {
-      const url = await photoUpload(
-        result.assets[0].uri,
-        result.assets[0].fileName,
-      );
-      setSelectedImage(url);
-
+    if (busy) return;
+    if (!name && !pickedUri) {
+      showToastWithMsg("Nothing to update");
       return;
     }
-    setSelectedImage(null);
+
+    try {
+      setBusy(true);
+
+      // copy into app storage only now, and drop the old photo in the same step
+      let savedImage: string | null = null;
+      if (pickedUri) {
+        savedImage = await savePickedImage(pickedUri, "member", currentImgUrl);
+      }
+
+      if (name && savedImage) {
+        await updateMember(sqlDb, { _id, userName: name, imgUrl: savedImage });
+      } else if (name) {
+        await updateName_of_Member(sqlDb, { _id, userName: name });
+      } else if (savedImage) {
+        await updateImage_of_Member(sqlDb, { _id, imgUrl: savedImage });
+      }
+
+      showToast("DETAILS_UPDATE");
+      setIsUpdate(false);
+    } catch (error) {
+      console.log("Error From Member Update :", error);
+      showToast("ERROR");
+      setBusy(false);
+    }
   };
+
+  // Image Picking logic — preview only, no file is written yet
+  const pickImage = async () => {
+    try {
+      const result = await ImagePicker.launchImageLibraryAsync({
+        mediaTypes: ["images"],
+        allowsEditing: true,
+        aspect: [1, 1],
+        quality: 1,
+      });
+      // keep the existing selection if the user backs out
+      if (result.canceled) return;
+      setPickedUri(result.assets[0].uri);
+    } catch (error) {
+      console.log("Member photo pick error:", error);
+      showToastWithMsg("Could not open gallery");
+    }
+  };
+
+  const preview = pickedUri ?? currentImgUrl ?? null;
+
   return (
     <ThemedView>
       <ThemedText type="subtitle" style={{ fontSize: 16, marginTop: 12 }}>
@@ -113,14 +117,14 @@ const UpdateDetails = ({
       >
         <TouchableOpacity
           style={{
-            width: selectedImage ? 100 : "auto",
+            width: preview ? 100 : "auto",
             aspectRatio: 1,
             borderRadius: 16,
-            borderColor: selectedImage ? cardBorder : "rgba(255,255,255,0.15)",
+            borderColor: preview ? cardBorder : "rgba(255,255,255,0.15)",
             backgroundColor: surface,
-            padding: selectedImage ? 0 : 15,
+            padding: preview ? 0 : 15,
             borderWidth: 1,
-            borderStyle: selectedImage ? "solid" : "dashed",
+            borderStyle: preview ? "solid" : "dashed",
             overflow: "hidden",
             justifyContent: "center",
             alignItems: "center",
@@ -128,9 +132,9 @@ const UpdateDetails = ({
           onPress={pickImage}
           activeOpacity={0.8}
         >
-          {selectedImage ? (
+          {preview ? (
             <Image
-              source={{ uri: selectedImage }}
+              source={{ uri: preview }}
               style={{ objectFit: "cover", width: "100%", height: "100%" }}
             />
           ) : (
@@ -171,6 +175,7 @@ const UpdateDetails = ({
         </TouchableOpacity>
         <TouchableOpacity
           onPress={update}
+          disabled={busy}
           style={[
             {
               flex: 1,
@@ -178,11 +183,11 @@ const UpdateDetails = ({
               paddingVertical: 13,
               borderRadius: 12,
             },
-            { backgroundColor: accent },
+            { backgroundColor: accent, opacity: busy ? 0.6 : 1 },
           ]}
         >
-          <ThemedText style={{ color: "#071311", fontWeight: "700" }}>
-            Update
+          <ThemedText style={{ color: background, fontWeight: "700" }}>
+            {busy ? "Saving..." : "Update"}
           </ThemedText>
         </TouchableOpacity>
       </View>

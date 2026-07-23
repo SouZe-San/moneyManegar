@@ -98,8 +98,8 @@ export default function SearchProfileSection({ member, setMember }: SearchProfil
       <View style={[styles.searchMemberView]}>
         {searchResult.length === 0 ? (
           <ThemedText
-            style={{ marginTop: 5, textAlign: "center" }}
-            colorName="blurBg"
+            style={{ marginTop: 5, textAlign: "center", fontSize:14 }}
+            colorName="textMuted"
           >
             Nonnnnnn
           </ThemedText>

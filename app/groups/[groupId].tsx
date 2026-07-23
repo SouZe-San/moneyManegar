@@ -23,7 +23,7 @@ import {
   updateGroupMember3,
 } from "@/hooks/queries/group";
 import { fetchMemberBy_id } from "@/hooks/queries/member";
-import { photoUpload, showToast, showToastWithMsg } from "@/hooks/useFunc";
+import {savePickedImage, showToast, showToastWithMsg } from "@/hooks/useFunc";
 import { useThemeColorWithName } from "@/hooks/useThemeColor";
 
 import { Members } from "@/types/expanse";
@@ -84,12 +84,17 @@ const GroupDetails = () => {
     });
 
     if (!result.canceled) {
-      const url = await photoUpload(result.assets[0].uri, result.assets[0].fileName);
+      const url = await savePickedImage(
+        result.assets[0].uri,
+        "group",
+        selectedImage,
+      );
       setSelectedImage(url);
       return;
     }
     setSelectedImage(null);
   };
+
 
   async function onSubmit() {
     if (!groupName) {

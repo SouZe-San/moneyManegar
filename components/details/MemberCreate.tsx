@@ -1,5 +1,5 @@
 import { Members } from "@/types/expanse";
-import { View, Alert, TouchableOpacity, Image,Text } from "react-native";
+import { View, Alert, TouchableOpacity, Image, Text } from "react-native";
 import { useSQLiteContext } from "expo-sqlite";
 import * as ImagePicker from "expo-image-picker";
 import { useState } from "react";
@@ -11,17 +11,21 @@ import SearchProfileSection from "../comp/SearchProfileSection";
 import SubmitButton from "../inputs/SubmitButton";
 
 import { useThemeColorWithName } from "@/hooks/useThemeColor";
-import { photoUpload, showToast, showToastWithMsg } from "@/hooks/useFunc";
+import { savePickedImage, showToast, showToastWithMsg } from "@/hooks/useFunc";
 
 import { ProCamIcon } from "@/assets/icons/SVG/RandomIcons";
 
-const MemberCreate = ({ setModalVisibility }: { setModalVisibility: (value: boolean) => void }) => {
+const MemberCreate = ({
+  setModalVisibility,
+}: {
+  setModalVisibility: (value: boolean) => void;
+}) => {
   const [member, setMember] = useState<Members | null>(null);
   const [selectedImage, setSelectedImage] = useState<string | null>(null);
   const sqlDb = useSQLiteContext();
-    const surface = useThemeColorWithName("surface");
-    const cardBorder = useThemeColorWithName("cardBorder");
- const textMuted = useThemeColorWithName("textMuted");
+  const surface = useThemeColorWithName("surface");
+  const cardBorder = useThemeColorWithName("cardBorder");
+  const textMuted = useThemeColorWithName("textMuted");
 
   const memberSubmit = async () => {
     if (!member) {
@@ -49,7 +53,7 @@ const MemberCreate = ({ setModalVisibility }: { setModalVisibility: (value: bool
             },
             { text: "No" },
           ],
-          { cancelable: true }
+          { cancelable: true },
         );
       } else {
         await memberCreate(sqlDb, {
@@ -77,12 +81,13 @@ const MemberCreate = ({ setModalVisibility }: { setModalVisibility: (value: bool
       quality: 1,
     });
     if (!result.canceled) {
-      const url = await photoUpload(result.assets[0].uri, result.assets[0].fileName);
+      const url = await savePickedImage(result.assets[0].uri, "member");
       setSelectedImage(url);
       return;
     }
     setSelectedImage(null);
   };
+
 
   return (
     <ThemedView>
@@ -93,52 +98,52 @@ const MemberCreate = ({ setModalVisibility }: { setModalVisibility: (value: bool
         NewOne ~_~
       </ThemedText>
       <View
-             style={{
-               flexDirection: "row",
-               alignItems: "center",
-               gap: 14,
-               marginBottom: 16,
-             }}
-           >
-             <TouchableOpacity
-               style={{
-                 width: selectedImage ? 100 : "auto",
-                 aspectRatio: 1,
-                 borderRadius: 16,
-                 borderColor: selectedImage ? cardBorder : "rgba(255,255,255,0.15)",
-                 backgroundColor: surface,
-                 padding: selectedImage ? 0 : 15,
-                 borderWidth: 1,
-                 borderStyle: selectedImage ? "solid" : "dashed",
-                 overflow: "hidden",
-                 justifyContent: "center",
-                 alignItems: "center",
-               }}
-               onPress={pickImage}
-               activeOpacity={0.8}
-             >
-               {selectedImage ? (
-                 <Image
-                   source={{ uri: selectedImage }}
-                   style={{ objectFit: "cover", width: "100%", height: "100%" }}
-                 />
-               ) : (
-                 <ProCamIcon color={textMuted} />
-               )}
-             </TouchableOpacity>
-             <View>
-               <ThemedText type="defaultSemiBold">Profile Photo</ThemedText>
-               <Text style={{ fontSize: 12, color: textMuted }}>
-                 Tap to choose from gallery
-               </Text>
-             </View>
-           </View>
+        style={{
+          flexDirection: "row",
+          alignItems: "center",
+          gap: 14,
+          marginBottom: 16,
+        }}
+      >
+        <TouchableOpacity
+          style={{
+            width: selectedImage ? 100 : "auto",
+            aspectRatio: 1,
+            borderRadius: 16,
+            borderColor: selectedImage ? cardBorder : "rgba(255,255,255,0.15)",
+            backgroundColor: surface,
+            padding: selectedImage ? 0 : 15,
+            borderWidth: 1,
+            borderStyle: selectedImage ? "solid" : "dashed",
+            overflow: "hidden",
+            justifyContent: "center",
+            alignItems: "center",
+          }}
+          onPress={pickImage}
+          activeOpacity={0.8}
+        >
+          {selectedImage ? (
+            <Image
+              source={{ uri: selectedImage }}
+              style={{ objectFit: "cover", width: "100%", height: "100%" }}
+            />
+          ) : (
+            <ProCamIcon color={textMuted} />
+          )}
+        </TouchableOpacity>
+        <View>
+          <ThemedText type="defaultSemiBold">Profile Photo</ThemedText>
+          <Text style={{ fontSize: 12, color: textMuted }}>
+            Tap to choose from gallery
+          </Text>
+        </View>
+      </View>
       <SearchProfileSection member={member} setMember={setMember} />
 
       <View
         style={{
           width: "100%",
-          marginTop:30,
+          marginTop: 30,
           justifyContent: "center",
           alignItems: "center",
           alignSelf: "center",

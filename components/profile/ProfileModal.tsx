@@ -10,7 +10,7 @@ import { ThemedText } from "../ThemedText";
 
 import { BellIcon, RingBellIcon, ProCamIcon } from "@/assets/icons/SVG/RandomIcons";
 
-import { photoUpload } from "@/hooks/useFunc";
+import { photoUpload, savePickedImage, showToastWithMsg } from "@/hooks/useFunc";
 import { useThemeColorWithName } from "@/hooks/useThemeColor";
 
 const NOTIFICATION_COUNT = 0;
@@ -27,22 +27,25 @@ export default function ProfileModal({
   // Image Picking logic
   const pickImage = async () => {
     // No permissions request is necessary for launching the image library
-    let result = await ImagePicker.launchImageLibraryAsync({
-      mediaTypes: ["images"],
-      allowsEditing: true,
-      aspect: [1, 1],
-      quality: 1,
-    });
+    try {
+      let result = await ImagePicker.launchImageLibraryAsync({
+        mediaTypes: ["images"],
+        allowsEditing: true,
+        aspect: [1, 1],
+        quality: 1,
+      });
+      if (result.canceled) return;
 
-    if (!result.canceled) {
-      const url = await photoUpload(result.assets[0].uri, result.assets[0].fileName);
-      if (selectedImage) {
-        const prevUrl = await FileSystem.getContentUriAsync(selectedImage);
-        await FileSystem.deleteAsync(prevUrl);
-      }
+      const url = await savePickedImage(
+        result.assets[0].uri,
+        "profile",
+        selectedImage,
+      );
       setSelectedImage(url);
       await SecureStore.setItemAsync("profile", url);
-      return;
+    } catch (error) {
+      console.log("Profile photo error:", error);
+      showToastWithMsg("Could not set that photo");
     }
   };
 

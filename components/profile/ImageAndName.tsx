@@ -1,6 +1,7 @@
 import { View, Image, StyleSheet, TouchableOpacity, type ImageSourcePropType } from "react-native";
 import { useState, useCallback, useRef, useEffect } from "react";
 import * as SecureStore from "expo-secure-store";
+import { getInfoAsync } from "expo-file-system";
 import { ThemedText } from "../ThemedText";
 import BottomSheetModal from "@/components/BottomSheetModal";
 import { BottomSheetRefProps } from "@/components/BottomSheetView";
@@ -16,13 +17,25 @@ const ImageAndName = () => {
   const ref = useRef<BottomSheetRefProps>(null);
   const { userName } = useExpense();
 
-  useEffect(() => {
-    (async () => {
-      const url = await SecureStore.getItemAsync("profile");
+   useEffect(() => {
+     (async () => {
+       try {
+         const url = await SecureStore.getItemAsync("profile");
+         if (!url) return;
 
-      setImage(url);
-    })();
-  }, []);
+         const info = await getInfoAsync(url);
+         if (info.exists) {
+           setImage(url);
+         } else {
+           await SecureStore.deleteItemAsync("profile"); // stop pointing at nothing
+           setImage(null);
+         }
+       } catch (error) {
+         console.log("Profile photo load failed:", error);
+         setImage(null);
+       }
+     })();
+   }, []);
 
   const onPress = useCallback(() => {
     setOpenedItem(true);
@@ -33,10 +46,12 @@ const ImageAndName = () => {
       ref?.current?.scrollTo(-200);
     }
   }, []);
+
+  const source: ImageSourcePropType = image ? { uri: image } : defaultProfile;
   return (
     <View style={styles.container}>
       <Image
-        source={image ? { uri: image } : defaultProfile}
+        source={source}
         style={{
           opacity: 0.5,
           position: "absolute",
@@ -50,7 +65,7 @@ const ImageAndName = () => {
       <TouchableOpacity onPress={onPress}>
         <View style={[styles.image]}>
           <Image
-            source={image ? { uri: image } : defaultProfile}
+            source={source}
             style={{ objectFit: "cover", width: "100%", height: "100%" }}
           />
         </View>
