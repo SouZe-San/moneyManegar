@@ -40,6 +40,18 @@ export const fetchMemberBy_id = async (db: SQLiteDatabase, id: number) => {
     return null;
   }
 };
+export const countMember_byName = async (db: SQLiteDatabase, name: string) => {
+  try {
+    const row: { count: number } | null = await db.getFirstAsync(
+      "SELECT count(userName) AS count FROM MemberTable WHERE TRIM(userName) = ?",
+      [name],
+    );
+    return row?.count;
+  } catch (error) {
+    console.log("Error From Fetch single Member,: ", error);
+    return null;
+  }
+};
 
 // ─── UPDATE ──────────────────────────────────────────────────────────────────
 

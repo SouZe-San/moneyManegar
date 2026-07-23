@@ -4,65 +4,69 @@ import { useSQLiteContext } from "expo-sqlite";
 import * as ImagePicker from "expo-image-picker";
 import { useState } from "react";
 
-import { memberCreate } from "@/hooks/queries/member";
-import { ThemedView } from "../ThemedView";
-import { ThemedText } from "../ThemedText";
-import SearchProfileSection from "../comp/SearchProfileSection";
-import SubmitButton from "../inputs/SubmitButton";
+import { ThemedView } from "@/components/ThemedView";
+import { ThemedText } from "@/components/ThemedText";
+import SubmitButton from "@/components/inputs/SubmitButton";
 
+import { countMember_byName, memberCreate } from "@/hooks/queries/member";
 import { useThemeColorWithName } from "@/hooks/useThemeColor";
 import { savePickedImage, showToast, showToastWithMsg } from "@/hooks/useFunc";
 
 import { ProCamIcon } from "@/assets/icons/SVG/RandomIcons";
+import { UserIcon } from "@/assets/icons/SVG/InputIcons";
+import { InputWithIcon } from "@/components/inputs/InputBox";
 
 const MemberCreate = ({
   setModalVisibility,
 }: {
   setModalVisibility: (value: boolean) => void;
 }) => {
-  const [member, setMember] = useState<Members | null>(null);
+  const [member, setMember] = useState("");
   const [selectedImage, setSelectedImage] = useState<string | null>(null);
   const sqlDb = useSQLiteContext();
   const surface = useThemeColorWithName("surface");
   const cardBorder = useThemeColorWithName("cardBorder");
   const textMuted = useThemeColorWithName("textMuted");
+  const iconColor = useThemeColorWithName("inputIcon");
 
+  // New User Creation
   const memberSubmit = async () => {
-    if (!member) {
+    if (!member || member.trim() === "") {
       showToastWithMsg("Please Select a Member");
       return;
     }
+    try {
+      const userCount = await countMember_byName(sqlDb, member.trim());
+      if (userCount && userCount > 0) {
+        showToastWithMsg("Already have this user");
+        return;
+      }
+    } catch (error) {
+      showToast("ERROR");
+      console.log("Error From User finding :", error);
+    }
 
     try {
-      if (!member?.userId) {
-        Alert.alert(
-          "New User Creating",
-          `Are you Sure you want to add ${member.userName}?`,
-          [
-            {
-              text: "Yes",
-              onPress: async () => {
-                const newMember: Members = {
-                  userName: member?.userName,
-                  userId: member.userId,
-                  imgUrl: selectedImage,
-                };
-                await memberCreate(sqlDb, newMember);
-                showToast("USER");
-              },
+      Alert.alert(
+        "New User Creating",
+        `Are you Sure you want to add ${member}?`,
+        [
+          {
+            text: "Yes",
+            onPress: async () => {
+              const newMember: Members = {
+                userName: member.trim(),
+                userId: null,
+                imgUrl: selectedImage,
+              };
+              await memberCreate(sqlDb, newMember);
+              showToast("USER");
             },
-            { text: "No" },
-          ],
-          { cancelable: true },
-        );
-      } else {
-        await memberCreate(sqlDb, {
-          userName: member?.userName,
-          userId: member?.userId,
-          imgUrl: selectedImage,
-        });
-        showToast("USER");
-      }
+          },
+          { text: "No" },
+        ],
+        { cancelable: true },
+      );
     } catch (error) {
       showToast("ERROR");
       console.log("Error From Member Create :", error);
@@ -88,12 +92,11 @@ const MemberCreate = ({
     setSelectedImage(null);
   };
 
-
   return (
     <ThemedView>
       <ThemedText
         type="subtitle"
-        style={{ marginTop: 15, marginBottom: 20, fontSize: 24 }}
+        style={{ marginTop: 15, marginBottom: 30, fontSize: 24 }}
       >
         NewOne ~_~
       </ThemedText>
@@ -102,7 +105,7 @@ const MemberCreate = ({
           flexDirection: "row",
           alignItems: "center",
           gap: 14,
-          marginBottom: 16,
+          marginBottom: 12,
         }}
       >
         <TouchableOpacity
@@ -138,12 +141,19 @@ const MemberCreate = ({
           </Text>
         </View>
       </View>
-      <SearchProfileSection member={member} setMember={setMember} />
-
+      <View>
+        <InputWithIcon
+          icon={<UserIcon color={iconColor} />}
+          placeholder="UserName ...."
+          value={member}
+          setValue={setMember}
+          keyboardType="default"
+        />
+      </View>
       <View
         style={{
           width: "100%",
-          marginTop: 30,
+          marginTop: 12,
           justifyContent: "center",
           alignItems: "center",
           alignSelf: "center",
